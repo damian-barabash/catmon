@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 30" width="48" height="30">
+  <!-- корона чемпиона турнира: золото с кошачьими ушками-зубцами -->
+  <path d="M5 24 L3 8 L13 15 L21 4 L27 4 L35 15 L45 8 L43 24 Z"
+        fill="#E8A200" stroke="#141412" stroke-width="1.8" stroke-linejoin="round"/>
+  <path d="M5 24 L4.2 12 L13 18 L22 7.5 L26 7.5 L35 18 L43.8 12 L43 24 Z"
+        fill="#FFD558" stroke="none"/>
+  <rect x="5" y="23" width="38" height="4.5" rx="2"
+        fill="#E8A200" stroke="#141412" stroke-width="1.8"/>
+  <circle cx="24" cy="16.5" r="3" fill="#C9202A" stroke="#141412" stroke-width="1.4"/>
+  <circle cx="13.5" cy="20" r="2" fill="#2F6BFF" stroke="#141412" stroke-width="1.2"/>
+  <circle cx="34.5" cy="20" r="2" fill="#2F6BFF" stroke="#141412" stroke-width="1.2"/>
+  <circle cx="21" cy="6" r="1.6" fill="#FFF3CF" stroke="#141412" stroke-width="1"/>
+  <circle cx="27" cy="6" r="1.6" fill="#FFF3CF" stroke="#141412" stroke-width="1"/>
+</svg>

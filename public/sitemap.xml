@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9" xmlns:xhtml="http://www.w3.org/1999/xhtml">
+  <url>
+    <loc>https://catmongame.app/</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://catmongame.app/?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://catmongame.app/?lang=ru"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://catmongame.app/?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://catmongame.app/?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://catmongame.app/"/>
+    <changefreq>weekly</changefreq><priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://catmongame.app/contact</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://catmongame.app/contact?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://catmongame.app/contact?lang=ru"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://catmongame.app/contact?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://catmongame.app/contact?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://catmongame.app/contact"/>
+    <changefreq>weekly</changefreq><priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://catmongame.app/blog</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://catmongame.app/blog?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://catmongame.app/blog?lang=ru"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://catmongame.app/blog?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://catmongame.app/blog?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://catmongame.app/blog"/>
+    <changefreq>weekly</changefreq><priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://catmongame.app/season</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://catmongame.app/season?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://catmongame.app/season?lang=ru"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://catmongame.app/season?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://catmongame.app/season?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://catmongame.app/season"/>
+    <changefreq>weekly</changefreq><priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://catmongame.app/privacy</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://catmongame.app/privacy?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://catmongame.app/privacy?lang=ru"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://catmongame.app/privacy?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://catmongame.app/privacy?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://catmongame.app/privacy"/>
+    <changefreq>weekly</changefreq><priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://catmongame.app/cookies</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://catmongame.app/cookies?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://catmongame.app/cookies?lang=ru"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://catmongame.app/cookies?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://catmongame.app/cookies?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://catmongame.app/cookies"/>
+    <changefreq>weekly</changefreq><priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://catmongame.app/terms</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://catmongame.app/terms?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://catmongame.app/terms?lang=ru"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://catmongame.app/terms?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://catmongame.app/terms?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://catmongame.app/terms"/>
+    <changefreq>weekly</changefreq><priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://catmongame.app/rules</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://catmongame.app/rules?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://catmongame.app/rules?lang=ru"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://catmongame.app/rules?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://catmongame.app/rules?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://catmongame.app/rules"/>
+    <changefreq>weekly</changefreq><priority>0.6</priority>
+  </url>
+  <url>
+    <loc>https://catmongame.app/data-processing</loc>
+    <xhtml:link rel="alternate" hreflang="en" href="https://catmongame.app/data-processing?lang=en"/>
+    <xhtml:link rel="alternate" hreflang="ru" href="https://catmongame.app/data-processing?lang=ru"/>
+    <xhtml:link rel="alternate" hreflang="pl" href="https://catmongame.app/data-processing?lang=pl"/>
+    <xhtml:link rel="alternate" hreflang="fr" href="https://catmongame.app/data-processing?lang=fr"/>
+    <xhtml:link rel="alternate" hreflang="x-default" href="https://catmongame.app/data-processing"/>
+    <changefreq>weekly</changefreq><priority>0.6</priority>
+  </url>
+</urlset>

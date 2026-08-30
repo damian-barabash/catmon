@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <!-- Пятно следа: тёмный силуэт сидящего кота; цвет редкости — кольцо снаружи (Flutter) -->
+  <g stroke="#141412" stroke-width="1.6" stroke-linejoin="round">
+    <path d="M14 42c-3-7-2-16 3-21l-2-11 8 5c1-.3 2-.4 3-.4s2 .1 3 .4l8-5-2 11c5 5 6 14 3 21Z" fill="#2B2721"/>
+    <path d="M14 42c-3-7-2-16 3-21l-2-11 8 5c-3 4-4 10-3 16 .6 4 2 8 4 11Z" fill="#141412" stroke="none"/>
+    <!-- хвост -->
+    <path d="M34 40c5-1 8-6 5-11" fill="none" stroke-width="3" stroke-linecap="round"/>
+    <path d="M34 40c5-1 8-6 5-11" fill="none" stroke="#2B2721" stroke-width="1.4" stroke-linecap="round"/>
+    <!-- глаза -->
+    <ellipse cx="20.5" cy="20" rx="2" ry="2.5" fill="#FFD558" stroke="none"/>
+    <ellipse cx="29.5" cy="20" rx="2" ry="2.5" fill="#FFD558" stroke="none"/>
+    <ellipse cx="20.5" cy="20" rx=".7" ry="2" fill="#141412" stroke="none"/>
+    <ellipse cx="29.5" cy="20" rx=".7" ry="2" fill="#141412" stroke="none"/>
+  </g>
+</svg>

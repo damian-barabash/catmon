@@ -1,0 +1,22 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 96 96">
+  <!-- Радар следа: диск с кольцами и перекрестьем; вращающийся луч рисует Flutter -->
+  <circle cx="48" cy="48" r="44" fill="#1E2A22" stroke="#141412" stroke-width="2"/>
+  <circle cx="48" cy="48" r="44" fill="none" stroke="#3FBF7F" stroke-opacity="0.35" stroke-width="1.6"/>
+  <g fill="none" stroke="#3FBF7F" stroke-opacity="0.45" stroke-width="1.2">
+    <circle cx="48" cy="48" r="32"/>
+    <circle cx="48" cy="48" r="20"/>
+    <circle cx="48" cy="48" r="8"/>
+    <path d="M48 4v88M4 48h88"/>
+  </g>
+  <g stroke="#3FBF7F" stroke-opacity="0.25" stroke-width="1" fill="none">
+    <path d="M17 17l62 62M79 17L17 79"/>
+  </g>
+  <!-- центр: лапка охотника -->
+  <g fill="#3FBF7F" stroke="none">
+    <ellipse cx="48" cy="50" rx="3" ry="3.4"/>
+    <circle cx="44.2" cy="45.6" r="1.4"/><circle cx="47.2" cy="44.2" r="1.4"/><circle cx="50.4" cy="44.5" r="1.4"/><circle cx="52.6" cy="47" r="1.3"/>
+  </g>
+  <!-- ободок со стеклом -->
+  <circle cx="48" cy="48" r="44" fill="none" stroke="#141412" stroke-width="2"/>
+  <path d="M20 26a34 34 0 0 1 24-14" fill="none" stroke="#FAF9F6" stroke-opacity="0.18" stroke-width="3" stroke-linecap="round"/>
+</svg>

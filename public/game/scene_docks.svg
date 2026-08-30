@@ -1,0 +1,87 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 400" preserveAspectRatio="none">
+  <defs>
+    <linearGradient id="dsky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#152A4A"/>
+      <stop offset="0.6" stop-color="#0F1F38"/>
+      <stop offset="1" stop-color="#0A1526"/>
+    </linearGradient>
+    <radialGradient id="dmoon" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#EAF4FF" stop-opacity="0.9"/>
+      <stop offset="0.45" stop-color="#9FC6FF" stop-opacity="0.25"/>
+      <stop offset="1" stop-color="#9FC6FF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="cred" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E04A50"/>
+      <stop offset="1" stop-color="#8E1219"/>
+    </linearGradient>
+    <linearGradient id="cgreen" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4FBF6B"/>
+      <stop offset="1" stop-color="#1B5A2C"/>
+    </linearGradient>
+    <linearGradient id="cyellow" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#F5C242"/>
+      <stop offset="1" stop-color="#8E6400"/>
+    </linearGradient>
+    <linearGradient id="cblue" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4A8FD4"/>
+      <stop offset="1" stop-color="#1E4A80"/>
+    </linearGradient>
+    <linearGradient id="pier" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6B5637"/>
+      <stop offset="1" stop-color="#453620"/>
+    </linearGradient>
+    <linearGradient id="dwater" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2E6DA8"/>
+      <stop offset="1" stop-color="#0F2C4E"/>
+    </linearGradient>
+  </defs>
+  <rect width="360" height="400" fill="url(#dsky)"/>
+  <!-- луна -->
+  <circle cx="66" cy="60" r="52" fill="url(#dmoon)"/>
+  <circle cx="66" cy="60" r="24" fill="#EAF4FF"/>
+  <circle cx="58" cy="53" r="4.6" fill="#C7DCF5"/>
+  <circle cx="73" cy="66" r="3" fill="#C7DCF5"/>
+  <!-- звёзды, чайки -->
+  <circle cx="150" cy="34" r="1.8" fill="#FAF9F6" opacity="0.8"/>
+  <circle cx="205" cy="58" r="1.4" fill="#FAF9F6" opacity="0.6"/>
+  <circle cx="130" cy="80" r="1.4" fill="#FAF9F6" opacity="0.5"/>
+  <path d="M196 88c4-4 8-4 10 0 2-4 6-4 10 0" fill="none" stroke="#DCE8F5" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M150 116c3-3 6-3 7.6 0 1.6-3 4.6-3 7.6 0" fill="none" stroke="#DCE8F5" stroke-width="1.8" stroke-linecap="round" opacity="0.8"/>
+  <!-- кран -->
+  <path d="M296 336V64h10v272z" fill="#454E62" stroke="#141412" stroke-width="2.5"/>
+  <path d="M301 64L180 96" stroke="#141412" stroke-width="3.4" stroke-linecap="round"/>
+  <path d="M301 64L180 96" stroke="#8A94A6" stroke-width="1.4" stroke-linecap="round"/>
+  <path d="M301 64l44 18" stroke="#141412" stroke-width="3" stroke-linecap="round"/>
+  <path d="M212 88v34" stroke="#DCE8F5" stroke-width="1.8"/>
+  <path d="M202 122h20v16h-20z" fill="#F5C242" stroke="#141412" stroke-width="2.2"/>
+  <path d="M296 90h10M296 120h10M296 150h10" stroke="#141412" stroke-width="1.6" opacity="0.6"/>
+  <!-- фонарь на пирсе -->
+  <path d="M28 336v-72" stroke="#141412" stroke-width="4" stroke-linecap="round"/>
+  <path d="M28 264c0-8 10-8 14-4" fill="none" stroke="#141412" stroke-width="3.4" stroke-linecap="round"/>
+  <circle cx="46" cy="264" r="14" fill="url(#dmoon)"/>
+  <circle cx="46" cy="264" r="5" fill="#FFE9A8" stroke="#141412" stroke-width="1.8"/>
+  <!-- ВЕРХНИЙ контейнер (ДОРОЖКА 1, y=192): синий на двух красных -->
+  <rect x="176" y="192" width="130" height="44" rx="3" fill="url(#cblue)" stroke="#141412" stroke-width="2.5"/>
+  <path d="M194 192v44M212 192v44M230 192v44M248 192v44M266 192v44M284 192v44" stroke="#16355C" stroke-width="2.2"/>
+  <rect x="240" y="200" width="34" height="12" rx="2" fill="#EAF4FF" opacity="0.9"/>
+  <!-- СРЕДНИЙ ярус (ДОРОЖКА 2, y=258): красный + зелёный -->
+  <rect x="130" y="258" width="112" height="46" rx="3" fill="url(#cred)" stroke="#141412" stroke-width="2.5"/>
+  <path d="M148 258v46M166 258v46M184 258v46M202 258v46M220 258v46" stroke="#6E0E14" stroke-width="2.2"/>
+  <rect x="242" y="258" width="118" height="46" rx="3" fill="url(#cgreen)" stroke="#141412" stroke-width="2.5"/>
+  <path d="M260 258v46M278 258v46M296 258v46M314 258v46M332 258v46" stroke="#144420" stroke-width="2.2"/>
+  <circle cx="238" cy="280" r="3" fill="#EAF4FF" opacity="0.9"/>
+  <!-- ПИРС (ДОРОЖКА 3, y=336) -->
+  <rect x="0" y="336" width="360" height="34" fill="url(#pier)" stroke="#141412" stroke-width="2.5"/>
+  <path d="M24 336v34M72 336v34M120 336v34M168 336v34M216 336v34M264 336v34M312 336v34" stroke="#141412" stroke-width="1.6" opacity="0.5"/>
+  <!-- жёлтый контейнер на пирсе слева -->
+  <rect x="84" y="292" width="90" height="44" rx="3" fill="url(#cyellow)" stroke="#141412" stroke-width="2.5"/>
+  <path d="M100 292v44M118 292v44M136 292v44M154 292v44" stroke="#6E4E00" stroke-width="2.2"/>
+  <!-- канат и кнехт -->
+  <path d="M232 322c10 10 26 10 36 0" fill="none" stroke="#A88A5C" stroke-width="4" stroke-linecap="round"/>
+  <ellipse cx="52" cy="330" rx="9" ry="5" fill="#454E62" stroke="#141412" stroke-width="2"/>
+  <rect x="48" y="318" width="8" height="12" fill="#454E62" stroke="#141412" stroke-width="2"/>
+  <!-- вода -->
+  <path d="M0 370c10-4 20-4 30 0s20 4 30 0 20-4 30 0 20 4 30 0 20-4 30 0 20 4 30 0 20-4 30 0 20 4 30 0 20-4 30 0 20 4 30 0 20-4 30 0 12 3 20 1v29H0z" fill="url(#dwater)" stroke="#141412" stroke-width="2"/>
+  <path d="M30 382h26M90 390h30M170 380h26M240 390h28M300 380h26" stroke="#9FC6FF" stroke-width="2.4" stroke-linecap="round" opacity="0.75"/>
+  <path d="M52 60l0 0" stroke="none"/>
+</svg>

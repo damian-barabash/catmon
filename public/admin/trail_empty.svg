@@ -1,0 +1,33 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 120 96">
+  <!-- Пустое состояние: кот с биноклем на холме, вокруг — туман и одинокий след -->
+  <g stroke="#141412" stroke-width="1.8" stroke-linejoin="round">
+    <path d="M6 88c20-10 40-14 60-12s34 6 48 12Z" fill="#8E9196"/>
+    <path d="M6 88c20-10 40-14 60-12-10 2-20 6-28 12Z" fill="#6F6C64" stroke="none"/>
+    <!-- кот -->
+    <ellipse cx="60" cy="66" rx="16" ry="12" fill="#E8A200"/>
+    <path d="M46 48l3-12 9 7ZM74 48l-3-12-9 7Z" fill="#E8A200"/>
+    <circle cx="60" cy="50" r="13" fill="#E8A200"/>
+    <!-- бинокль -->
+    <rect x="46" y="46" width="12" height="9" rx="3" fill="#2B2721"/>
+    <rect x="62" y="46" width="12" height="9" rx="3" fill="#2B2721"/>
+    <path d="M58 50h4" stroke-width="2.4"/>
+    <circle cx="52" cy="50.5" r="2.6" fill="#7FA0FF" stroke="none"/>
+    <circle cx="68" cy="50.5" r="2.6" fill="#7FA0FF" stroke="none"/>
+    <path d="M57 58.5h6l-3 2.4Z" fill="#141412" stroke="none"/>
+    <path d="M60 61c-2 2-4 2-6 1M60 61c2 2 4 2 6 1" fill="none" stroke-width="1.4"/>
+    <!-- хвост -->
+    <path d="M76 70c8-2 12-8 8-14" fill="none" stroke-width="3.5" stroke-linecap="round"/>
+    <path d="M76 70c8-2 12-8 8-14" fill="none" stroke="#E8A200" stroke-width="1.6" stroke-linecap="round"/>
+  </g>
+  <!-- туман -->
+  <g fill="#FAF9F6" fill-opacity="0.55" stroke="#141412" stroke-width="1.2" stroke-opacity="0.35">
+    <ellipse cx="22" cy="30" rx="16" ry="6"/>
+    <ellipse cx="98" cy="24" rx="14" ry="5"/>
+    <ellipse cx="30" cy="72" rx="12" ry="4"/>
+  </g>
+  <!-- след -->
+  <g fill="#8E9196" stroke="#141412" stroke-width="1.2">
+    <ellipse cx="100" cy="76" rx="2.6" ry="3"/>
+    <circle cx="97" cy="71.5" r="1.2"/><circle cx="100" cy="70.4" r="1.2"/><circle cx="103" cy="71.6" r="1.2"/>
+  </g>
+</svg>

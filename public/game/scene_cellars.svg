@@ -1,0 +1,83 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 400" preserveAspectRatio="none">
+  <defs>
+    <linearGradient id="cwall" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3E2F44"/>
+      <stop offset="1" stop-color="#241B2C"/>
+    </linearGradient>
+    <linearGradient id="ctunnel" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1C1424"/>
+      <stop offset="1" stop-color="#0B0710"/>
+    </linearGradient>
+    <radialGradient id="lamp" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#FFE9A8" stop-opacity="0.8"/>
+      <stop offset="0.5" stop-color="#F0B429" stop-opacity="0.25"/>
+      <stop offset="1" stop-color="#F0B429" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="cbarrel" x1="0" y1="0" x2="1" y2="0">
+      <stop offset="0" stop-color="#7E5330"/>
+      <stop offset="0.5" stop-color="#C08A4C"/>
+      <stop offset="1" stop-color="#7E5330"/>
+    </linearGradient>
+    <linearGradient id="shelf" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#8E6B44"/>
+      <stop offset="1" stop-color="#5E4327"/>
+    </linearGradient>
+    <linearGradient id="floor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#4A3C50"/>
+      <stop offset="1" stop-color="#2E2434"/>
+    </linearGradient>
+  </defs>
+  <rect width="360" height="400" fill="url(#cwall)"/>
+  <!-- своды -->
+  <path d="M-20 130C40 40 130 20 180 20s140 20 200 110v270H-20z" fill="url(#ctunnel)"/>
+  <path d="M-20 130C40 40 130 20 180 20s140 20 200 110" fill="none" stroke="#141412" stroke-width="3"/>
+  <path d="M10 108C64 40 130 34 180 34s116 6 170 74" fill="none" stroke="#57485E" stroke-width="2.4" opacity="0.7"/>
+  <!-- рёбра свода и кладка -->
+  <path d="M60 70v22M120 42v22M180 34v22M240 42v22M300 70v22" stroke="#57485E" stroke-width="2" opacity="0.6"/>
+  <path d="M20 160h30M0 200h26M334 160h26M336 200h24" stroke="#141412" stroke-width="1.6" opacity="0.5"/>
+  <!-- фонарь -->
+  <circle cx="180" cy="106" r="64" fill="url(#lamp)"/>
+  <path d="M180 34v40" stroke="#141412" stroke-width="2.4"/>
+  <path d="M172 74h16l-2.6 18h-10.8z" fill="#F0B429" stroke="#141412" stroke-width="2.2" stroke-linejoin="round"/>
+  <path d="M176 79h8" stroke="#FFE9A8" stroke-width="2.6" stroke-linecap="round"/>
+  <!-- паутина -->
+  <path d="M330 96l24-24M338 104l16-6M330 96l6 16M330 96c10 2 18 8 22 16" fill="none" stroke="#8A84A6" stroke-width="1.2" opacity="0.5"/>
+  <!-- ПОЛКА слева (ДОРОЖКА 1, y=196) -->
+  <rect x="0" y="196" width="160" height="12" rx="3" fill="url(#shelf)" stroke="#141412" stroke-width="2.4"/>
+  <path d="M18 208v26M136 208v26" stroke="#5E4327" stroke-width="6"/>
+  <path d="M18 208v26M136 208v26" stroke="#141412" stroke-width="1.4" opacity="0.6"/>
+  <!-- банки на полке -->
+  <rect x="10" y="178" width="16" height="18" rx="3" fill="#7EA86E" opacity="0.85" stroke="#141412" stroke-width="1.6"/>
+  <rect x="32" y="182" width="14" height="14" rx="3" fill="#C9705A" opacity="0.85" stroke="#141412" stroke-width="1.6"/>
+  <!-- ШТАБЕЛЬ ЯЩИКОВ справа (ДОРОЖКА 2, y=262) -->
+  <rect x="206" y="262" width="154" height="60" fill="#8E6B44" stroke="#141412" stroke-width="2.4"/>
+  <path d="M206 262l154 0M206 292h154" stroke="#141412" stroke-width="1.6" opacity="0.6"/>
+  <path d="M232 262v60M284 262v60M336 262v60" stroke="#5E4327" stroke-width="2.4"/>
+  <path d="M212 268l14 18M226 268l-14 18M264 292l14 18M278 292l-14 18" stroke="#5E4327" stroke-width="2"/>
+  <rect x="222" y="240" width="52" height="22" fill="#A5825C" stroke="#141412" stroke-width="2.2"/>
+  <path d="M226 244l10 14M236 244l-10 14" stroke="#6B4E2E" stroke-width="1.8"/>
+  <!-- рыба торчит из ящика -->
+  <path d="M288 254c6-6 14-6 20 0-6 6-14 6-20 0z" fill="#6EC1FF" stroke="#141412" stroke-width="1.8"/>
+  <circle cx="293" cy="253" r="1.4" fill="#141412"/>
+  <!-- ПОЛ (ДОРОЖКА 3, y=336) -->
+  <rect x="0" y="336" width="360" height="64" fill="url(#floor)" stroke="#141412" stroke-width="2.5"/>
+  <path d="M0 336h360" stroke="#141412" stroke-width="2.5"/>
+  <path d="M40 356h44M120 372h44M220 352h44M300 370h40M20 384h36" stroke="#141412" stroke-width="1.4" opacity="0.4"/>
+  <!-- бочки на полу -->
+  <path d="M28 296c0-3 5-5.4 12-5.4s12 2.4 12 5.4v34c0 3-5 5.4-12 5.4s-12-2.4-12-5.4z" fill="url(#cbarrel)" stroke="#141412" stroke-width="2.2"/>
+  <path d="M28 306c3.6 2 7.8 3 12 3s8.4-1 12-3M28 322c3.6 2 7.8 3 12 3s8.4-1 12-3" fill="none" stroke="#141412" stroke-width="1.6"/>
+  <ellipse cx="40" cy="296" rx="12" ry="4.4" fill="#D9A96A" stroke="#141412" stroke-width="1.8"/>
+  <path d="M66 312c0-2.6 4.2-4.6 10-4.6s10 2 10 4.6v22c0 2.6-4.2 4.6-10 4.6s-10-2-10-4.6z" fill="url(#cbarrel)" stroke="#141412" stroke-width="2"/>
+  <ellipse cx="76" cy="312" rx="10" ry="3.8" fill="#D9A96A" stroke="#141412" stroke-width="1.6"/>
+  <!-- мешок -->
+  <path d="M150 310c-8 4-10 16-4 24 6 6 20 6 26 0 6-8 4-20-4-24 2-4 0-8-9-8s-11 4-9 8z" fill="#A89878" stroke="#141412" stroke-width="2"/>
+  <path d="M154 304h11" stroke="#141412" stroke-width="1.6"/>
+  <!-- свеча на ящиках -->
+  <rect x="238" y="226" width="8" height="14" rx="2" fill="#FAF9F6" stroke="#141412" stroke-width="1.6"/>
+  <path d="M242 218c2.6 3 2.6 5.6 0 7.4-2.6-1.8-2.6-4.4 0-7.4z" fill="#FFD558" stroke="#E8A200" stroke-width="1.2"/>
+  <!-- глаза мышей в темноте -->
+  <circle cx="330" cy="384" r="2" fill="#7EE787"/>
+  <circle cx="337" cy="384" r="2" fill="#7EE787"/>
+  <circle cx="120" cy="226" r="1.8" fill="#FFD558"/>
+  <circle cx="126" cy="226" r="1.8" fill="#FFD558"/>
+</svg>

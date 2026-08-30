@@ -1,0 +1,59 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 84" preserveAspectRatio="none">
+  <defs>
+    <linearGradient id="vault" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#221833"/><stop offset="1" stop-color="#33244A"/>
+    </linearGradient>
+    <linearGradient id="vfloor" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3D2B56"/><stop offset="1" stop-color="#2B1E3E"/>
+    </linearGradient>
+    <radialGradient id="torchC" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#FFC96B" stop-opacity=".85"/><stop offset="1" stop-color="#FFC96B" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect width="360" height="84" fill="url(#vault)"/>
+  <path d="M0 26C60 6 120 0 180 0s120 6 180 26V0H0z" fill="#1A1226"/>
+  <g fill="#2C1F42">
+    <rect x="24" y="10" width="26" height="10" rx="2"/><rect x="60" y="4" width="26" height="10" rx="2"/>
+    <rect x="274" y="4" width="26" height="10" rx="2"/><rect x="310" y="10" width="26" height="10" rx="2"/>
+    <rect x="150" y="0" width="60" height="8" rx="2"/>
+  </g>
+  <rect y="58" width="360" height="26" fill="url(#vfloor)"/>
+  <ellipse cx="180" cy="62" rx="132" ry="8" fill="#4A3568"/>
+  <circle cx="30" cy="26" r="26" fill="url(#torchC)"/>
+  <path d="M27 34h6l-1 16h-4z" fill="#160F22"/>
+  <path d="M30 16c5 5 4 9 0 12-4-3-5-7 0-12z" fill="#FFB84D"/>
+  <path d="M30 21c2.4 2.6 2 4.6 0 6-2-1.4-2.4-3.4 0-6z" fill="#FFE08A"/>
+  <circle cx="330" cy="26" r="26" fill="url(#torchC)"/>
+  <path d="M327 34h6l-1 16h-4z" fill="#160F22"/>
+  <path d="M330 16c5 5 4 9 0 12-4-3-5-7 0-12z" fill="#FFB84D"/>
+  <path d="M330 21c2.4 2.6 2 4.6 0 6-2-1.4-2.4-3.4 0-6z" fill="#FFE08A"/>
+  <g>
+    <rect x="66" y="38" width="52" height="26" rx="4" fill="#6B4A26"/>
+    <path d="M66 46h52v4H66z" fill="#503618"/>
+    <rect x="66" y="38" width="52" height="10" rx="4" fill="#7C5730"/>
+    <rect x="88" y="44" width="8" height="10" rx="2" fill="#E8A200"/>
+    <circle cx="92" cy="49" r="1.6" fill="#503618"/>
+  </g>
+  <g>
+    <rect x="150" y="30" width="60" height="34" rx="5" fill="#B57E1E"/>
+    <rect x="150" y="30" width="60" height="13" rx="5" fill="#D89A2B"/>
+    <path d="M150 40h60v4h-60z" fill="#8F6212"/>
+    <rect x="175" y="38" width="10" height="13" rx="2.4" fill="#FFD558"/>
+    <circle cx="180" cy="44" r="2.2" fill="#8F6212"/>
+    <circle cx="159" cy="36" r="2.4" fill="#C9202A"/><circle cx="201" cy="36" r="2.4" fill="#2F6BFF"/>
+  </g>
+  <g>
+    <rect x="244" y="40" width="48" height="24" rx="4" fill="#3E2C5C"/>
+    <rect x="244" y="40" width="48" height="9" rx="4" fill="#50396F"/>
+    <path d="M244 48h48v3h-48z" fill="#2E2044"/>
+    <rect x="263" y="45" width="9" height="10" rx="2" fill="#9B6BFF"/>
+  </g>
+  <g fill="#7FA8FF">
+    <path d="M128 60l4-7 4 7-4 4z"/><path d="M137 62l3-5 3 5-3 3z"/>
+  </g>
+  <g fill="#FFD558">
+    <path d="M222 60l4-7 4 7-4 4z"/><circle cx="234" cy="62" r="2.4"/>
+    <circle cx="120" cy="64" r="2" /><circle cx="216" cy="65" r="1.8"/>
+  </g>
+  <g fill="#C77DFF"><path d="M300 58l3.4-6 3.4 6-3.4 3.4z"/><circle cx="310" cy="61" r="2"/></g>
+</svg>

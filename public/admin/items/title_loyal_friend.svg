@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <!-- титул «Верный друг»: щит-эмблема (epic) + сердце с лапкой -->
+  <path d="M24 3l17 5v14c0 11-7 19-17 23C14 41 7 33 7 22V8z" fill="#C79BF2" stroke="#141412" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M24 7.5l13 3.8V22c0 8.6-5.3 15-13 18.4C16.3 37 11 30.6 11 22V11.3z" fill="none" stroke="#9333EA" stroke-width="2.2"/>
+  <path d="M12 10.5l8-2.4" stroke="#EBDBFA" stroke-width="2" stroke-linecap="round"/>
+  <path d="M24 34.5c-5.6-3.6-9-7-9-11.2 0-3 2.2-5.3 5-5.3 2 0 3.3 1 4 2.4.7-1.4 2-2.4 4-2.4 2.8 0 5 2.3 5 5.3 0 4.2-3.4 7.6-9 11.2z" fill="#FF6B8A" stroke="#141412" stroke-width="1.8" stroke-linejoin="round"/>
+  <circle cx="21.4" cy="23.6" r="1.5" fill="#FFE1E8"/>
+  <circle cx="24" cy="22.2" r="1.2" fill="#FFE1E8"/>
+  <circle cx="26.6" cy="23.6" r="1.5" fill="#FFE1E8"/>
+  <ellipse cx="24" cy="26.6" rx="2.4" ry="2" fill="#FFE1E8"/>
+</svg>

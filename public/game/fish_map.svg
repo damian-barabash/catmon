@@ -1,0 +1,121 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 520" width="360" height="520">
+  <!-- Карта рыбных мест: ночная долина с тремя озёрами.
+       Хот-споты озёр (доли холста, центры): calm (0.30, 0.20) · shoal (0.72, 0.47) · abyss (0.38, 0.78) -->
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#1B2A4A"/>
+      <stop offset="0.5" stop-color="#15203B"/>
+      <stop offset="1" stop-color="#0E1428"/>
+    </linearGradient>
+    <radialGradient id="calmW" cx="0.5" cy="0.5" r="0.6">
+      <stop offset="0" stop-color="#2C6EA8"/>
+      <stop offset="1" stop-color="#16456B"/>
+    </radialGradient>
+    <radialGradient id="shoalW" cx="0.5" cy="0.45" r="0.65">
+      <stop offset="0" stop-color="#6C9BD8"/>
+      <stop offset="1" stop-color="#3D6BA8"/>
+    </radialGradient>
+    <radialGradient id="abyssW" cx="0.5" cy="0.5" r="0.62">
+      <stop offset="0" stop-color="#4A3C8E"/>
+      <stop offset="0.72" stop-color="#2E2560"/>
+      <stop offset="1" stop-color="#191344"/>
+    </radialGradient>
+  </defs>
+
+  <rect width="360" height="520" fill="url(#sky)"/>
+
+  <!-- звёзды -->
+  <g fill="#EAF4FF">
+    <circle cx="36" cy="34" r="1.6" opacity=".9"/><circle cx="322" cy="24" r="1.3" opacity=".7"/>
+    <circle cx="188" cy="18" r="1.1" opacity=".6"/><circle cx="256" cy="48" r="1.4" opacity=".8"/>
+    <circle cx="90" cy="56" r="1" opacity=".5"/><circle cx="330" cy="140" r="1.2" opacity=".6"/>
+    <circle cx="20" cy="150" r="1.2" opacity=".6"/><circle cx="300" cy="330" r="1.1" opacity=".5"/>
+    <circle cx="52" cy="332" r="1.3" opacity=".6"/><circle cx="316" cy="452" r="1.4" opacity=".6"/>
+  </g>
+  <!-- луна -->
+  <circle cx="292" cy="70" r="22" fill="#EAF4FF" opacity=".92"/>
+  <circle cx="285" cy="63" r="5" fill="#C9D8F0" opacity=".5"/>
+  <circle cx="299" cy="76" r="3.4" fill="#C9D8F0" opacity=".45"/>
+
+  <!-- дальние холмы -->
+  <path d="M0 120 Q60 84 120 116 Q170 140 230 112 Q300 82 360 118 L360 200 L0 200 Z" fill="#1D2B4D" opacity=".85"/>
+  <path d="M0 210 Q80 176 160 206 Q250 236 360 198 L360 300 L0 300 Z" fill="#1A2543" opacity=".9"/>
+  <path d="M0 350 Q90 318 200 348 Q290 372 360 342 L360 460 L0 460 Z" fill="#161F3A" opacity=".95"/>
+
+  <!-- тропа между озёрами (пунктир) -->
+  <path d="M108 128 Q200 170 240 230 Q262 268 258 300 M230 288 Q170 330 152 372"
+        stroke="#8A93B8" stroke-width="2.4" stroke-dasharray="1 9" fill="none"
+        stroke-linecap="round" opacity=".7"/>
+
+  <!-- ══ ОЗЕРО 1: Тихая Заводь (0.30, 0.20) ══ -->
+  <g>
+    <ellipse cx="108" cy="112" rx="74" ry="40" fill="#0B2A45" opacity=".55"/>
+    <path d="M46 108 Q54 82 100 78 Q152 74 168 100 Q180 122 152 136 Q116 150 74 140 Q40 130 46 108 Z"
+          fill="url(#calmW)" stroke="#F2E8C9" stroke-width="1.4" stroke-opacity=".5"/>
+    <!-- спокойная рябь -->
+    <path d="M70 106 Q90 100 112 106 M84 120 Q104 114 128 119 M100 92 Q118 88 136 93"
+          stroke="#9FC3E4" stroke-width="1.6" fill="none" stroke-linecap="round" opacity=".55"/>
+    <!-- камыш и поплавок -->
+    <path d="M52 128 l0 -14 M57 130 l0 -11 M62 131 l0 -15" stroke="#3E8E5A" stroke-width="2" stroke-linecap="round"/>
+    <circle cx="53" cy="112" r="2.4" fill="#3E8E5A"/><circle cx="63" cy="114" r="2" fill="#3E8E5A"/>
+    <circle cx="128" cy="112" r="3" fill="#C9202A"/><circle cx="128" cy="109.6" r="1.4" fill="#F2E8C9"/>
+  </g>
+
+  <!-- ══ ОЗЕРО 2: Лунная Отмель (0.72, 0.47) ══ -->
+  <g>
+    <ellipse cx="260" cy="248" rx="80" ry="44" fill="#1A3560" opacity=".55"/>
+    <path d="M192 244 Q198 214 250 208 Q308 202 326 232 Q338 256 306 272 Q262 288 222 278 Q188 268 192 244 Z"
+          fill="url(#shoalW)" stroke="#EAF4FF" stroke-width="1.4" stroke-opacity=".55"/>
+    <!-- лунная дорожка -->
+    <path d="M300 216 L272 268" stroke="#EAF4FF" stroke-width="7" stroke-linecap="round" opacity=".38"/>
+    <path d="M300 216 L272 268" stroke="#EAF4FF" stroke-width="2.6" stroke-linecap="round" opacity=".7"/>
+    <!-- серебряная рыба-тень и блики отмели -->
+    <path d="M226 250 q10 -7 20 0 l7 -5 -2 7 2 6 -7 -4 q-10 6 -20 -1 Z" fill="#CBDEF6" opacity=".8"/>
+    <path d="M214 232 Q230 226 246 231 M238 264 Q256 258 274 263" stroke="#BFD8F4" stroke-width="1.5" fill="none" stroke-linecap="round" opacity=".5"/>
+    <!-- песчаная коса -->
+    <path d="M204 262 Q228 274 262 276 Q234 282 210 274 Z" fill="#8FA6C8" opacity=".5"/>
+  </g>
+
+  <!-- ══ ОЗЕРО 3: Бездонный Омут (0.38, 0.78) ══ -->
+  <g>
+    <ellipse cx="137" cy="408" rx="86" ry="48" fill="#0A0720" opacity=".6"/>
+    <path d="M62 404 Q68 370 128 364 Q192 358 210 392 Q222 420 184 436 Q136 452 94 440 Q56 428 62 404 Z"
+          fill="url(#abyssW)" stroke="#B57BFF" stroke-width="1.6" stroke-opacity=".65"/>
+    <!-- воронка -->
+    <g fill="none" stroke="#B57BFF" stroke-linecap="round">
+      <ellipse cx="137" cy="402" rx="46" ry="20" stroke-width="1.6" opacity=".5"/>
+      <ellipse cx="137" cy="402" rx="32" ry="13.6" stroke-width="1.5" opacity=".65"/>
+      <ellipse cx="137" cy="402" rx="19" ry="8" stroke-width="1.4" opacity=".8"/>
+      <ellipse cx="137" cy="402" rx="8" ry="3.4" stroke-width="1.3" opacity=".95"/>
+    </g>
+    <circle cx="137" cy="402" r="2.6" fill="#0A0720"/>
+    <!-- золотой глаз чудища из глубины -->
+    <g transform="translate(176 424)">
+      <circle r="9" fill="#3A2A08" opacity=".9"/>
+      <path d="M-6 0 Q0 -5 6 0 Q0 5 -6 0 Z" fill="#E8A200"/>
+      <circle r="1.6" fill="#141412"/>
+    </g>
+    <!-- обломки свай -->
+    <path d="M74 428 l-2 -14 M84 434 l-1 -10" stroke="#4A3C6E" stroke-width="3" stroke-linecap="round"/>
+  </g>
+
+  <!-- ёлки -->
+  <g fill="#20315A">
+    <path d="M26 236 l9 -18 9 18 Z M26 226 l9 -16 9 16 Z"/>
+    <path d="M318 168 l8 -16 8 16 Z M318 159 l8 -14 8 14 Z"/>
+    <path d="M296 392 l9 -18 9 18 Z M296 382 l9 -16 9 16 Z"/>
+    <path d="M40 470 l10 -20 10 20 Z M40 458 l10 -17 10 17 Z"/>
+    <path d="M250 470 l8 -16 8 16 Z"/>
+  </g>
+
+  <!-- компас -->
+  <g transform="translate(322 486)" opacity=".8">
+    <circle r="16" fill="none" stroke="#8A93B8" stroke-width="1.4"/>
+    <path d="M0 -12 L3.6 4 L0 0.6 L-3.6 4 Z" fill="#C9202A"/>
+    <path d="M0 12 L3.6 -4 L0 -0.6 L-3.6 -4 Z" fill="#EAF4FF" opacity=".85"/>
+  </g>
+
+  <!-- рамка карты -->
+  <rect x="6" y="6" width="348" height="508" rx="18" fill="none" stroke="#8A93B8" stroke-width="1.6" opacity=".5"/>
+  <rect x="11" y="11" width="338" height="498" rx="14" fill="none" stroke="#8A93B8" stroke-width="0.8" opacity=".35"/>
+</svg>

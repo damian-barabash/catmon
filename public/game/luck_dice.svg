@@ -1,0 +1,23 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <!-- кубик удачи с лапкой: плоские заливки, обводка #141412, золото -->
+  <path d="M10 14l14-7 14 7v20l-14 7-14-7z" fill="#FFD558" stroke="#141412" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M10 14l14 7 14-7" fill="none" stroke="#141412" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M24 21v20" fill="none" stroke="#141412" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M24 21l14-7v20l-14 7z" fill="#E8A200" stroke="#141412" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M10 14l14 7v20l-14-7z" fill="#FFE590" stroke="#141412" stroke-width="2" stroke-linejoin="round"/>
+  <!-- лапка на верхней грани -->
+  <ellipse cx="24" cy="15.5" rx="3.2" ry="2.3" fill="#141412"/>
+  <ellipse cx="18.8" cy="12.6" rx="1.6" ry="1.2" fill="#141412"/>
+  <ellipse cx="22.2" cy="10.6" rx="1.6" ry="1.2" fill="#141412"/>
+  <ellipse cx="26" cy="10.6" rx="1.6" ry="1.2" fill="#141412"/>
+  <ellipse cx="29.4" cy="12.6" rx="1.6" ry="1.2" fill="#141412"/>
+  <!-- точки на гранях -->
+  <circle cx="15" cy="21.5" r="1.7" fill="#141412"/>
+  <circle cx="19" cy="31" r="1.7" fill="#141412"/>
+  <circle cx="31" cy="19.5" r="1.7" fill="#141412"/>
+  <circle cx="35" cy="26.5" r="1.7" fill="#141412"/>
+  <circle cx="27" cy="33" r="1.7" fill="#141412"/>
+  <!-- искры удачи -->
+  <path d="M40 6l1.2 2.8L44 10l-2.8 1.2L40 14l-1.2-2.8L36 10l2.8-1.2z" fill="#FFD558" stroke="#141412" stroke-width="1.4" stroke-linejoin="round"/>
+  <path d="M7 36l.9 2.1L10 39l-2.1.9L7 42l-.9-2.1L4 39l2.1-.9z" fill="#FFD558" stroke="#141412" stroke-width="1.2" stroke-linejoin="round"/>
+</svg>

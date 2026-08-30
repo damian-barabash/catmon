@@ -1,0 +1,8 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 56">
+  <!-- Точка патруля: булавка-капля с лапой; номер рисует Flutter -->
+  <g stroke="#141412" stroke-width="1.8" stroke-linejoin="round">
+    <path d="M24 54C13 40 6 31 6 21a18 18 0 0 1 36 0c0 10-7 19-18 33Z" fill="#2F6BFF"/>
+    <path d="M24 54C13 40 6 31 6 21A18 18 0 0 1 24 3c-6 6-8 14-6 22 2 8 4 16 6 29Z" fill="#1F4FCC" stroke="none"/>
+    <circle cx="24" cy="21" r="12.5" fill="#FAF9F6"/>
+  </g>
+</svg>

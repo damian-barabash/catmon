@@ -1,0 +1,88 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 400" preserveAspectRatio="none">
+  <defs>
+    <linearGradient id="sky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2A2350"/>
+      <stop offset="0.5" stop-color="#1B1838"/>
+      <stop offset="1" stop-color="#121026"/>
+    </linearGradient>
+    <radialGradient id="moonglow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#FFE9A8" stop-opacity="0.9"/>
+      <stop offset="0.4" stop-color="#FFD558" stop-opacity="0.3"/>
+      <stop offset="1" stop-color="#FFD558" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="roofA" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#E08463"/>
+      <stop offset="1" stop-color="#A84E38"/>
+    </linearGradient>
+    <linearGradient id="roofB" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#6E7A94"/>
+      <stop offset="1" stop-color="#454E62"/>
+    </linearGradient>
+    <linearGradient id="wallA" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#3A3355"/>
+      <stop offset="1" stop-color="#282344"/>
+    </linearGradient>
+    <linearGradient id="wallB" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#463C60"/>
+      <stop offset="1" stop-color="#2E2848"/>
+    </linearGradient>
+    <radialGradient id="win" cx="0.5" cy="0.5" r="0.6">
+      <stop offset="0" stop-color="#FFE9A8"/>
+      <stop offset="1" stop-color="#E8A200"/>
+    </radialGradient>
+  </defs>
+  <rect width="360" height="400" fill="url(#sky)"/>
+  <!-- луна -->
+  <circle cx="292" cy="64" r="58" fill="url(#moonglow)"/>
+  <circle cx="292" cy="64" r="26" fill="#FFE9A8"/>
+  <circle cx="283" cy="57" r="5" fill="#F0C96A"/>
+  <circle cx="300" cy="70" r="3.4" fill="#F0C96A"/>
+  <circle cx="292" cy="52" r="2.4" fill="#F0C96A"/>
+  <!-- звёзды -->
+  <path d="M40 40l2 4.6 4.6 2-4.6 2-2 4.6-2-4.6-4.6-2 4.6-2z" fill="#FAF9F6" opacity="0.9"/>
+  <circle cx="96" cy="30" r="2" fill="#FAF9F6" opacity="0.8"/>
+  <circle cx="150" cy="56" r="1.6" fill="#FAF9F6" opacity="0.6"/>
+  <circle cx="210" cy="26" r="1.6" fill="#FAF9F6" opacity="0.7"/>
+  <circle cx="66" cy="86" r="1.4" fill="#FAF9F6" opacity="0.5"/>
+  <circle cx="238" cy="110" r="1.4" fill="#FAF9F6" opacity="0.5"/>
+  <!-- облако -->
+  <path d="M120 78c6-10 20-10 26-2 8-6 20-2 22 6 8 0 12 6 10 10H112c-4-6 0-12 8-14z" fill="#3A3560" opacity="0.7"/>
+  <!-- дальний город -->
+  <path d="M0 190h24v-26h20v14h26v-32h22v24h24v-14h20v22h26v-30h22v18h24v-12h20v26h26v-16h22v14h24v-10h20v14h20v220H0z" fill="#221E3E"/>
+  <path d="M32 176h6v6h-6zM76 158h6v6h-6zM128 152h6v6h-6zM196 150h6v6h-6zM252 168h6v6h-6zM308 178h6v6h-6z" fill="#FFD558" opacity="0.5"/>
+  <!-- ЗАДНЕЕ здание слева: плоская крыша (ДОРОЖКА 1, y=200) -->
+  <rect x="0" y="200" width="150" height="200" fill="url(#wallA)" stroke="#141412" stroke-width="2.5"/>
+  <rect x="-4" y="194" width="158" height="10" rx="3" fill="#565073" stroke="#141412" stroke-width="2.5"/>
+  <rect x="16" y="222" width="24" height="28" rx="2" fill="url(#win)" stroke="#141412" stroke-width="2"/>
+  <rect x="58" y="222" width="24" height="28" rx="2" fill="#211D3C" stroke="#141412" stroke-width="2"/>
+  <rect x="100" y="222" width="24" height="28" rx="2" fill="url(#win)" stroke="#141412" stroke-width="2"/>
+  <rect x="16" y="268" width="24" height="28" rx="2" fill="#211D3C" stroke="#141412" stroke-width="2"/>
+  <rect x="58" y="268" width="24" height="28" rx="2" fill="url(#win)" stroke="#141412" stroke-width="2"/>
+  <rect x="100" y="268" width="24" height="28" rx="2" fill="#211D3C" stroke="#141412" stroke-width="2"/>
+  <!-- антенна на крыше 1 -->
+  <path d="M120 194v-26M111 176l18-10" fill="none" stroke="#141412" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M120 194v-26M111 176l18-10" fill="none" stroke="#8A84A6" stroke-width="1" stroke-linecap="round"/>
+  <!-- СРЕДНЕЕ здание справа: терракотовая крыша со СКАТОМ (ДОРОЖКА 2, y=258) -->
+  <path d="M168 262L262 218l94 44z" fill="url(#roofA)" stroke="#141412" stroke-width="2.5" stroke-linejoin="round"/>
+  <path d="M196 249l66-31 66 31M224 236l38-18 38 18" fill="none" stroke="#8E4130" stroke-width="1.8"/>
+  <rect x="176" y="262" width="184" height="138" fill="url(#wallB)" stroke="#141412" stroke-width="2.5"/>
+  <rect x="196" y="282" width="28" height="34" rx="2" fill="url(#win)" stroke="#141412" stroke-width="2"/>
+  <rect x="246" y="282" width="28" height="34" rx="2" fill="#211D3C" stroke="#141412" stroke-width="2"/>
+  <rect x="296" y="282" width="28" height="34" rx="2" fill="url(#win)" stroke="#141412" stroke-width="2"/>
+  <!-- труба с дымом на скате -->
+  <rect x="300" y="228" width="16" height="26" fill="#7A5648" stroke="#141412" stroke-width="2.2"/>
+  <path d="M308 222c5-4 3-9 8-12" fill="none" stroke="#B9B4C9" stroke-width="4" stroke-linecap="round" opacity="0.7"/>
+  <!-- ПЕРЕДНЯЯ терраса-крыша во всю ширину (ДОРОЖКА 3, y=330) -->
+  <rect x="0" y="336" width="360" height="64" fill="#2E2848" stroke="#141412" stroke-width="2.5"/>
+  <rect x="-4" y="330" width="368" height="10" rx="3" fill="#5E5680" stroke="#141412" stroke-width="2.5"/>
+  <!-- черепичная кромка передней крыши -->
+  <path d="M0 348h360" stroke="#141412" stroke-width="1.4" opacity="0.5"/>
+  <path d="M14 336v-7M42 336v-7M70 336v-7M98 336v-7M126 336v-7M154 336v-7M182 336v-7M210 336v-7M238 336v-7M266 336v-7M294 336v-7M322 336v-7M350 336v-7" stroke="#141412" stroke-width="1.6" opacity="0.55"/>
+  <!-- бельевая верёвка -->
+  <path d="M20 330c40 12 90 12 130 0" fill="none" stroke="#8A84A6" stroke-width="1.6"/>
+  <path d="M58 336v10M76 337v9M96 337v10" stroke="#C9705A" stroke-width="4" stroke-linecap="round" opacity="0.9"/>
+  <!-- горшок и труба на передней крыше -->
+  <path d="M312 330l4-14h16l4 14z" fill="#B85A42" stroke="#141412" stroke-width="2"/>
+  <path d="M318 316c2-6 10-6 12 0" fill="none" stroke="#3FA455" stroke-width="3" stroke-linecap="round"/>
+  <rect x="252" y="352" width="20" height="48" fill="#211D3C" stroke="#141412" stroke-width="2"/>
+</svg>

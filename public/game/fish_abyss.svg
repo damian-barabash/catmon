@@ -1,0 +1,50 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+  <defs>
+    <linearGradient id="fasky" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#241B3E"/>
+      <stop offset="1" stop-color="#0D0A1C"/>
+    </linearGradient>
+    <linearGradient id="fawater" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0" stop-color="#2E2560"/>
+      <stop offset="0.55" stop-color="#1A1440"/>
+      <stop offset="1" stop-color="#0A0720"/>
+    </linearGradient>
+    <radialGradient id="favortex" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#0A0720"/>
+      <stop offset="0.7" stop-color="#2E2560" stop-opacity="0.6"/>
+      <stop offset="1" stop-color="#2E2560" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="faglow" cx="0.5" cy="0.5" r="0.5">
+      <stop offset="0" stop-color="#FFD558" stop-opacity="0.9"/>
+      <stop offset="0.6" stop-color="#E8A200" stop-opacity="0.3"/>
+      <stop offset="1" stop-color="#E8A200" stop-opacity="0"/>
+    </radialGradient>
+  </defs>
+  <rect x="1.5" y="1.5" width="61" height="61" rx="14" fill="url(#fasky)" stroke="#141412" stroke-width="2"/>
+  <circle cx="50" cy="10" r="0.9" fill="#B57BFF" opacity="0.8"/>
+  <circle cx="14" cy="12" r="0.8" fill="#B57BFF" opacity="0.6"/>
+  <!-- тёмная вода -->
+  <path d="M2 22h60v39a13 13 0 01-13 1.5H15A13 13 0 012 61z" fill="url(#fawater)"/>
+  <path d="M2 22h60" stroke="#141412" stroke-width="1.4" opacity="0.6"/>
+  <!-- воронка омута -->
+  <circle cx="32" cy="41" r="17" fill="url(#favortex)"/>
+  <path d="M15 41c0-9.4 7.6-17 17-17s17 7.6 17 17" fill="none" stroke="#6E5BD4" stroke-width="1.6" opacity="0.75"/>
+  <path d="M19.5 41c0-6.9 5.6-12.5 12.5-12.5S44.5 34.1 44.5 41" fill="none" stroke="#8F7BE8" stroke-width="1.4" opacity="0.65"/>
+  <path d="M24 41c0-4.4 3.6-8 8-8s8 3.6 8 8" fill="none" stroke="#B0A0F5" stroke-width="1.2" opacity="0.55"/>
+  <path d="M28.5 41c0-1.9 1.6-3.5 3.5-3.5s3.5 1.6 3.5 3.5" fill="none" stroke="#D0C6FF" stroke-width="1.1" opacity="0.5"/>
+  <circle cx="32" cy="41" r="1.6" fill="#0A0720" stroke="#B0A0F5" stroke-width="0.9"/>
+  <!-- легендарная рыба-тень с золотым свечением в глубине -->
+  <circle cx="45" cy="53" r="9" fill="url(#faglow)"/>
+  <path d="M38 53c3-3.4 7.4-3.4 10.4 0-3 3.4-7.4 3.4-10.4 0z" fill="#141412" stroke="#E8A200" stroke-width="1.3"/>
+  <path d="M48.4 51l2.6-2.6M48.4 55l2.6 2.6" stroke="#E8A200" stroke-width="1.1"/>
+  <circle cx="40.6" cy="52.4" r="0.7" fill="#FFD558"/>
+  <!-- эпическая рыба-тень -->
+  <path d="M12 30c2.4-2.6 5.8-2.6 8.2 0-2.4 2.6-5.8 2.6-8.2 0z" fill="#141412" stroke="#9333EA" stroke-width="1.2"/>
+  <circle cx="14.2" cy="29.6" r="0.6" fill="#B57BFF"/>
+  <!-- пузыри -->
+  <circle cx="24" cy="26" r="1.1" fill="none" stroke="#8F7BE8" stroke-width="0.9" opacity="0.7"/>
+  <circle cx="27" cy="23" r="0.8" fill="none" stroke="#8F7BE8" stroke-width="0.8" opacity="0.6"/>
+  <circle cx="52" cy="30" r="1" fill="none" stroke="#8F7BE8" stroke-width="0.9" opacity="0.6"/>
+  <!-- щупальце?! -->
+  <path d="M6 61c2-4 1-7-1.6-9 4-1.4 7.4 1 8 5" fill="none" stroke="#6E5BD4" stroke-width="2" stroke-linecap="round" opacity="0.8"/>
+</svg>
