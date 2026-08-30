@@ -49,6 +49,20 @@ const items: Item[] = [
   { code: 'fish_calm_01', kind: 'fish', name: 'Рыба тихой заводи', rarity: 'common' },
 ]
 
+const itemEffects: Record<string, Record<string, unknown>> = {
+  acc_rune_stone: { stats: { mystery: 5 } },
+  acc_dragon: { stats: { dominance: 6, agility: 6 }, active: true, special: 'fear' },
+  a4_c_street_bowtie: { stats: { charm: 3 } },
+  a4_e_crystal_crown: { stats: { charm: 7, mystery: 6 }, special: 'mirror' },
+  a4_l_cosmic_feather: { stats: { mystery: 9, agility: 9 }, active: true, special: 'wish' },
+  a4_c_knit_goggles: { stats: { agility: 4 } },
+  a4_e_storm_bell: { stats: { dominance: 7, agility: 6 }, active: true, special: 'opener' },
+  a4_l_divine_anklet: { stats: { charm: 10, mystery: 10 }, special: 'guardian_angel', charges: 1 },
+  a4_c_paper_flower: { stats: { charm: 3, agility: 2 } },
+  a4_e_lunar_horns: { stats: { mystery: 7, dominance: 6 }, special: 'aura' },
+  boost_xp_x2: { type: 'xp_scans', scans: 5 },
+}
+
 const settings: Setting[] = [
   { key: 'maintenance', value: { on: false, message_i18n: { ru: 'Технические работы, вернёмся через час' } } },
   { key: 'scan_limits', value: { hour: 12, day: 60, plus_hour: 20, plus_day: 100 } },
@@ -195,7 +209,7 @@ export async function mockCall(action: string, params: Record<string, unknown>):
     case 'admin_create': { const a: Admin = { id: `a${admins.length + 1}`, email: P.email, name: P.name, role: P.role, lang: 'ru' }; admins.push(a); return { ok: true, admin: a } }
     case 'admin_delete': { const i = admins.findIndex(a => a.id === P.id); if (i > 0) admins.splice(i, 1); return { ok: true } }
     case 'ai_translate': return { en: '[en] ' + P.text_ru, pl: '[pl] ' + P.text_ru, fr: '[fr] ' + P.text_ru }
-    case 'items_list': return { items: items.map(i => ({ description: '', effect: {}, plus_only: false, dungeon_only: false, exclusive: false, ...i })), total: items.length }
+    case 'items_list': return { items: items.map(i => ({ description: '', effect: itemEffects[i.code] ?? {}, plus_only: false, dungeon_only: false, exclusive: false, ...i })), total: items.length }
     case 'cats_list': {
       let list = [...mockCats]
       const s = String(P.q ?? '').toLowerCase()

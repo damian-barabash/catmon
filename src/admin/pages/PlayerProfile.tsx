@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { api, catPhotoUrl, fileToBase64, itemIconUrl, type Item, type PlayerCard, type PlayerFull } from '../api'
 import { fmtAgo, fmtDate, fmtN, i18nText, useAsync, useStore } from '../store'
-import { Card, Empty, ErrorBox, Field, Modal, RarityChip, Skeleton, Tabs, initials, useConfirm } from '../ui'
+import { Card, Empty, ErrorBox, Field, ItemToken, Modal, RarityChip, Skeleton, Tabs, initials, useConfirm } from '../ui'
 import { IcArrowLeft, IcBan, IcCamera, IcCat, IcCheck, IcChest, IcClose, IcCoins, IcEye, IcGem, IcGift, IcInfo, IcMinus, IcPlus, IcStar, IcTrash, IcWarn, IcBolt } from '../icons'
 
 type Tab = 'cats' | 'inventory' | 'policies' | 'notices' | 'audit'
@@ -30,7 +30,7 @@ export default function PlayerProfile() {
   // items catalogue (lazy)
   const [items, setItems] = useState<Item[] | null>(null)
   // забрать предмет с плитки инвентаря (крестик)
-  const [removeIt, setRemoveIt] = useState<{ code: string; name: string; max: number } | null>(null)
+  const [removeIt, setRemoveIt] = useState<{ code: string; name: string; max: number; rarity?: string; kind?: string } | null>(null)
   const [removeQty, setRemoveQty] = useState(1)
   useEffect(() => { if ((modal === 'give' || modal === 'notice') && !items) api.itemsList().then(setItems).catch(e => toast((e as Error).message, 'err')) }, [modal]) // eslint-disable-line react-hooks/exhaustive-deps
 
@@ -86,7 +86,7 @@ export default function PlayerProfile() {
           {tab === 'cats' && (!p.cards.length ? <Empty /> : <div className="cat-grid">{p.cards.map(c => <CatCard key={c.id} c={c} link />)}</div>)}
           {tab === 'inventory' && (!p.items.length ? <Empty /> : <div className="item-grid">{p.items.map(it => (
             <div key={it.code} className="item has-x">
-              <button className="item-x" aria-label={t('take_n')} title={t('take_n')} onClick={() => { setRemoveQty(1); setRemoveIt({ code: it.code, name: it.name ?? it.code, max: it.qty }) }}><IcClose size={13} /></button>
+              <button className="item-x" aria-label={t('take_n')} title={t('take_n')} onClick={() => { setRemoveQty(1); setRemoveIt({ code: it.code, name: it.name ?? it.code, max: it.qty, rarity: it.rarity, kind: it.kind }) }}><IcClose size={13} /></button>
               <div className="ic"><ItemIcon code={it.code} /></div><div style={{ minWidth: 0 }}><div className="nm">{it.name ?? it.code}</div><div className="qt">×{it.qty} · {it.rarity ?? it.kind ?? ''}</div></div>
             </div>))}</div>)}
           {tab === 'policies' && (!p.acceptances.length ? <Empty /> : <div className="tbl-wrap"><table className="tbl"><thead><tr><th>code</th><th>{t('version')}</th><th>{t('when')}</th><th>ip</th><th>build</th></tr></thead><tbody>{p.acceptances.map(a => <tr key={a.code + a.version}><td><b>{a.code}</b></td><td>v{a.version}</td><td className="muted">{fmtDate(a.accepted_at, true)}</td><td className="mono muted">{a.ip ?? '—'}</td><td className="muted">{a.app_build ?? '—'}</td></tr>)}</tbody></table></div>)}
@@ -127,7 +127,7 @@ export default function PlayerProfile() {
           optimistic(cur => ({ ...cur, items: cur.items.map(i => i.code === r.code ? { ...i, qty: i.qty - qty } : i).filter(i => i.qty > 0) }), () => api.playerRemoveItem(id, r.code, qty))
         }}>{t('take_n')}</button>
       </>}>
-        <p style={{ marginBottom: 10 }}>{t('take_confirm')} <b>{removeIt?.name}</b> <span className="mono muted">({removeIt?.code})</span></p>
+        <div className="row" style={{ marginBottom: 10, flexWrap: 'nowrap' }}>{removeIt && <ItemToken code={removeIt.code} kind={removeIt.kind} rarity={removeIt.rarity} size={36} />}<p>{t('take_confirm')} <b>{removeIt?.name}</b> <span className="mono muted">({removeIt?.code})</span></p></div>
         <Field label={`${t('qty')} (max ${removeIt?.max ?? 1})`}><input className="input" type="number" min={1} max={removeIt?.max ?? 1} value={removeQty} onChange={e => setRemoveQty(Number(e.target.value))} style={{ width: 120 }} /></Field>
       </Modal>
       {node}

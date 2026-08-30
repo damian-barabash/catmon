@@ -1,0 +1,15 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <!-- титул «Чемпион сезона»: щит-эмблема (legendary) + кубок и лавры -->
+  <path d="M24 3l17 5v14c0 11-7 19-17 23C14 41 7 33 7 22V8z" fill="#FFD558" stroke="#141412" stroke-width="2" stroke-linejoin="round"/>
+  <path d="M24 7.5l13 3.8V22c0 8.6-5.3 15-13 18.4C16.3 37 11 30.6 11 22V11.3z" fill="none" stroke="#E8A200" stroke-width="2.2"/>
+  <path d="M12 10.5l8-2.4" stroke="#FFF4D6" stroke-width="2" stroke-linecap="round"/>
+  <g stroke="#141412" stroke-width="1.4" stroke-linejoin="round">
+    <path d="M18 15h12v5c0 4-2.7 7-6 7s-6-3-6-7z" fill="#FAF9F6"/>
+    <path d="M18 17c-2.4 0-3.6 1.2-3.6 2.8s1.6 2.8 4 2.8M30 17c2.4 0 3.6 1.2 3.6 2.8s-1.6 2.8-4 2.8" fill="none"/>
+    <rect x="22" y="27" width="4" height="2.5" fill="#E8A200"/>
+    <rect x="19.5" y="29.5" width="9" height="2.4" rx="1" fill="#FAF9F6"/>
+  </g>
+  <g stroke="#8A6200" stroke-width="1" fill="#FFE38A" stroke-linejoin="round">
+    <path d="M14 30c1.6-2.6 3.6-3.8 6-3.6-.6 2.6-2.6 3.8-6 3.6zM34 30c-1.6-2.6-3.6-3.8-6-3.6.6 2.6 2.6 3.8 6 3.6z"/>
+  </g>
+</svg>

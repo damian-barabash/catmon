@@ -2,7 +2,7 @@ import { useEffect, useRef, useState, type ReactNode } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { IcCheck, IcChevron, IcClose, IcEmpty, IcInfo, IcWarn } from './icons'
 import { useStore } from './store'
-import type { Rarity } from './api'
+import { itemIconUrl, type Rarity } from './api'
 
 export function Card({ title, icon, right, children, className = '', soft }: { title?: ReactNode; icon?: ReactNode; right?: ReactNode; children: ReactNode; className?: string; soft?: boolean }) {
   return (
@@ -106,6 +106,16 @@ export function useConfirm() {
     </Modal>
   )
   return { confirm, node }
+}
+
+export function ItemToken({ code, kind, rarity, size, className = '' }: { code: string; kind?: string; rarity?: string; size?: number; className?: string }) {
+  const [err, setErr] = useState(false)
+  useEffect(() => { setErr(false) }, [code])
+  return (
+    <div className={`token r-${rarity || 'common'} ${className}`} style={size ? { width: size, height: size, fontSize: Math.round(size * 0.38) } : undefined}>
+      {err ? (kind || code).charAt(0) : <img src={itemIconUrl(code)} alt="" loading="lazy" onError={() => setErr(true)} />}
+    </div>
+  )
 }
 
 export const initials = (s?: string | null) => (s ?? '?').replace(/[^\p{L}\p{N}]/gu, '').slice(0, 2).toUpperCase() || '?'
