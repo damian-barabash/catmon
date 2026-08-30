@@ -8,7 +8,7 @@ import { TranslatedBadge } from './Blog'
 
 export default function Policies() {
   const { t, toast } = useStore()
-  const { data, loading, error, reload } = useAsync(() => api.policiesList(), [])
+  const { data, loading, error, reload } = useAsync(() => api.policiesList(), [], 'policies')
   const [code, setCode] = useState<string | null>(null)
   const cur: Policy | undefined = data?.policies.find(p => p.code === code) ?? data?.policies[0]
   const [f, setF] = useState({ title: '', body: '', required: true, bump: false })

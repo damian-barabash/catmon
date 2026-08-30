@@ -35,6 +35,7 @@ const ru = {
   audit: 'Аудит', action: 'Действие', target: 'Цель', payload: 'Данные', admin_who: 'Админ', when: 'Когда',
   admins: 'Админы', add_admin: 'Добавить админа', role: 'Роль', r_owner: 'Owner', r_admin: 'Admin', r_editor: 'Editor', owner_only: 'Только owner может управлять админами', delete_admin: 'Удалить админа?',
   profile: 'Профиль', change_password: 'Смена пароля', old_password: 'Старый пароль', new_password: 'Новый пароль', repeat_password: 'Повторите пароль', passwords_differ: 'Пароли не совпадают', password_changed: 'Пароль изменён', ui_lang: 'Язык интерфейса',
+  kpi_period: 'За период', kpi_now: 'Сейчас / всего', updating: 'Обновляется…',
   unauthorized: 'Сессия истекла — войдите снова', network: 'Нет связи с сервером',
 }
 export type Dict = typeof ru
@@ -67,6 +68,7 @@ const en: Dict = {
   audit: 'Audit', action: 'Action', target: 'Target', payload: 'Payload', admin_who: 'Admin', when: 'When',
   admins: 'Admins', add_admin: 'Add admin', role: 'Role', r_owner: 'Owner', r_admin: 'Admin', r_editor: 'Editor', owner_only: 'Only owner can manage admins', delete_admin: 'Delete admin?',
   profile: 'Profile', change_password: 'Change password', old_password: 'Old password', new_password: 'New password', repeat_password: 'Repeat password', passwords_differ: 'Passwords differ', password_changed: 'Password changed', ui_lang: 'Interface language',
+  kpi_period: 'In period', kpi_now: 'Right now / total', updating: 'Updating…',
   unauthorized: 'Session expired — sign in again', network: 'No connection to server',
 }
 
@@ -97,6 +99,7 @@ const pl: Dict = {
   audit: 'Audyt', action: 'Akcja', target: 'Cel', payload: 'Dane', admin_who: 'Admin', when: 'Kiedy',
   admins: 'Admini', add_admin: 'Dodaj admina', role: 'Rola', owner_only: 'Tylko owner zarządza adminami', delete_admin: 'Usunąć admina?',
   profile: 'Profil', change_password: 'Zmiana hasła', old_password: 'Stare hasło', new_password: 'Nowe hasło', repeat_password: 'Powtórz hasło', passwords_differ: 'Hasła się różnią', password_changed: 'Hasło zmienione', ui_lang: 'Język interfejsu',
+  kpi_period: 'W okresie', kpi_now: 'Teraz / łącznie', updating: 'Aktualizacja…',
   unauthorized: 'Sesja wygasła — zaloguj się ponownie', network: 'Brak połączenia z serwerem',
 }
 

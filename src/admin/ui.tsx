@@ -43,7 +43,7 @@ export function Modal({ open, onClose, title, children, footer, wide }: { open: 
         <motion.div className="modal-bg" initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} onMouseDown={e => { if (e.target === e.currentTarget) onClose() }}>
           <motion.div className={`modal ${wide ? 'wide' : ''}`} role="dialog" aria-modal="true" ref={ref} initial={{ y: 16, scale: .98 }} animate={{ y: 0, scale: 1 }} exit={{ y: 8, opacity: 0 }} transition={{ duration: .18 }}>
             <div className="modal-h"><h2>{title}</h2><button className="btn icon ghost right" onClick={onClose} aria-label="close"><IcClose size={18} /></button></div>
-            {children}
+            <div className="modal-b">{children}</div>
             {footer && <div className="modal-f">{footer}</div>}
           </motion.div>
         </motion.div>

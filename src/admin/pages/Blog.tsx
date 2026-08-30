@@ -13,7 +13,7 @@ export function TranslatedBadge({ p }: { p: BlogPost | { title_i18n: Record<stri
 export default function Blog() {
   const { t, toast } = useStore()
   const nav = useNavigate()
-  const { data, loading, error, reload } = useAsync(() => api.blogList(), [])
+  const { data, loading, error, reload } = useAsync(() => api.blogList(), [], 'blog')
   const { confirm, node } = useConfirm()
   const del = async (p: BlogPost) => {
     if (!(await confirm(t('delete_post'), { text: p.title_i18n.ru, danger: true }))) return

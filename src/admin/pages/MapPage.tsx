@@ -8,7 +8,7 @@ import { IcMap, IcWarn, IcClock } from '../icons'
 export default function MapPage() {
   const { t, lang } = useStore()
   const [days, setDays] = useState<'30' | '90' | '365'>('30')
-  const { data, loading, error } = useAsync(() => api.mapUsage(Number(days)), [days])
+  const { data, loading, error } = useAsync(() => api.mapUsage(Number(days)), [days], `map.${days}`)
   const calc = useMemo(() => {
     if (!data) return null
     const month = dayStr(new Date()).slice(0, 7)

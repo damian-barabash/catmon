@@ -49,7 +49,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     const r = await api.login(email, password)
     setToken(r.token); setAdmin(r.admin)
   }
-  const logout = async () => { try { await api.logout() } catch { /* ignore */ } setToken(null); setAdmin(null) }
+  const logout = async () => { try { await api.logout() } catch { /* ignore */ } setToken(null); setAdmin(null); clearAdminCache() }
 
   const value = useMemo<Store>(() => ({ theme, setTheme, lang, setLang, t, admin, setAdmin, ready, login, logout, toasts, toast, dismiss, mock: isMock() }), [theme, lang, t, admin, ready, toasts, toast, dismiss])
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>
@@ -57,18 +57,48 @@ export function StoreProvider({ children }: { children: ReactNode }) {
 export function useStore() { const s = useContext(Ctx); if (!s) throw new Error('StoreProvider missing'); return s }
 export const useT = () => useStore().t
 
-/* ---------- async helper ---------- */
-export function useAsync<T>(fn: () => Promise<T>, deps: unknown[]) {
-  const [state, set] = useState<{ data: T | null; loading: boolean; error: string | null }>({ data: null, loading: true, error: null })
+/* ---------- async helper: stale-while-revalidate cache in localStorage ---------- */
+const CACHE_PREFIX = 'admin.cache.'
+function cacheGet<T>(key: string): T | null {
+  try { const raw = localStorage.getItem(CACHE_PREFIX + key); if (!raw) return null; return (JSON.parse(raw) as { d: T }).d ?? null } catch { return null }
+}
+function cacheSet(key: string, d: unknown) {
+  try { const raw = JSON.stringify({ t: Date.now(), d }); if (raw.length < 1_500_000) localStorage.setItem(CACHE_PREFIX + key, raw) } catch { /* quota */ }
+}
+export function clearAdminCache() {
+  try { Object.keys(localStorage).filter(k => k.startsWith(CACHE_PREFIX)).forEach(k => localStorage.removeItem(k)) } catch { /* ignore */ }
+}
+
+/* tiny pub/sub: how many cached views are refreshing in background right now */
+let refreshN = 0
+const refreshSubs = new Set<(n: number) => void>()
+const bumpRefresh = (d: number) => { refreshN = Math.max(0, refreshN + d); refreshSubs.forEach(f => f(refreshN)) }
+export function useRefreshing() {
+  const [n, setN] = useState(refreshN)
+  useEffect(() => { refreshSubs.add(setN); setN(refreshN); return () => { refreshSubs.delete(setN) } }, [])
+  return n > 0
+}
+
+/** useAsync(fn, deps, cacheKey?) — with cacheKey: last good response is drawn instantly from
+ *  localStorage (no skeleton), then refreshed in background and swapped in (SWR). */
+export function useAsync<T>(fn: () => Promise<T>, deps: unknown[], cacheKey?: string) {
+  const [state, set] = useState<{ data: T | null; loading: boolean; error: string | null }>(() => {
+    const cached = cacheKey ? cacheGet<T>(cacheKey) : null
+    return { data: cached, loading: !cached, error: null }
+  })
   const [tick, setTick] = useState(0)
   useEffect(() => {
     let alive = true
-    set(s => ({ ...s, loading: true, error: null }))
-    fn().then(d => alive && set({ data: d, loading: false, error: null })).catch(e => alive && set(s => ({ ...s, loading: false, error: (e as Error).message || 'error' })))
+    const cached = cacheKey ? cacheGet<T>(cacheKey) : null
+    if (cached) { set({ data: cached, loading: false, error: null }); bumpRefresh(1) }
+    else set(s => ({ ...s, loading: true, error: null }))
+    fn().then(d => { if (cacheKey) cacheSet(cacheKey, d); if (alive) set({ data: d, loading: false, error: null }) })
+      .catch(e => alive && set(s => ({ ...s, loading: false, error: (e as Error).message || 'error' })))
+      .finally(() => { if (cached) bumpRefresh(-1) })
     return () => { alive = false }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [...deps, tick])
-  return { ...state, reload: () => setTick(x => x + 1), setData: (d: T) => set(s => ({ ...s, data: d })) }
+  return { ...state, reload: () => setTick(x => x + 1), setData: (d: T) => { if (cacheKey) cacheSet(cacheKey, d); set(s => ({ ...s, data: d })) } }
 }
 
 /* ---------- formatting ---------- */

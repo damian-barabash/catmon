@@ -9,7 +9,7 @@ export default function Audit() {
   const { t } = useStore()
   const [limit, setLimit] = useState(100)
   const [q, setQ] = useState('')
-  const { data, loading, error } = useAsync(() => api.audit(limit), [limit])
+  const { data, loading, error } = useAsync(() => api.audit(limit), [limit], `audit.${limit}`)
   const rows = (data?.audit ?? []).filter(r => !q || r.action.includes(q) || (r.target ?? '').includes(q) || (r.admin_email ?? '').includes(q) || JSON.stringify(r.payload ?? {}).includes(q))
   return (
     <>

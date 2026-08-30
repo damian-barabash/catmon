@@ -58,8 +58,8 @@ function ResultsTable({ rows }: { rows: SeasonResult[] }) {
 
 export default function Seasons() {
   const { t, lang, toast } = useStore()
-  const { data, loading, error, reload } = useAsync(() => api.seasonsList(), [])
-  const pub = useAsync(() => api.seasonPublic(), [])
+  const { data, loading, error, reload } = useAsync(() => api.seasonsList(), [], 'seasons')
+  const pub = useAsync(() => api.seasonPublic(), [], 'season_public')
   const { confirm, node } = useConfirm()
   const cur = data?.seasons.find(s => s.status === 'active') ?? null
   const past = (data?.seasons ?? []).filter(s => s.status === 'finished').sort((a, b) => b.no - a.no)

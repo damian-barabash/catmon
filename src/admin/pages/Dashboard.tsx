@@ -38,7 +38,7 @@ export default function Dashboard() {
   const [to, setTo] = useState(() => dayStr(new Date()))
   const [applied, setApplied] = useState<[string, string]>(() => range('week', '', ''))
   const pick = (p: Preset) => { setPreset(p); if (p !== 'custom') { const r = range(p, from, to); setFrom(r[0]); setTo(r[1]); setApplied(r) } }
-  const { data, loading, error } = useAsync(() => api.dashboard(applied[0], applied[1]), [applied[0], applied[1]])
+  const { data, loading, error } = useAsync(() => api.dashboard(applied[0], applied[1]), [applied[0], applied[1]], `dashboard.${applied[0]}.${applied[1]}`)
   const d = data as Dash | null
   const daily = d?.series.daily ?? []
   const sp = (k: keyof Dash['series']['daily'][number]) => daily.map(x => Number(x[k] ?? 0))
@@ -52,23 +52,28 @@ export default function Dashboard() {
   const rarityTotal = rarity.reduce((s, x) => s + x.value, 0)
   const funnel = d?.funnel ?? null
 
-  const KPIS: { k: Key; v: (x: Dash) => ReactNode; I: ReactNode; sub?: (x: Dash) => ReactNode; spark?: keyof Dash['series']['daily'][number]; accent?: boolean; img?: string }[] = [
-    { k: 'k_players_total', v: x => fmtN(x.kpi.players_total, lang), I: <IcUsers size={18} />, sub: x => `+${fmtN(x.kpi.players_new, lang)} ${t('k_players_new').toLowerCase()}`, spark: 'new_players', accent: true },
-    { k: 'k_players_active', v: x => fmtN(x.kpi.players_active_period, lang), I: <IcBolt size={18} />, sub: x => `DAU ${fmtN(x.kpi.dau_today, lang)} · online ${fmtN(x.kpi.online_now, lang)}`, spark: 'active' },
-    { k: 'k_subs_active', v: x => fmtN(x.kpi.subs_active, lang), I: <IcCoins size={18} />, sub: x => `${t('k_subs_paid')} ${x.kpi.subs_paid} · ${t('k_subs_test').toLowerCase()} ${x.kpi.subs_test}` },
-    { k: 'k_donations_real', v: x => `${fmtN(x.kpi.donations_pln_real, lang)} zł`, I: <IcCoins size={18} />, sub: x => `${t('k_donations_test')}: ${fmtN(x.kpi.donations_pln_test, lang)} zł`, spark: 'revenue_pln', accent: true },
-    { k: 'k_cats_total', v: x => fmtN(x.kpi.cats_found_total, lang), I: <IcCat size={18} />, sub: x => `+${fmtN(x.kpi.cats_found_period, lang)} ${t('k_cats_period').toLowerCase()}`, spark: 'cats' },
-    { k: 'k_scans', v: x => fmtN(x.kpi.scans_period, lang), I: <IcScan size={18} />, sub: x => `${t('k_reject')} ${fmtPct(x.kpi.scan_reject_rate)} · ${(x.kpi.avg_scan_ms / 1000).toFixed(1)}s`, spark: 'scans' },
-    { k: 'k_gems_bank', v: x => fmtN(x.kpi.gems_bank, lang), I: <IcGem size={18} />, img: '/admin/gem.svg' },
-    { k: 'k_eyes_bank', v: x => fmtN(x.kpi.eyes_bank, lang), I: <IcEye size={18} />, img: '/admin/cat_eye.svg' },
+  type KpiDef = { k: Key; v: (x: Dash) => ReactNode; I: ReactNode; sub?: (x: Dash) => ReactNode; spark?: keyof Dash['series']['daily'][number]; accent?: boolean; img?: string }
+  const PERIOD_KPIS: KpiDef[] = [
+    { k: 'k_players_new', v: x => `+${fmtN(x.kpi.players_new, lang)}`, I: <IcUsers size={18} />, spark: 'new_players', accent: true },
+    { k: 'k_players_active', v: x => fmtN(x.kpi.players_active_period, lang), I: <IcBolt size={18} />, spark: 'active' },
+    { k: 'k_cats_period', v: x => `+${fmtN(x.kpi.cats_found_period, lang)}`, I: <IcCat size={18} />, sub: x => `${t('k_cats_total')}: ${fmtN(x.kpi.cats_found_total, lang)}`, spark: 'cats' },
+    { k: 'k_scans', v: x => fmtN(x.kpi.scans_period, lang), I: <IcScan size={18} />, sub: x => x.kpi.scans_period ? `${t('k_reject')} ${fmtPct(x.kpi.scan_reject_rate)} · ${(x.kpi.avg_scan_ms / 1000).toFixed(1)}s` : undefined, spark: 'scans' },
+    { k: 'k_battles', v: x => fmtN(x.kpi.arena_battles_period, lang), I: <IcArena size={18} />, sub: x => x.kpi.arena_battles_today ? `${t('k_battles_today')}: ${fmtN(x.kpi.arena_battles_today, lang)}` : undefined, spark: 'battles' },
     { k: 'k_chests', v: x => fmtN(x.kpi.chests_opened_period, lang), I: <IcChest size={18} />, spark: 'chests' },
-    { k: 'k_battles', v: x => fmtN(x.kpi.arena_battles_period, lang), I: <IcArena size={18} />, sub: x => `${t('k_battles_today')}: ${fmtN(x.kpi.arena_battles_today, lang)}`, spark: 'battles' },
-    { k: 'k_expedition', v: x => fmtN(x.kpi.cats_on_expedition, lang), I: <IcCompass size={18} /> },
-    { k: 'k_market_cards', v: x => fmtN(x.kpi.market_cards, lang), I: <IcMarket size={18} />, sub: x => `${t('k_market_fish')}: ${fmtN(x.kpi.market_fish, lang)}` },
+    { k: 'k_donations_real', v: x => `${fmtN(x.kpi.donations_pln_real, lang)} zł`, I: <IcCoins size={18} />, sub: x => x.kpi.donations_pln_test ? `${t('k_donations_test')}: ${fmtN(x.kpi.donations_pln_test, lang)} zł` : undefined, spark: 'revenue_pln', accent: true },
     { k: 'k_tournaments', v: x => fmtN(x.kpi.tournaments_period, lang), I: <IcTrophy size={18} /> },
     { k: 'k_dungeons', v: x => fmtN(x.kpi.dungeon_runs_period, lang), I: <IcDungeon size={18} /> },
     { k: 'k_fish', v: x => fmtN(x.kpi.fish_caught_period, lang), I: <IcFish size={18} /> },
     { k: 'k_messages', v: x => fmtN(x.kpi.messages_period, lang), I: <IcChat size={18} /> },
+  ]
+  const NOW_KPIS: KpiDef[] = [
+    { k: 'k_players_total', v: x => fmtN(x.kpi.players_total, lang), I: <IcUsers size={18} />, accent: true },
+    { k: 'k_dau', v: x => fmtN(x.kpi.dau_today, lang), I: <IcBolt size={18} />, sub: x => `online ${fmtN(x.kpi.online_now, lang)}` },
+    { k: 'k_subs_active', v: x => fmtN(x.kpi.subs_active, lang), I: <IcCoins size={18} />, sub: x => `${t('k_subs_paid')} ${x.kpi.subs_paid} · ${t('k_subs_test').toLowerCase()} ${x.kpi.subs_test}` },
+    { k: 'k_gems_bank', v: x => fmtN(x.kpi.gems_bank, lang), I: <IcGem size={18} />, img: '/admin/gem.svg' },
+    { k: 'k_eyes_bank', v: x => fmtN(x.kpi.eyes_bank, lang), I: <IcEye size={18} />, img: '/admin/cat_eye.svg' },
+    { k: 'k_expedition', v: x => fmtN(x.kpi.cats_on_expedition, lang), I: <IcCompass size={18} /> },
+    { k: 'k_market_cards', v: x => fmtN(x.kpi.market_cards, lang), I: <IcMarket size={18} />, sub: x => x.kpi.market_fish ? `${t('k_market_fish')}: ${fmtN(x.kpi.market_fish, lang)}` : undefined },
   ]
 
   return (
@@ -91,9 +96,18 @@ export default function Dashboard() {
       {/* map tiles warning */}
       {d && mapMonth.pct >= 0.8 && <div className="alert warn" style={{ marginBottom: 14 }}><IcWarn size={18} /><span><b>{t('map_warn')}</b> {fmtN(mapMonth.used, lang)} / {fmtN(d.map_tile_limit, lang)} ({Math.round(mapMonth.pct * 100)}%)</span></div>}
 
-      <div className="grid kpi" style={{ marginBottom: 14 }}>
-        {loading || !d ? Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} lines={2} />) : KPIS.map(c => <Kpi key={c.k} label={t(c.k)} value={c.v(d)} icon={c.I} sub={c.sub?.(d)} spark={c.spark ? sp(c.spark) : undefined} accent={c.accent} img={c.img} />)}
-      </div>
+      <section className="kpi-zone">
+        <h3 className="kicker">{t('kpi_period')}</h3>
+        <div className="grid kpi">
+          {loading || !d ? Array.from({ length: 8 }).map((_, i) => <SkeletonCard key={i} lines={2} />) : PERIOD_KPIS.map(c => <Kpi key={c.k} label={t(c.k)} value={c.v(d)} icon={c.I} sub={c.sub?.(d)} spark={c.spark ? sp(c.spark) : undefined} accent={c.accent} img={c.img} />)}
+        </div>
+      </section>
+      <section className="kpi-zone now">
+        <h3 className="kicker">{t('kpi_now')}</h3>
+        <div className="grid kpi">
+          {loading || !d ? Array.from({ length: 4 }).map((_, i) => <SkeletonCard key={i} lines={2} />) : NOW_KPIS.map(c => <Kpi key={c.k} label={t(c.k)} value={c.v(d)} icon={c.I} sub={c.sub?.(d)} spark={c.spark ? sp(c.spark) : undefined} accent={c.accent} img={c.img} />)}
+        </div>
+      </section>
 
       <div className="grid c21" style={{ marginBottom: 14 }}>
         <Card title={t('charts')} icon={<IcBolt size={18} />}>
@@ -130,7 +144,7 @@ export default function Dashboard() {
           )}
         </Card>
         <Card title={t('top_cats')} icon={<IcCat size={18} />}>
-          {loading || !d ? <Skeleton h={220} /> : <BubbleCloud cats={d.top_cats} />}
+          {loading || !d ? <Skeleton h={220} /> : <TopCatsBars cats={d.top_cats} />}
         </Card>
         <Card title={t('retention')} icon={<IcUsers size={18} />}>
           {loading || !d ? <Skeleton h={180} /> : (
@@ -193,20 +207,19 @@ export default function Dashboard() {
   )
 }
 
-function BubbleCloud({ cats }: { cats: Dash['top_cats'] }) {
-  if (!cats?.length) return <div className="empty small">—</div>
-  const max = Math.max(...cats.map(c => c.owners_count || 1))
-  // simple packed layout: sizes by owners, positions on a spiral
-  const pos = [[50, 50], [22, 32], [78, 34], [26, 74], [76, 74], [50, 14], [50, 88], [10, 55], [90, 55]]
+function TopCatsBars({ cats }: { cats: Dash['top_cats'] }) {
+  if (!cats?.length) return <Empty />
+  const top = [...cats].sort((a, b) => (b.owners_count || 0) - (a.owners_count || 0)).slice(0, 8)
+  const max = Math.max(...top.map(c => c.owners_count || 0), 1)
   return (
-    <div className="bubbles">
-      {cats.slice(0, 9).map((c, i) => {
-        const s = 46 + (c.owners_count / max) * 64
-        const [x, y] = pos[i]
-        return <Link key={c.id} to="/admin/players" className="bubble" style={{ width: s, height: s, left: `calc(${x}% - ${s / 2}px)`, top: `calc(${y}% - ${s / 2}px)`, background: RARITY_COLOR[c.rarity] ?? '#8E9196', opacity: .92 }} title={`${c.name} · ${c.owners_count}`}>
-          <span><b>{c.owners_count}</b>{s > 70 ? c.name : ''}</span>
+    <div className="catbars">
+      {top.map(c => (
+        <Link key={c.id} to="/admin/players" className="cb" title={`${c.name} · ${c.owners_count}`}>
+          <span className="nm">{c.card_no != null && <span className="no">#{c.card_no}</span>}{c.name}</span>
+          <span className="bar"><i style={{ width: `${Math.max(4, (c.owners_count || 0) / max * 100)}%`, background: RARITY_COLOR[c.rarity] ?? '#8E9196' }} /></span>
+          <b className="num">{c.owners_count ?? 0}</b>
         </Link>
-      })}
+      ))}
     </div>
   )
 }

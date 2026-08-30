@@ -9,7 +9,7 @@ const KNOWN = ['maintenance', 'scan_limits', 'energy', 'chest_prices', 'tourname
 
 export default function Settings() {
   const { t, toast } = useStore()
-  const { data, loading, error, reload } = useAsync(() => api.settingsGet(), [])
+  const { data, loading, error, reload } = useAsync(() => api.settingsGet(), [], 'settings')
   const [vals, setVals] = useState<Record<string, unknown>>({})
   const [meta, setMeta] = useState<Record<string, Setting>>({})
   const [busy, setBusy] = useState<string | null>(null)
@@ -25,7 +25,8 @@ export default function Settings() {
   const obj = (k: string) => g<Obj>(k, {})
   const set = (k: string, v: unknown) => setVals(x => ({ ...x, [k]: v }))
   const setSub = (k: string, sub: string, v: unknown) => set(k, { ...obj(k), [sub]: v })
-  const save = async (k: string, v = vals[k]) => { setBusy(k); try { await api.settingsSet(k, v); toast(`${t('saved')}: ${k}`); reload() } catch (e) { toast((e as Error).message, 'err') } finally { setBusy(null) } }
+  /* optimistic: form state is the truth; request in background, on error toast + reload to revert */
+  const save = (k: string, v = vals[k]) => { setBusy(k); return api.settingsSet(k, v).then(() => toast(`${t('saved')}: ${k}`)).catch(e => { toast((e as Error).message, 'err'); reload() }).finally(() => setBusy(null)) }
   const SaveBtn = ({ k }: { k: string }) => <div className="row"><button className="btn ink sm" disabled={busy === k} onClick={() => save(k)}>{t('save')}</button>{meta[k]?.updated_at && <span className="small muted">{t('updated')}: {fmtDate(meta[k].updated_at, true)}</span>}</div>
   const Num = ({ k, sub, label, step }: { k: string; sub?: string; label: string; step?: number }) => (
     <Field label={label}><input className="input" type="number" step={step ?? 1} value={sub ? String((obj(k)[sub] as number) ?? '') : String(g<number>(k, 0))} onChange={e => sub ? setSub(k, sub, Number(e.target.value)) : set(k, Number(e.target.value))} /></Field>
@@ -38,7 +39,7 @@ export default function Settings() {
       <div className="row" style={{ marginBottom: 16 }}><h1>{t('world')}</h1></div>
       {error && <ErrorBox text={error} />}
       <div className="grid c2">
-        <Card icon={<IcWarn size={18} />} title={t('maintenance')} right={<Switch on={!!maint.on} onChange={v => setSub('maintenance', 'on', v)} />}>
+        <Card icon={<IcWarn size={18} />} title={t('maintenance')} right={<Switch on={!!maint.on} onChange={v => { const nv = { ...obj('maintenance'), on: v }; set('maintenance', nv); save('maintenance', nv) }} />}>
           <div className="setting-block">
             {!!maint.on && <div className="alert warn small"><IcWarn size={14} />{t('maintenance_on')}</div>}
             <Field label={t('maintenance_msg')}><textarea className="textarea" style={{ minHeight: 70 }} value={((maint.message_i18n as Obj)?.ru as string) ?? ''} onChange={e => setSub('maintenance', 'message_i18n', { ...(maint.message_i18n as Obj ?? {}), ru: e.target.value })} /></Field>

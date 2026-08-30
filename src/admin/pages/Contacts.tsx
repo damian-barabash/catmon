@@ -11,11 +11,13 @@ export default function Contacts() {
   const [kind, setKind] = useState<'all' | ContactRequest['kind']>('all')
   const [q, setQ] = useState('')
   const [sel, setSel] = useState<string | null>(null)
-  const { data, loading, error, setData } = useAsync(() => api.contactsList(), [])
+  const { data, loading, error, setData } = useAsync(() => api.contactsList(), [], 'contacts')
   const list = useMemo(() => (data?.contacts ?? []).filter(c => (st === 'all' || c.status === st) && (kind === 'all' || c.kind === kind) && (!q || [c.name, c.email, c.message].some(s => s?.toLowerCase().includes(q.toLowerCase())))).sort((a, b) => b.created_at.localeCompare(a.created_at)), [data, st, kind, q])
   const cur = list.find(c => c.id === sel) ?? list[0]
   const setStatus = async (c: ContactRequest, status: ContactRequest['status']) => {
-    try { await api.contactSetStatus(c.id, status); setData({ contacts: (data?.contacts ?? []).map(x => x.id === c.id ? { ...x, status } : x) }); toast(t('saved')) } catch (e) { toast((e as Error).message, 'err') }
+    const prev = data
+    setData({ contacts: (data?.contacts ?? []).map(x => x.id === c.id ? { ...x, status } : x) })
+    try { await api.contactSetStatus(c.id, status); toast(t('saved')) } catch (e) { if (prev) setData(prev); toast((e as Error).message, 'err') }
   }
   const kindL = (k: ContactRequest['kind']) => t(`c_${k}` as 'c_bug')
   const stL = (s: ContactRequest['status']) => t(`st_${s}` as 'st_new')

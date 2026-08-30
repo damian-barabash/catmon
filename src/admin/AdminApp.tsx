@@ -1,7 +1,7 @@
 import { useEffect, useState, type ReactNode } from 'react'
 import { Navigate, NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import './admin.css'
-import { StoreProvider, useStore } from './store'
+import { StoreProvider, useRefreshing, useStore } from './store'
 import { Toasts, initials } from './ui'
 import { IcAudit, IcBlog, IcDashboard, IcInbox, IcLogout, IcMap, IcMenu, IcMoon, IcSearch, IcShield, IcSun, IcTrophy, IcUser, IcUsers, IcWorld, IcKey } from './icons'
 import { LANGS } from './i18n'
@@ -37,6 +37,8 @@ const NAV = [
 function Shell({ children }: { children: ReactNode }) {
   const { t, theme, setTheme, lang, setLang, admin, logout, mock } = useStore()
   const [open, setOpen] = useState(false)
+  const [expanded, setExpanded] = useState(() => { try { return localStorage.getItem('admin.side') === '1' } catch { return false } })
+  const refreshing = useRefreshing()
   const [q, setQ] = useState('')
   const nav = useNavigate()
   const loc = useLocation()
@@ -45,7 +47,7 @@ function Shell({ children }: { children: ReactNode }) {
   const dateTxt = now.toLocaleDateString(lang === 'ru' ? 'ru-RU' : lang === 'pl' ? 'pl-PL' : 'en-GB', { weekday: 'short', month: 'long' })
   const submitSearch = (e: React.FormEvent) => { e.preventDefault(); if (q.trim()) { nav(`/admin/players?q=${encodeURIComponent(q.trim())}`); setQ('') } }
   return (
-    <div className="adm-shell">
+    <div className={`adm-shell ${expanded ? 'side-x' : ''}`}>
       <div className={`side-bg ${open ? 'open' : ''}`} onClick={() => setOpen(false)} />
       <aside className={`adm-side ${open ? 'open' : ''}`}>
         <div className="adm-logo"><img src="/admin/cat_logo.png" alt="CatMon" /></div>
@@ -64,8 +66,9 @@ function Shell({ children }: { children: ReactNode }) {
       </aside>
       <main className="adm-main">
         <header className="adm-top">
-          <button className="btn icon adm-burger" onClick={() => setOpen(true)} aria-label="menu"><IcMenu size={20} /></button>
+          <button className="btn icon adm-burger" onClick={() => { if (window.innerWidth <= 800) setOpen(o => !o); else setExpanded(x => { try { localStorage.setItem('admin.side', x ? '0' : '1') } catch { /* */ } return !x }) }} aria-label="menu" aria-expanded={expanded}><IcMenu size={20} /></button>
           <div className="date-pill"><div className="dnum">{now.getDate()}</div><div className="dtxt"><b>{dateTxt}</b>{t('brand')} · {t('admin')}{mock && <span className="chip warn" style={{ marginLeft: 6 }}>mock</span>}</div></div>
+          {refreshing && <span className="refresh-pill" role="status"><i />{t('updating')}</span>}
           <form className="adm-search right" onSubmit={submitSearch} role="search"><IcSearch size={18} /><input value={q} onChange={e => setQ(e.target.value)} placeholder={t('search_players')} aria-label={t('search')} /></form>
           <NavLink to="/admin/profile" className="row" style={{ gap: 10 }}><div className="adm-avatar">{initials(admin?.name || admin?.email)}</div><div className="adm-who"><b>{admin?.name || admin?.email}</b><span>{admin?.role}</span></div></NavLink>
         </header>

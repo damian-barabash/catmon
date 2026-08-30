@@ -13,12 +13,19 @@ export default function PlayerProfile() {
   const { id = '' } = useParams()
   const { t, lang, toast } = useStore()
   const nav = useNavigate()
-  const { data: p, loading, error, reload } = useAsync(() => api.player(id), [id])
+  const { data: p, loading, error, reload, setData } = useAsync(() => api.player(id), [id])
   const [tab, setTab] = useState<Tab>('cats')
   const [modal, setModal] = useState<ModalKind>(null)
   const { confirm, node } = useConfirm()
   const [busy, setBusy] = useState(false)
   const run = async (fn: () => Promise<unknown>, okMsg = t('done')) => { setBusy(true); try { await fn(); toast(okMsg); setModal(null); reload() } catch (e) { toast((e as Error).message, 'err') } finally { setBusy(false) } }
+  /* optimistic: patch UI immediately, request in background, roll back + toast on error */
+  const optimistic = (patch: (cur: PlayerFull) => PlayerFull, fn: () => Promise<unknown>, okMsg = t('done')) => {
+    if (!p) return
+    const prev = p
+    setData(patch(p)); setModal(null)
+    fn().then(() => { toast(okMsg); reload() }).catch(e => { setData(prev); toast((e as Error).message, 'err') })
+  }
 
   // items catalogue (lazy)
   const [items, setItems] = useState<Item[] | null>(null)
@@ -96,9 +103,12 @@ export default function PlayerProfile() {
         </Card>
       </div>
 
-      <AdjustModal open={modal === 'adjust'} onClose={() => setModal(null)} busy={busy} onSubmit={v => run(() => api.playerAdjust({ id, ...v }))} />
+      <AdjustModal open={modal === 'adjust'} onClose={() => setModal(null)} busy={busy} onSubmit={v => optimistic(cur => ({ ...cur, gems: (cur.gems ?? 0) + (v.gems ?? 0), cat_eyes: (cur.cat_eyes ?? 0) + (v.eyes ?? 0), xp: (cur.xp ?? 0) + (v.xp ?? 0), energy: cur.energy != null ? cur.energy + (v.energy ?? 0) : cur.energy }), () => api.playerAdjust({ id, ...v }))} />
       <ItemModal open={modal === 'give' || modal === 'remove'} mode={modal === 'give' ? 'give' : 'remove'} items={modal === 'give' ? items : (p.items.map(i => ({ code: i.code, name: i.name ?? i.code, kind: i.kind ?? '', rarity: i.rarity ?? 'common' })))} onClose={() => setModal(null)} busy={busy}
-        onSubmit={(code, qty) => run(() => (modal === 'give' ? api.playerGiveItem(id, code, qty) : api.playerRemoveItem(id, code, qty)))} />
+        onSubmit={(code, qty) => { const give = modal === 'give'; optimistic(cur => ({ ...cur, items: give
+          ? (cur.items.some(i => i.code === code) ? cur.items.map(i => i.code === code ? { ...i, qty: i.qty + qty } : i) : [...cur.items, { code, qty }])
+          : cur.items.map(i => i.code === code ? { ...i, qty: i.qty - qty } : i).filter(i => i.qty > 0) }),
+          () => (give ? api.playerGiveItem(id, code, qty) : api.playerRemoveItem(id, code, qty))) }} />
       <AddCatModal open={modal === 'addcat'} onClose={() => { setModal(null); reload() }} playerId={id} />
       <NoticeModal open={modal === 'notice'} onClose={() => setModal(null)} busy={busy} items={items} onSubmit={v => run(() => api.playerNotice({ id, ...v }))} />
       <BanModal open={modal === 'ban'} onClose={() => setModal(null)} busy={busy} onSubmit={(until, reason) => run(() => api.playerBan(id, until, reason))} />
@@ -153,7 +163,7 @@ export function ItemPicker({ items, value, onChange }: { items: Item[] | null; v
   return (
     <div>
       <input className="input" placeholder={t('item_search')} value={q} onChange={e => setQ(e.target.value)} />
-      <div style={{ maxHeight: 220, overflow: 'auto', marginTop: 8, display: 'grid', gap: 4 }}>
+      <div style={{ maxHeight: 240, overflow: 'auto', marginTop: 8, display: 'grid', gap: 4 }}>
         {!items ? <Skeleton h={80} /> : list.map(i => (
           <button key={i.code} type="button" className="item" style={{ cursor: 'pointer', textAlign: 'left', borderColor: value === i.code ? 'var(--accent)' : undefined, background: value === i.code ? 'var(--accent-soft)' : undefined }} onClick={() => onChange(i.code)}>
             <div className="ic"><ItemIcon code={i.code} /></div><div style={{ minWidth: 0 }}><div className="nm">{i.name}</div><div className="qt mono">{i.code} · <span className={`chip r-${i.rarity}`} style={{ padding: '0 6px' }}>{i.rarity}</span> {i.kind}</div></div>
@@ -203,7 +213,7 @@ function AddCatModal({ open, onClose, playerId }: { open: boolean; onClose: () =
         <div className="grid" style={{ gap: 10 }}>
           <label className="drop" style={{ display: 'block' }}>
             <input type="file" accept="image/*" hidden onChange={e => pickFile(e.target.files?.[0] ?? null)} />
-            {prev ? <img src={prev} alt="" style={{ maxHeight: 220, margin: '0 auto', borderRadius: 12 }} /> : <><IcCamera size={32} /><div>{t('upload_photo')}</div></>}
+            {prev ? <img src={prev} alt="" style={{ maxHeight: 240, margin: '0 auto', borderRadius: 12 }} /> : <><IcCamera size={32} /><div>{t('upload_photo')}</div></>}
           </label>
           <div className="grid c2" style={{ gap: 10 }}>
             <Field label={t('lat')}><input className="input" value={lat} onChange={e => setLat(e.target.value)} placeholder="52.23" /></Field>

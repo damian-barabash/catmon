@@ -21,7 +21,7 @@ export default function Players() {
   useEffect(() => { setQi(q) }, [q])
   useEffect(() => { const h = setTimeout(() => { if (qi !== q) { sp.set('q', qi); sp.set('p', '1'); setSp(sp, { replace: true }) } }, 350); return () => clearTimeout(h) }, [qi]) // eslint-disable-line react-hooks/exhaustive-deps
   const set = (k: string, v: string) => { sp.set(k, v); if (k !== 'p') sp.set('p', '1'); setSp(sp) }
-  const { data, loading, error } = useAsync(() => api.players({ q, filter, sort, limit: LIMIT, offset: (page - 1) * LIMIT }), [q, filter, sort, page])
+  const { data, loading, error } = useAsync(() => api.players({ q, filter, sort, limit: LIMIT, offset: (page - 1) * LIMIT }), [q, filter, sort, page], `players.${q}.${filter}.${sort}.${page}`)
   const nav = useNavigate()
   const [sk, sd] = sort.split(':')
   const th = (k: string, l: string, num = false) => <th className={`sortable ${num ? 'num' : ''}`} onClick={() => set('sort', `${k}:${sk === k && sd === 'desc' ? 'asc' : 'desc'}`)} aria-sort={sk === k ? (sd === 'asc' ? 'ascending' : 'descending') : 'none'}>{l}{sk === k ? (sd === 'asc' ? ' ↑' : ' ↓') : ''}</th>
