@@ -32,17 +32,18 @@
 .adm .right { margin-left: auto; }
 .adm :focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 6px; }
 /* ---------- layout ---------- */
-.adm .adm-shell { display: grid; grid-template-columns: 76px 1fr; min-height: 100vh; }
-.adm-side { position: sticky; top: 0; height: 100vh; padding: 14px 12px; display: flex; flex-direction: column; align-items: center; gap: 6px; background: var(--paper); border-right: 1px solid var(--line); z-index: 30; }
-.adm-logo { width: 44px; height: 44px; border-radius: 14px; background: var(--ink); display: grid; place-items: center; margin-bottom: 10px; overflow: hidden; }
+.adm .adm-shell { display: grid; grid-template-columns: auto 1fr; min-height: 100vh; }
+.adm-side { position: sticky; top: 0; height: 100vh; width: 76px; padding: 14px 12px; display: flex; flex-direction: column; align-items: stretch; gap: 6px; background: var(--paper); border-right: 1px solid var(--line); z-index: 30; transition: width .28s cubic-bezier(.4,0,.2,1); overflow: hidden; }
+.adm-logo { width: 44px; height: 44px; border-radius: 14px; background: var(--ink); display: grid; place-items: center; margin: 0 auto 10px; overflow: hidden; flex: none; transition: margin .28s cubic-bezier(.4,0,.2,1); }
 .adm-logo img { width: 34px; height: 34px; object-fit: contain; }
 .adm.dark .adm-logo { background: var(--card); border: 1px solid var(--line); }
 .adm-nav { display: flex; flex-direction: column; gap: 4px; width: 100%; }
-.adm-nav a { display: flex; align-items: center; justify-content: center; width: 52px; height: 46px; margin: 0 auto; border-radius: 14px; color: var(--subtle); position: relative; transition: background .15s, color .15s; }
+.adm-nav a { display: flex; align-items: center; justify-content: flex-start; gap: 12px; width: 100%; height: 46px; padding: 0 14px; border-radius: 14px; color: var(--subtle); position: relative; transition: background .15s, color .15s; }
+.adm-nav a svg { flex: none; }
 .adm-nav a:hover { background: var(--mist); color: var(--ink); }
 .adm-nav a.active { background: var(--ink); color: var(--paper); }
 .adm.dark .adm-nav a.active { background: var(--accent); color: #fff; }
-.adm-nav a span.lbl { display: none; }
+.adm-nav a span.lbl { display: inline-block; max-width: 0; opacity: 0; transform: translateX(-6px); overflow: hidden; white-space: nowrap; font-weight: 500; font-size: 14px; transition: max-width .28s cubic-bezier(.4,0,.2,1), opacity .18s, transform .22s; }
 .adm-nav a .tip { position: absolute; left: 60px; top: 50%; transform: translateY(-50%); background: var(--ink); color: var(--paper); font-size: 12px; padding: 4px 8px; border-radius: 8px; white-space: nowrap; opacity: 0; pointer-events: none; transition: opacity .12s; }
 .adm-nav a:hover .tip { opacity: 1; }
 .adm-side .bottom { margin-top: auto; display: flex; flex-direction: column; gap: 6px; align-items: center; }
@@ -254,10 +255,10 @@
 }
 @media (max-width: 800px) {
   .adm .adm-shell { grid-template-columns: 1fr; }
-  .adm-side { position: fixed; left: 0; top: 0; bottom: 0; height: 100vh; width: 240px; transform: translateX(-100%); transition: transform .2s; align-items: stretch; box-shadow: 0 0 40px rgba(0,0,0,.2); }
+  .adm-side { position: fixed; left: 0; top: 0; bottom: 0; height: 100vh; width: 240px; transform: translateX(-100%); transition: transform .25s cubic-bezier(.4,0,.2,1); align-items: stretch; box-shadow: 0 0 40px rgba(0,0,0,.2); }
   .adm-side.open { transform: none; }
   .adm-nav a { width: auto; justify-content: flex-start; gap: 12px; padding: 0 14px; margin: 0; }
-  .adm-nav a span.lbl { display: inline; font-weight: 500; font-size: 14px; } .adm-nav a .tip { display: none; }
+  .adm-nav a span.lbl { max-width: none; opacity: 1; transform: none; } .adm-nav a .tip { display: none; }
   .adm-side .bottom { flex-direction: row; justify-content: space-between; }
   .adm-burger { display: inline-flex; }
   .adm-main { padding: 12px 12px 32px; }
@@ -293,10 +294,9 @@
 @keyframes adm-spin { to { transform: rotate(360deg); } }
 /* ---------- expanded sidebar (desktop burger toggle) ---------- */
 @media (min-width: 801px) {
-  .adm .adm-shell.side-x { grid-template-columns: 216px 1fr; }
-  .adm .adm-shell.side-x .adm-side { align-items: stretch; }
-  .adm .adm-shell.side-x .adm-nav a { width: auto; justify-content: flex-start; gap: 12px; padding: 0 14px; margin: 0; }
-  .adm .adm-shell.side-x .adm-nav a span.lbl { display: inline; font-weight: 500; font-size: 14px; }
+  .adm .adm-shell.side-x .adm-side { width: 216px; }
+  .adm .adm-shell.side-x .adm-logo { margin: 0 0 10px; }
+  .adm .adm-shell.side-x .adm-nav a span.lbl { max-width: 140px; opacity: 1; transform: none; transition-delay: .06s, .1s, .1s; }
   .adm .adm-shell.side-x .adm-nav a .tip { display: none; }
   .adm .adm-shell.side-x .adm-side .bottom { flex-direction: row; justify-content: space-between; }
 }
