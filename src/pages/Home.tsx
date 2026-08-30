@@ -332,7 +332,11 @@ export default function Home() {
           <Reveal className="section-head"><span className="kicker">{t.video.kicker}</span><h2>{t.video.title}</h2><p>{t.hero.kicker}</p></Reveal>
           <Reveal i={1}>
             <div className="phone-video">
-              <video controls playsInline preload="none" poster="/shots/promo-poster.webp" src="/video/promo-portrait.mp4">{t.video.unsupported}</video>
+              <video controls playsInline preload="none" poster="/shots/promo-poster.webp">
+                <source src="/video/promo-portrait.webm" type="video/webm" />
+                <source src="/video/promo-portrait.mp4" type="video/mp4" />
+                {t.video.unsupported}
+              </video>
             </div>
           </Reveal>
         </div>
