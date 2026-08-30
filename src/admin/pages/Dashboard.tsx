@@ -1,6 +1,6 @@
 import { useMemo, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
-import { api, type Dashboard as Dash, type Rarity } from '../api'
+import { api, type Dashboard as Dash, type Rarity, type SubsSeries } from '../api'
 import { dayStr, fmtN, fmtPct, useAsync, useStore } from '../store'
 import { Card, Empty, ErrorBox, Seg, Skeleton, SkeletonCard } from '../ui'
 import { AreaSeries, Bars, Donut, MapUsageChart, RARITY_COLOR, Ring, Sparkline } from '../charts'
@@ -203,7 +203,49 @@ export default function Dashboard() {
           )}
         </Card>
       </div>
+
+      <SubsSection />
     </>
+  )
+}
+
+/** Подписки по дням — со СВОИМ фильтром дат, независимым от общего периода. */
+function SubsSection() {
+  const { t, lang } = useStore()
+  const [preset, setPreset] = useState<Preset>('month')
+  const [from, setFrom] = useState(() => range('month', '', '')[0])
+  const [to, setTo] = useState(() => dayStr(new Date()))
+  const [applied, setApplied] = useState<[string, string]>(() => range('month', '', ''))
+  const pick = (p: Preset) => { setPreset(p); if (p !== 'custom') { const r = range(p, from, to); setFrom(r[0]); setTo(r[1]); setApplied(r) } }
+  const { data, loading } = useAsync(() => api.subsSeries(applied[0], applied[1]), [applied[0], applied[1]], `subs.${applied[0]}.${applied[1]}`)
+  const d = data as SubsSeries | null
+  const total = d ? d.daily.reduce((s, x) => s + x.paid + x.test, 0) : 0
+  return (
+    <div style={{ marginTop: 14 }}>
+    <Card title={t('subs_chart')} icon={<IcCoins size={18} />}
+      right={<div className="row">
+        <Seg value={preset} onChange={pick} options={[{ v: 'today', l: t('today') }, { v: 'week', l: t('week') }, { v: 'month', l: t('month') }, { v: 'custom', l: t('custom') }]} />
+        {preset === 'custom' && (
+          <form className="row" onSubmit={e => { e.preventDefault(); setApplied([from, to]) }}>
+            <input className="input" type="date" value={from} max={to} onChange={e => setFrom(e.target.value)} style={{ width: 140 }} />
+            <input className="input" type="date" value={to} min={from} onChange={e => setTo(e.target.value)} style={{ width: 140 }} />
+            <button className="btn ink sm" type="submit">{t('apply')}</button>
+          </form>
+        )}
+      </div>}>
+      {loading && !d ? <Skeleton h={220} /> : !d ? null : <>
+        <div className="row" style={{ gap: 18, marginBottom: 10, flexWrap: 'wrap' }}>
+          <span className="small muted">{t('k_subs_today')}: <b className="num" style={{ fontSize: 16 }}>{fmtN(d.today, lang)}</b>{d.today_test ? <span className="muted"> ({t('s_subs_test')} {d.today_test})</span> : null}</span>
+          <span className="small muted">{t('k_subs_active')}: <b className="num" style={{ fontSize: 16 }}>{fmtN(d.active_now, lang)}</b></span>
+          <span className="small muted">{t('kpi_period').toLowerCase()}: <b className="num" style={{ fontSize: 16 }}>{fmtN(total, lang)}</b></span>
+        </div>
+        {!d.daily.length ? <Empty /> : <>
+          <Bars data={d.daily} keys={[{ k: 'paid', l: t('s_subs_paid'), c: '#C9202A' }, { k: 'test', l: t('s_subs_test'), c: '#8E9196' }]} height={220} stacked />
+          <div className="legend" style={{ marginTop: 6 }}><span><i style={{ background: '#C9202A' }} />{t('s_subs_paid')}</span><span><i style={{ background: '#8E9196' }} />{t('s_subs_test')}</span></div>
+        </>}
+      </>}
+    </Card>
+    </div>
   )
 }
 

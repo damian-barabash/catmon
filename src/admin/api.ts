@@ -19,6 +19,10 @@ export type Role = 'owner' | 'admin' | 'editor'
 
 export interface Admin { id: string; email: string; name: string; role: Role; lang: string }
 
+export interface SubsSeries {
+  today: number; today_test: number; active_now: number
+  daily: { day: string; paid: number; test: number; pln: number }[]
+}
 export interface DashboardKpi {
   subs_paid: number; subs_test: number; subs_active: number
   donations_pln_real: number; donations_pln_test: number
@@ -179,6 +183,7 @@ export const api = {
   changePassword: (old: string, nw: string) => call<{ ok: true }>('change_password', { old, new: nw }),
   // dashboard
   dashboard: (from: string, to: string) => call<Dashboard>('dashboard', { from, to }),
+  subsSeries: (from: string, to: string) => call<SubsSeries>('subs_series', { from, to }),
   // players
   players: (p: { q?: string; filter?: 'all' | 'guests' | 'linked' | 'banned' | 'plus'; sort?: string; limit?: number; offset?: number }) =>
     call<{ players: PlayerRow[]; total: number }>('players', p),
