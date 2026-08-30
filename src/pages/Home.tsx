@@ -158,7 +158,8 @@ const worldArt: Record<string, { banner: string; icon: string }> = {
   buddy: { banner: '/game/banner_catdex.svg', icon: '/game/buddy_feed.svg' },
 }
 const fairIcons = ['/game/pigeon_panic.svg', '/game/seal_paw.svg', '/game/luck_dice.svg']
-const shots = ['catdex', 'arena', 'dungeon', 'chests', 'quests', 'fishing', 'expeditions', 'battle']
+// battle.webp — RU-кадр интерфейса, в EN-полосе не показываем
+const shots = ['catdex', 'arena', 'dungeon', 'chests', 'quests', 'fishing', 'expeditions']
 
 /**
  * Worlds: on desktop the cards ride a horizontal rail driven by vertical
@@ -331,7 +332,7 @@ export default function Home() {
           <Reveal className="section-head"><span className="kicker">{t.video.kicker}</span><h2>{t.video.title}</h2><p>{t.hero.kicker}</p></Reveal>
           <Reveal i={1}>
             <div className="phone-video">
-              <video controls playsInline preload="none" poster="/shots/battle.webp" src="/video/promo-portrait.mp4">{t.video.unsupported}</video>
+              <video controls playsInline preload="none" poster="/shots/promo-poster.webp" src="/video/promo-portrait.mp4">{t.video.unsupported}</video>
             </div>
           </Reveal>
         </div>
