@@ -71,6 +71,27 @@ export interface PlayerFull extends PlayerRow { cards: PlayerCard[]; items: Play
 
 export interface Item { code: string; kind: string; name: string; description?: string; rarity: Rarity; icon?: string; plus_only?: boolean }
 
+/* ---------- cats & items admin ---------- */
+export const RARITIES: Rarity[] = ['common', 'rare', 'epic', 'legendary']
+export const ARCHETYPES = ['hunter', 'guardian', 'shadow', 'royal', 'street', 'mystic', 'explorer', 'lazy', 'chaos', 'noble'] as const
+export const COAT_CLASSES = ['black-white', 'calico', 'colorpoint', 'grey', 'orange', 'orange-white', 'solid-black', 'tabby', 'tabby-white', 'tortie']
+/** Информативные коридоры суммы 4 статов по редкости (админ может выходить за них) */
+export const RARITY_SUM: Record<Rarity, [number, number]> = { common: [200, 276], rare: [284, 324], epic: [332, 360], legendary: [368, 392] }
+export interface CatRow {
+  id: string; card_no: number; name: string; name_i18n?: I18n | null; rarity: Rarity; archetype: string
+  coat_class?: string | null; power: number; owners_count: number; photo_path?: string | null
+  first_found_by?: string | null; first_found_username?: string | null; first_found_at?: string
+}
+export interface CatFull extends CatRow {
+  description: string; description_i18n?: I18n | null
+  charm: number; agility: number; dominance: number; mystery: number
+  lat?: number | null; lng?: number | null; show_location: boolean
+}
+export interface CatOwner { user_card_id: string; user_id: string; username?: string | null; evolution: number; rarity_boost: number; is_first_discovery: boolean; accessory_code?: string | null; created_at?: string }
+export interface CatPatch { name_ru?: string; description_ru?: string; rarity?: Rarity; archetype?: string; coat_class?: string | null; charm?: number; agility?: number; dominance?: number; mystery?: number; show_location?: boolean }
+export interface ItemFull { code: string; kind: string; name: string; description: string; rarity: Rarity; effect: Record<string, unknown>; plus_only: boolean; dungeon_only: boolean; exclusive: boolean; dungeon?: number | null; sort?: number; name_i18n?: I18n | null; description_i18n?: I18n | null }
+export interface ItemPatch { name_ru?: string; description_ru?: string; rarity?: Rarity; effect?: Record<string, unknown>; plus_only?: boolean; dungeon_only?: boolean; exclusive?: boolean }
+
 export interface BlogPost {
   id: string; slug: string; status: 'draft' | 'published'
   title_i18n: I18n; excerpt_i18n: I18n; body_i18n: I18n
@@ -230,6 +251,16 @@ export const api = {
   adminCreate: (p: { email: string; password: string; name: string; role: Role }) => call<{ ok: true; admin?: Admin }>('admin_create', p),
   adminDelete: (id: string) => call<{ ok: true }>('admin_delete', { id }),
   aiTranslate: (text_ru: string) => call<{ en: string; pl: string; fr: string }>('ai_translate', { text_ru }),
+  // cats & items admin
+  catsList: (p: { q?: string; rarity?: string; archetype?: string; coat_class?: string; sort?: string; limit?: number; offset?: number }) =>
+    call<{ cats: CatRow[]; total: number }>('cats_list', p),
+  catGet: (id: string) => call<{ cat: CatFull; owners: CatOwner[] }>('cat_get', { id }),
+  catUpdate: (id: string, patch: CatPatch) => call<{ ok: true; cat?: CatFull; translating?: boolean }>('cat_update', { id, patch }),
+  cardUpdate: (p: { user_card_id: string; evolution?: number; rarity_boost?: number }) => call<{ ok: true }>('card_update', p),
+  catDelete: (id: string) => call<{ ok: true }>('cat_delete', { id }),
+  itemsFull: (p: { q?: string; kind?: string; rarity?: string; flag?: 'plus_only' | 'dungeon_only' | 'exclusive' | ''; limit?: number; offset?: number }) =>
+    call<{ items: ItemFull[]; total: number }>('items_list', p),
+  itemUpdate: (code: string, patch: ItemPatch) => call<{ ok: true; item?: ItemFull; translating?: boolean }>('item_update', { code, patch }),
   itemsList: async (): Promise<Item[]> => {
     if (isMock()) return (await mockCall('items_list', {}) as { items: Item[] }).items
     try {
@@ -252,6 +283,7 @@ export const api = {
 }
 
 export const catPhotoUrl = (p?: string | null) => (!p ? '' : p.startsWith('http') ? p : CAT_PHOTO_BASE + p.replace(/^\//, ''))
+export const catThumbUrl = (p?: string | null, width = 160) => (!p ? '' : p.startsWith('http') ? p : `${SUPABASE_URL}/storage/v1/render/image/public/cat-photos/${p.replace(/^\//, '')}?width=${width}`)
 export const mediaUrl = (p?: string | null) => (!p ? '' : p.startsWith('http') ? p : SITE_MEDIA_BASE + p.replace(/^\//, ''))
 export const itemIconUrl = (code: string) => `/admin/items/${code}.svg`
 

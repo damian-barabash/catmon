@@ -35,6 +35,14 @@ const ru = {
   audit: 'Аудит', action: 'Действие', target: 'Цель', payload: 'Данные', admin_who: 'Админ', when: 'Когда',
   admins: 'Админы', add_admin: 'Добавить админа', role: 'Роль', r_owner: 'Owner', r_admin: 'Admin', r_editor: 'Editor', owner_only: 'Только owner может управлять админами', delete_admin: 'Удалить админа?',
   profile: 'Профиль', change_password: 'Смена пароля', old_password: 'Старый пароль', new_password: 'Новый пароль', repeat_password: 'Повторите пароль', passwords_differ: 'Пароли не совпадают', password_changed: 'Пароль изменён', ui_lang: 'Язык интерфейса',
+  // cats
+  nav_cats: 'Коты', cats: 'Коты', search_cats: 'Имя или № карточки…', rarity: 'Редкость', archetype: 'Архетип', coat: 'Окрас', sort_by: 'Сортировка', sort_card_no: 'По номеру', sort_owners: 'По владельцам', sort_power: 'По силе', sort_created: 'По дате находки', col_power: 'Сила', col_owners: 'Владельцы',
+  cat_name_ru: 'Имя (ru)', cat_desc_ru: 'Описание (ru)', stats: 'Статы', stat_charm: 'Шарм', stat_agility: 'Ловкость', stat_dominance: 'Доминантность', stat_mystery: 'Загадочность', stat_sum: 'Сумма статов', corridor: 'коридор', in_corridor: 'В коридоре редкости', out_corridor: 'Вне коридора редкости', power_auto: 'Сила (авто)', show_location: 'Показывать локацию на карте', coords: 'Координаты', open_osm: 'Открыть в OSM', no_coords: 'Нет координат',
+  owners: 'Владельцы', evolution: 'Эволюция', rarity_boost: 'Апгрейд редкости', first_discovery: 'Первооткрыватель', accessory: 'Аксессуар', found_at: 'Найден', found_by: 'Нашёл',
+  delete_cat: 'Удалить кота', delete_cat_confirm1: 'Удалить кота из мира? Фото удалится, это необратимо.', delete_cat_confirm2: 'Введите номер карточки для подтверждения', cat_has_owners: 'Удалить можно только кота без владельцев',
+  // items
+  nav_items: 'Предметы', items: 'Предметы', item_kind: 'Тип', flags: 'Флаги', f_plus_only: 'Plus', f_dungeon_only: 'Подземелье', f_exclusive: 'Эксклюзив', effect_json: 'Эффект (JSON)', effect_hint: '{"stats":{"charm":5}} — бонус статов; {"type":"…","value":N} — бустер; {"special":"…"} — особый эффект; {} — без эффекта', rename_warn: 'Переименование сломает переводы на клиенте до пересборки приложения', code: 'Код', search_items: 'Код или название…', edit_item: 'Редактировать предмет',
+  take_n: 'Забрать', take_confirm: 'Забрать предмет у игрока?',
   kpi_period: 'За период', kpi_now: 'Сейчас / всего', updating: 'Обновляется…',
   unauthorized: 'Сессия истекла — войдите снова', network: 'Нет связи с сервером',
 }
@@ -68,6 +76,12 @@ const en: Dict = {
   audit: 'Audit', action: 'Action', target: 'Target', payload: 'Payload', admin_who: 'Admin', when: 'When',
   admins: 'Admins', add_admin: 'Add admin', role: 'Role', r_owner: 'Owner', r_admin: 'Admin', r_editor: 'Editor', owner_only: 'Only owner can manage admins', delete_admin: 'Delete admin?',
   profile: 'Profile', change_password: 'Change password', old_password: 'Old password', new_password: 'New password', repeat_password: 'Repeat password', passwords_differ: 'Passwords differ', password_changed: 'Password changed', ui_lang: 'Interface language',
+  nav_cats: 'Cats', cats: 'Cats', search_cats: 'Name or card #…', rarity: 'Rarity', archetype: 'Archetype', coat: 'Coat', sort_by: 'Sort', sort_card_no: 'By number', sort_owners: 'By owners', sort_power: 'By power', sort_created: 'By found date', col_power: 'Power', col_owners: 'Owners',
+  cat_name_ru: 'Name (ru)', cat_desc_ru: 'Description (ru)', stats: 'Stats', stat_charm: 'Charm', stat_agility: 'Agility', stat_dominance: 'Dominance', stat_mystery: 'Mystery', stat_sum: 'Stat sum', corridor: 'corridor', in_corridor: 'Within rarity corridor', out_corridor: 'Out of rarity corridor', power_auto: 'Power (auto)', show_location: 'Show location on map', coords: 'Coordinates', open_osm: 'Open in OSM', no_coords: 'No coordinates',
+  owners: 'Owners', evolution: 'Evolution', rarity_boost: 'Rarity boost', first_discovery: 'First discovery', accessory: 'Accessory', found_at: 'Found', found_by: 'Found by',
+  delete_cat: 'Delete cat', delete_cat_confirm1: 'Delete this cat from the world? Its photo is removed, this cannot be undone.', delete_cat_confirm2: 'Type the card number to confirm', cat_has_owners: 'Only a cat with no owners can be deleted',
+  nav_items: 'Items', items: 'Items', item_kind: 'Kind', flags: 'Flags', f_plus_only: 'Plus', f_dungeon_only: 'Dungeon', f_exclusive: 'Exclusive', effect_json: 'Effect (JSON)', effect_hint: '{"stats":{"charm":5}} — stat bonus; {"type":"…","value":N} — booster; {"special":"…"} — special effect; {} — none', rename_warn: 'Renaming breaks client translations until the app is rebuilt', code: 'Code', search_items: 'Code or name…', edit_item: 'Edit item',
+  take_n: 'Take', take_confirm: 'Take this item from the player?',
   kpi_period: 'In period', kpi_now: 'Right now / total', updating: 'Updating…',
   unauthorized: 'Session expired — sign in again', network: 'No connection to server',
 }
@@ -99,6 +113,12 @@ const pl: Dict = {
   audit: 'Audyt', action: 'Akcja', target: 'Cel', payload: 'Dane', admin_who: 'Admin', when: 'Kiedy',
   admins: 'Admini', add_admin: 'Dodaj admina', role: 'Rola', owner_only: 'Tylko owner zarządza adminami', delete_admin: 'Usunąć admina?',
   profile: 'Profil', change_password: 'Zmiana hasła', old_password: 'Stare hasło', new_password: 'Nowe hasło', repeat_password: 'Powtórz hasło', passwords_differ: 'Hasła się różnią', password_changed: 'Hasło zmienione', ui_lang: 'Język interfejsu',
+  nav_cats: 'Koty', cats: 'Koty', search_cats: 'Imię lub nr karty…', rarity: 'Rzadkość', archetype: 'Archetyp', coat: 'Umaszczenie', sort_by: 'Sortowanie', sort_card_no: 'Wg numeru', sort_owners: 'Wg właścicieli', sort_power: 'Wg siły', sort_created: 'Wg daty znalezienia', col_power: 'Siła', col_owners: 'Właściciele',
+  cat_name_ru: 'Imię (ru)', cat_desc_ru: 'Opis (ru)', stats: 'Statystyki', stat_charm: 'Urok', stat_agility: 'Zwinność', stat_dominance: 'Dominacja', stat_mystery: 'Tajemniczość', stat_sum: 'Suma statystyk', corridor: 'korytarz', in_corridor: 'W korytarzu rzadkości', out_corridor: 'Poza korytarzem rzadkości', power_auto: 'Siła (auto)', show_location: 'Pokazuj lokalizację na mapie', coords: 'Współrzędne', open_osm: 'Otwórz w OSM', no_coords: 'Brak współrzędnych',
+  owners: 'Właściciele', evolution: 'Ewolucja', rarity_boost: 'Ulepszenie rzadkości', first_discovery: 'Pierwsze odkrycie', accessory: 'Akcesorium', found_at: 'Znaleziony', found_by: 'Znalazł',
+  delete_cat: 'Usuń kota', delete_cat_confirm1: 'Usunąć kota ze świata? Zdjęcie zostanie usunięte, tego nie da się cofnąć.', delete_cat_confirm2: 'Wpisz numer karty, aby potwierdzić', cat_has_owners: 'Można usunąć tylko kota bez właścicieli',
+  nav_items: 'Przedmioty', items: 'Przedmioty', item_kind: 'Typ', flags: 'Flagi', f_plus_only: 'Plus', f_dungeon_only: 'Loch', f_exclusive: 'Ekskluzywny', effect_json: 'Efekt (JSON)', effect_hint: '{"stats":{"charm":5}} — bonus statystyk; {"type":"…","value":N} — booster; {"special":"…"} — efekt specjalny; {} — brak', rename_warn: 'Zmiana nazwy psuje tłumaczenia w aplikacji do czasu przebudowy', code: 'Kod', search_items: 'Kod lub nazwa…', edit_item: 'Edytuj przedmiot',
+  take_n: 'Zabierz', take_confirm: 'Zabrać przedmiot graczowi?',
   kpi_period: 'W okresie', kpi_now: 'Teraz / łącznie', updating: 'Aktualizacja…',
   unauthorized: 'Sesja wygasła — zaloguj się ponownie', network: 'Brak połączenia z serwerem',
 }

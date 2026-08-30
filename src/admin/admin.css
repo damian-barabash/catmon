@@ -300,3 +300,26 @@
   .adm .adm-shell.side-x .adm-nav a .tip { display: none; }
   .adm .adm-shell.side-x .adm-side .bottom { flex-direction: row; justify-content: space-between; }
 }
+.adm .cats-toolbar { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
+.adm .cats-toolbar .select { width: auto; min-width: 130px; background-color: var(--card); }
+.adm .cat-card .meta { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; font-size: 11.5px; color: var(--subtle); margin-top: 5px; }
+.adm .cat-card.clickable { cursor: pointer; transition: transform .12s, box-shadow .12s; }
+.adm .cat-card.clickable:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+.adm .cat-photo-lg { border-radius: var(--r-sm); overflow: hidden; aspect-ratio: 1; background: var(--mist); position: relative; }
+.adm .cat-photo-lg img { width: 100%; height: 100%; object-fit: cover; }
+.adm .cat-photo-lg .no { position: absolute; left: 10px; top: 10px; background: rgba(20,20,18,.7); color: #fff; font-size: 13px; padding: 3px 10px; border-radius: 999px; font-family: var(--font-h); }
+.adm .stat-row { display: grid; grid-template-columns: 120px 1fr 74px; gap: 10px; align-items: center; }
+.adm .stat-row input[type="range"] { width: 100%; accent-color: var(--accent); }
+.adm .stat-row .input { padding: 6px 8px; text-align: right; }
+.adm .item.has-x { position: relative; }
+.adm .item-x { position: absolute; top: -7px; right: -7px; width: 24px; height: 24px; border-radius: 50%; border: 1px solid var(--line); background: var(--card); color: var(--accent); display: grid; place-items: center; cursor: pointer; opacity: 0; transition: opacity .15s; box-shadow: var(--shadow); z-index: 2; }
+.adm .item.has-x:hover .item-x, .adm .item-x:focus-visible { opacity: 1; }
+@media (hover: none) { .adm .item-x { opacity: 1; } }
+.adm .token { width: 40px; height: 40px; border-radius: 12px; display: grid; place-items: center; font-family: var(--font-h); font-weight: 700; font-size: 15px; text-transform: uppercase; flex-shrink: 0; }
+.adm .token.r-common { background: rgba(142,145,150,.15); color: var(--common); }
+.adm .token.r-rare { background: rgba(47,107,255,.12); color: var(--rare); }
+.adm .token.r-epic { background: rgba(147,51,234,.12); color: var(--epic); }
+.adm .token.r-legendary { background: rgba(232,162,0,.16); color: #B47C00; }
+.adm.dark .token.r-legendary { color: var(--legendary2); }
+.adm .json-area.err { border-color: var(--accent); }
+.adm .stars { letter-spacing: 2px; color: var(--legendary); white-space: nowrap; }

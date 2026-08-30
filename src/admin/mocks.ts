@@ -195,7 +195,43 @@ export async function mockCall(action: string, params: Record<string, unknown>):
     case 'admin_create': { const a: Admin = { id: `a${admins.length + 1}`, email: P.email, name: P.name, role: P.role, lang: 'ru' }; admins.push(a); return { ok: true, admin: a } }
     case 'admin_delete': { const i = admins.findIndex(a => a.id === P.id); if (i > 0) admins.splice(i, 1); return { ok: true } }
     case 'ai_translate': return { en: '[en] ' + P.text_ru, pl: '[pl] ' + P.text_ru, fr: '[fr] ' + P.text_ru }
-    case 'items_list': return { items }
+    case 'items_list': return { items: items.map(i => ({ description: '', effect: {}, plus_only: false, dungeon_only: false, exclusive: false, ...i })), total: items.length }
+    case 'cats_list': {
+      let list = [...mockCats]
+      const s = String(P.q ?? '').toLowerCase()
+      if (s) list = list.filter(c => c.name.toLowerCase().includes(s) || String(c.card_no) === s)
+      if (P.rarity) list = list.filter(c => c.rarity === P.rarity)
+      if (P.archetype) list = list.filter(c => c.archetype === P.archetype)
+      if (P.coat_class) list = list.filter(c => c.coat_class === P.coat_class)
+      const sort = String(P.sort ?? 'card_no')
+      if (sort === 'owners') list.sort((a, b) => b.owners_count - a.owners_count)
+      else if (sort === 'power') list.sort((a, b) => b.power - a.power)
+      else list.sort((a, b) => a.card_no - b.card_no)
+      const off = Number(P.offset ?? 0), lim = Number(P.limit ?? 24)
+      return { cats: list.slice(off, off + lim), total: list.length }
+    }
+    case 'cat_get': {
+      const c = mockCats.find(x => x.id === P.id) ?? mockCats[0]
+      return { cat: c, owners: c.owners_count ? players.slice(0, c.owners_count).map((p, i) => ({ user_card_id: `uc-${c.id}-${i}`, user_id: p.id, username: p.username, evolution: i % 6, rarity_boost: i % 4, is_first_discovery: i === 0, accessory_code: i % 2 ? 'acc_rune_stone' : null, created_at: iso(daysAgo(i * 2)) })) : [] }
+    }
+    case 'cat_update': { const c = mockCats.find(x => x.id === P.id); if (c) Object.assign(c, P.patch ?? {}); return { ok: true } }
+    case 'card_update': return { ok: true }
+    case 'cat_delete': { const i = mockCats.findIndex(x => x.id === P.id); if (i >= 0) mockCats.splice(i, 1); return { ok: true } }
+    case 'item_update': return { ok: true }
     default: throw Object.assign(new Error(`mock: unknown action ${action}`), { code: 'unknown_action', status: 400 })
   }
 }
+
+/* ---------- cats (мир котов, мок) ---------- */
+const COATS = ['tabby', 'solid-black', 'calico', 'grey', 'orange', 'black-white']
+const ARCH = ['hunter', 'guardian', 'shadow', 'royal', 'street', 'mystic', 'explorer', 'lazy', 'chaos', 'noble']
+const mockCats = NAMES.map((name, i) => {
+  const charm = 40 + ((i * 7) % 55), agility = 45 + ((i * 11) % 50), dominance = 35 + ((i * 13) % 60), mystery = 50 + ((i * 5) % 45)
+  return {
+    id: `cat-${i + 1}`, card_no: i + 1, name, name_i18n: { ru: name }, description: 'Очень загадочный уличный кот из мок-данных.', description_i18n: { ru: 'Очень загадочный уличный кот из мок-данных.' },
+    rarity: RAR[i % 4], archetype: ARCH[i % 10], coat_class: COATS[i % 6],
+    charm, agility, dominance, mystery, power: Math.round((charm + agility + dominance + mystery) / 4),
+    owners_count: i % 5, photo_path: null as string | null, lat: 52.2 + i * 0.01, lng: 21.0 + i * 0.01, show_location: i % 2 === 0,
+    first_found_by: players[i % players.length].id, first_found_username: players[i % players.length].username, first_found_at: iso(daysAgo(i * 3)),
+  }
+})

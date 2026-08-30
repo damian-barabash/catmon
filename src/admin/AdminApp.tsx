@@ -3,12 +3,15 @@ import { Navigate, NavLink, Route, Routes, useLocation, useNavigate } from 'reac
 import './admin.css'
 import { StoreProvider, useRefreshing, useStore } from './store'
 import { Toasts, initials } from './ui'
-import { IcAudit, IcBlog, IcDashboard, IcInbox, IcLogout, IcMap, IcMenu, IcMoon, IcSearch, IcShield, IcSun, IcTrophy, IcUser, IcUsers, IcWorld, IcKey } from './icons'
+import { IcAudit, IcBlog, IcCat, IcChest, IcDashboard, IcInbox, IcLogout, IcMap, IcMenu, IcMoon, IcSearch, IcShield, IcSun, IcTrophy, IcUser, IcUsers, IcWorld, IcKey } from './icons'
 import { LANGS } from './i18n'
 import Login from './pages/Login'
 import Dashboard from './pages/Dashboard'
 import Players from './pages/Players'
 import PlayerProfile from './pages/PlayerProfile'
+import Cats from './pages/Cats'
+import CatEditor from './pages/CatEditor'
+import Items from './pages/Items'
 import Blog from './pages/Blog'
 import BlogEditor from './pages/BlogEditor'
 import Contacts from './pages/Contacts'
@@ -23,6 +26,8 @@ import Profile from './pages/Profile'
 const NAV = [
   { to: '/admin', k: 'nav_dashboard', I: IcDashboard, end: true },
   { to: '/admin/players', k: 'nav_players', I: IcUsers },
+  { to: '/admin/cats', k: 'nav_cats', I: IcCat },
+  { to: '/admin/items', k: 'nav_items', I: IcChest },
   { to: '/admin/blog', k: 'nav_blog', I: IcBlog },
   { to: '/admin/contacts', k: 'nav_contacts', I: IcInbox },
   { to: '/admin/seasons', k: 'nav_seasons', I: IcTrophy },
@@ -95,6 +100,9 @@ function Inner() {
         <Route index element={<Guard><Dashboard /></Guard>} />
         <Route path="players" element={<Guard><Players /></Guard>} />
         <Route path="players/:id" element={<Guard><PlayerProfile /></Guard>} />
+        <Route path="cats" element={<Guard><Cats /></Guard>} />
+        <Route path="cats/:id" element={<Guard><CatEditor /></Guard>} />
+        <Route path="items" element={<Guard><Items /></Guard>} />
         <Route path="blog" element={<Guard><Blog /></Guard>} />
         <Route path="blog/:id" element={<Guard><BlogEditor /></Guard>} />
         <Route path="contacts" element={<Guard><Contacts /></Guard>} />
