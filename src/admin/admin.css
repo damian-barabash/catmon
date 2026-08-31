@@ -183,8 +183,8 @@
 .adm .p-head .avatar img { width: 100%; height: 100%; object-fit: cover; }
 .adm .cat-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 12px; }
 .adm .cat-card { border-radius: 16px; border: 1px solid var(--line); overflow: hidden; background: var(--card2); }
-.adm .cat-card .ph { aspect-ratio: 1; background: var(--mist); display: grid; place-items: center; color: var(--subtle); position: relative; }
-.adm .cat-card .ph img { width: 100%; height: 100%; object-fit: cover; }
+.adm .cat-card .ph { aspect-ratio: 1; background: var(--mist); display: grid; place-items: center; color: var(--subtle); position: relative; overflow: hidden; }
+.adm .cat-card .ph img { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
 .adm .cat-card .ph .no { position: absolute; left: 8px; top: 8px; background: rgba(20,20,18,.7); color: #fff; font-size: 11px; padding: 2px 7px; border-radius: 999px; font-family: var(--font-h); }
 .adm .cat-card .body { padding: 8px 10px 10px; }
 .adm .cat-card .body b { display: block; font-size: 13px; margin-bottom: 4px; }
