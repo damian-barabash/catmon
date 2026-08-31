@@ -1,1 +1,6 @@
-<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48" width="48" height="48"><path d="M8 8 H40 V40 H8 Z M13 13 V35 H35 V13 Z" fill="#4A5A9E" stroke="#141412" stroke-width="2.0" stroke-linejoin="round" stroke-linecap="round" fill-rule="evenodd"/><path d="M8 8 H24 V13 H13 V24 H8 Z" fill="#E08A5A" stroke="#141412" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round" /><path d="M40 40 H24 V35 H35 V24 H40 Z" fill="#E08A5A" stroke="#141412" stroke-width="1.4" stroke-linejoin="round" stroke-linecap="round" /><circle cx="24" cy="24" r="4.5" fill="#E08A5A" stroke="#141412" stroke-width="1.5" /></svg>
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 48 48">
+  <rect x="6" y="6" width="36" height="36" rx="9" fill="none" stroke="#4A5A9E" stroke-width="5"/>
+  <circle cx="24" cy="20" r="6" fill="#FFD558" stroke="#2D3761" stroke-width="1.4"/>
+  <path d="M12.5 35V24h6v11zM20.5 35V18h7v17zM29.5 35V26h6v9z" fill="#4A5A9E" stroke="#2D3761" stroke-width="1.5" stroke-linejoin="round" stroke-linecap="round"/>
+  <path d="M14 26h1.6v1.6H14zM17 26h1.6v1.6H17zM14 29h1.6v1.6H14zM17 29h1.6v1.6H17zM22 21h1.6v1.6H22zM25 21h1.6v1.6H25zM22 24.5h1.6v1.6H22zM25 24.5h1.6v1.6H25zM22 28h1.6v1.6H22zM25 28h1.6v1.6H25zM31 28h1.6v1.6H31zM31 31h1.6v1.6H31z" fill="#F7E1D5"/>
+</svg>
