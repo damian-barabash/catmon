@@ -336,3 +336,12 @@
 .adm-nav a { overflow: visible; }
 .adm-nav .nav-badge { position: absolute; top: 4px; right: 6px; min-width: 18px; height: 18px; border-radius: 999px; background: var(--accent); color: #fff; font-size: 10.5px; font-weight: 700; display: grid; place-items: center; padding: 0 4px; font-family: var(--font-h); }
 .adm .adm-shell.side-x .adm-nav .nav-badge { position: static; margin-left: auto; }
+
+.adm .ver-list { display: grid; gap: 6px; }
+.adm .ver { border: 1px solid var(--line); border-radius: 12px; overflow: hidden; }
+.adm .ver-head { display: flex; align-items: center; gap: 8px; width: 100%; border: 0; background: transparent; padding: 10px 12px; cursor: pointer; color: var(--ink); font-size: 13.5px; }
+.adm .ver-head:hover { background: var(--mist); }
+.adm .ver-head .chev { color: var(--subtle); transition: transform .18s; }
+.adm .ver-head .chev.up { transform: rotate(180deg); }
+.adm .ver-notes { margin: 0; padding: 2px 14px 12px 30px; display: grid; gap: 5px; color: var(--subtle); font-size: 13px; }
+.adm .ver.open { background: var(--card2); }

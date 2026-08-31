@@ -19,6 +19,7 @@ export type Role = 'owner' | 'admin' | 'editor'
 
 export interface Admin { id: string; email: string; name: string; role: Role; lang: string }
 
+export interface AppVersion { build: number; version: string; notes: string[]; released_at: string }
 export interface SubsSeries {
   today: number; today_test: number; active_now: number
   daily: { day: string; paid: number; test: number; pln: number }[]
@@ -205,6 +206,7 @@ export const api = {
   // dashboard
   dashboard: (from: string, to: string) => call<Dashboard>('dashboard', { from, to }),
   subsSeries: (from: string, to: string) => call<SubsSeries>('subs_series', { from, to }),
+  versionsList: () => call<{ versions: AppVersion[]; current: AppVersion | null }>('versions_list'),
   // players
   players: (p: { q?: string; filter?: 'all' | 'guests' | 'linked' | 'banned' | 'plus'; sort?: string; limit?: number; offset?: number }) =>
     call<{ players: PlayerRow[]; total: number }>('players', p),

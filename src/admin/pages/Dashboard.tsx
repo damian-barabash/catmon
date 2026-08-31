@@ -1,7 +1,7 @@
 import { useMemo, useState, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { api, type Dashboard as Dash, type Rarity, type SubsSeries } from '../api'
-import { dayStr, fmtN, fmtPct, useAsync, useStore } from '../store'
+import { dayStr, fmtDate, fmtN, fmtPct, useAsync, useStore } from '../store'
 import { Card, Empty, ErrorBox, Seg, Skeleton, SkeletonCard } from '../ui'
 import { AreaSeries, Bars, Donut, MapUsageChart, RARITY_COLOR, Ring, Sparkline } from '../charts'
 import { IcArena, IcBolt, IcCat, IcChat, IcChest, IcCoins, IcCompass, IcDungeon, IcEye, IcFish, IcGem, IcMap, IcMarket, IcPaw, IcScan, IcServer, IcTrophy, IcUsers, IcWarn, IcClock } from '../icons'
@@ -205,7 +205,44 @@ export default function Dashboard() {
       </div>
 
       <SubsSection />
+      <VersionsSection />
     </>
+  )
+}
+
+/** История версий приложения: актуальный билд + разворачиваемые патчноуты. */
+function VersionsSection() {
+  const { t } = useStore()
+  const { data, loading } = useAsync(() => api.versionsList(), [], 'versions')
+  const [open, setOpen] = useState<number | null>(null)
+  const cur = data?.current
+  return (
+    <div style={{ marginTop: 14 }}>
+    <Card title={t('versions')} icon={<IcServer size={18} />}
+      right={cur && <span className="chip accent num">v{cur.version} · build {cur.build}</span>}>
+      {loading && !data ? <Skeleton h={160} /> : !data?.versions.length ? <Empty /> : (
+        <div className="ver-list">
+          {data.versions.map((v, i) => (
+            <div key={v.build} className={`ver ${open === v.build ? 'open' : ''}`}>
+              <button className="ver-head" onClick={() => setOpen(open === v.build ? null : v.build)} aria-expanded={open === v.build}>
+                <b className="num">v{v.version}</b>
+                <span className="chip">build {v.build}</span>
+                {i === 0 && <span className="chip accent">{t('ver_current')}</span>}
+                <span className="muted small right">{fmtDate(v.released_at)}</span>
+                <span className={`chev ${open === v.build ? 'up' : ''}`} aria-hidden>▾</span>
+              </button>
+              {open === v.build && (
+                <ul className="ver-notes">
+                  {(v.notes ?? []).map((n, j) => <li key={j}>{n}</li>)}
+                  {!(v.notes ?? []).length && <li className="muted">{t('empty')}</li>}
+                </ul>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </Card>
+    </div>
   )
 }
 

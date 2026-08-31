@@ -192,6 +192,7 @@ export async function mockCall(action: string, params: Record<string, unknown>):
     }
     case 'blog_delete': { const i = posts.findIndex(p => p.id === P.id); if (i >= 0) posts.splice(i, 1); return { ok: true } }
     case 'blog_upload': { const path = `blog/${Date.now()}_${P.filename}`; return { path, url: `data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='400' height='300'><rect width='400' height='300' fill='%23EFEDE7'/><text x='200' y='160' text-anchor='middle' font-family='sans-serif' font-size='20' fill='%236F6C64'>${encodeURIComponent(String(P.filename))}</text></svg>` } }
+    case 'versions_list': return { versions: [ { build: 76, version: '0.9.24', notes: ['81 иконка рамок перерисована', 'У «Бирки имени» появилась своя иконка'], released_at: '2026-08-31T12:00:00Z' }, { build: 75, version: '0.9.23', notes: ['Убраны жёлтые подчёркивания в «Новом уровне»'], released_at: '2026-08-31T10:00:00Z' } ], current: { build: 76, version: '0.9.24', notes: ['81 иконка рамок перерисована'], released_at: '2026-08-31T12:00:00Z' } }
     case 'contacts_unread': return { count: 1 }
     case 'contact_delete': return { ok: true }
     case 'contacts_list': return { contacts: P.status ? contacts.filter(c => c.status === P.status) : contacts }
