@@ -41,7 +41,12 @@ img, svg, video { max-width: 100%; display: block; }
 a { color: inherit; text-decoration: none; }
 button { font: inherit; color: inherit; cursor: pointer; background: none; border: 0; }
 h1, h2, h3, h4 { font-family: var(--display); font-weight: 900; line-height: 1.05; letter-spacing: -0.01em; margin: 0; overflow-wrap: break-word; hyphens: none; }
-h1 { font-size: clamp(2.4rem, 6.5vw, 5.2rem); }
+/* 5.4vw (not 6.5): «Коллекционная» must fit the hero text column now that
+   the columns are honest minmax(0,…) tracks */
+h1 { font-size: clamp(2.4rem, 4.5vw, 4rem); }
+/* narrow phones: the 2.4rem floor makes «Коллекционная» wider than the
+   viewport (406px at 390px) — scale with the screen instead */
+@media (max-width: 480px) { h1 { font-size: clamp(1.7rem, 8.2vw, 2.4rem); } }
 h2 { font-size: clamp(1.8rem, 4vw, 3rem); }
 h3 { font-size: clamp(1.15rem, 2vw, 1.5rem); font-weight: 700; }
 p { margin: 0; }
@@ -102,7 +107,9 @@ p { margin: 0; }
 
 /* hero */
 .hero { position: relative; overflow: hidden; padding: clamp(3rem, 7vw, 6rem) 0 clamp(3rem, 6vw, 5rem); min-height: min(calc(100vh - 68px), 820px); display: flex; align-items: center; }
-.hero-grid { display: grid; grid-template-columns: 1.05fr .95fr; gap: 3rem; align-items: center; }
+/* minmax(0,…): otherwise the h1's min-content width squeezes the visual
+   column to ~240px and the cards pile up on top of each other */
+.hero-grid { display: grid; grid-template-columns: minmax(0, 1.22fr) minmax(0, .78fr); gap: 3rem; align-items: center; }
 .hero h1 { white-space: pre-line; }
 .hero .lead { margin-top: 1.5rem; max-width: 520px; }
 .hero-cta { display: flex; flex-wrap: wrap; gap: 1rem; margin-top: 2rem; align-items: center; }
@@ -123,7 +130,7 @@ p { margin: 0; }
 a.pill.charity { border-color: color-mix(in srgb, var(--red) 45%, var(--line)); color: var(--ink); transition: border-color .2s, transform .15s; }
 a.pill.charity:hover { border-color: var(--red); transform: translateY(-1px); }
 .hero-visual { position: relative; height: clamp(420px, 55vw, 640px); }
-.hero-visual .cat-big { position: absolute; left: 50%; top: 50%; width: min(52%, 300px); transform: translate(-50%, -50%); filter: drop-shadow(0 30px 40px rgba(20,20,18,.25)); }
+.hero-visual .cat-big { position: absolute; left: 50%; top: 50%; width: min(52%, 300px); transform: translate(-50%, -50%); filter: drop-shadow(0 30px 40px rgba(20,20,18,.25)); z-index: 2; }
 .float-card { position: absolute; width: clamp(110px, 14vw, 160px); border-radius: 14px; overflow: hidden; background: var(--card); border: 3px solid var(--ink); box-shadow: var(--shadow); }
 .float-card img { width: 100%; aspect-ratio: 3/4; object-fit: cover; }
 .float-card .fc-name { font-family: var(--display); font-weight: 700; font-size: .72rem; padding: .45rem .55rem .15rem; color: var(--ink); }
@@ -132,6 +139,12 @@ a.pill.charity:hover { border-color: var(--red); transform: translateY(-1px); }
 .float-card.epic { border-color: var(--epic); } .float-card.epic .fc-r { color: var(--epic); }
 .float-card.legendary { border-color: var(--legendary); } .float-card.legendary .fc-r { color: var(--legendary); }
 .float-card.legendary::after { content: ''; position: absolute; inset: 0; background: linear-gradient(115deg, transparent 30%, rgba(255,213,88,.45) 50%, transparent 70%); background-size: 250% 100%; animation: shimmer 3s linear infinite; pointer-events: none; }
+/* fan composition: two small muted cards behind the cat at the top corners,
+   two bigger cards in front at the bottom; z-index = depth = parallax */
+.float-card.fc0 { left: 0; top: 5%; width: clamp(92px, 10.5vw, 124px); z-index: 1; }
+.float-card.fc1 { right: 1%; top: 0; width: clamp(98px, 11vw, 132px); z-index: 1; }
+.float-card.fc2 { left: 4%; bottom: 8%; width: clamp(112px, 12.5vw, 148px); z-index: 3; }
+.float-card.fc3 { right: 5%; bottom: 0; width: clamp(128px, 14.5vw, 178px); z-index: 4; }
 @keyframes shimmer { from { background-position: 200% 0; } to { background-position: -50% 0; } }
 .paw { position: absolute; width: 34px; opacity: .18; animation: pawfade 6s ease-in-out infinite; }
 @keyframes pawfade { 0%, 100% { opacity: .08; } 50% { opacity: .28; } }
@@ -139,9 +152,15 @@ a.pill.charity:hover { border-color: var(--red); transform: translateY(-1px); }
 .scroll-hint i { width: 1px; height: 28px; background: var(--subtle); animation: drop 1.6s ease-in-out infinite; }
 @keyframes drop { 0% { transform: scaleY(0); transform-origin: top; } 50% { transform: scaleY(1); transform-origin: top; } 51% { transform-origin: bottom; } 100% { transform: scaleY(0); transform-origin: bottom; } }
 @media (max-width: 900px) {
-  .hero { min-height: 0; }
+  .hero { min-height: 0; padding-top: 2.5rem; }
   .hero-grid { grid-template-columns: 1fr; gap: 1.5rem; }
-  .hero-visual { height: clamp(320px, 90vw, 460px); order: -1; }
+  /* text first (natural DOM order); compact visual below with 2 front cards */
+  .hero-visual { height: clamp(230px, 40vh, 330px); margin-top: .5rem; }
+  .hero-visual .cat-big { width: min(44%, 210px); }
+  .float-card.fc0, .float-card.fc1 { display: none; }
+  .float-card.fc2 { left: 2%; bottom: 6%; width: clamp(104px, 29vw, 130px); }
+  .float-card.fc3 { right: 2%; bottom: 2%; width: clamp(116px, 33vw, 148px); }
+  .bit.lg { display: none; }
   .scroll-hint { display: none; }
 }
 
@@ -400,4 +419,64 @@ a.pill.charity:hover { border-color: var(--red); transform: translateY(-1px); }
 @keyframes sk { from { background-position: 200% 0; } to { background-position: -200% 0; } }
 .nf { text-align: center; padding: 6rem 0; }
 .nf svg { width: 160px; margin: 0 auto 2rem; }
+/* ambient floating game bits (transform/opacity only) */
+.bits { position: absolute; inset: 0; pointer-events: none; z-index: 0; }
+.bit { position: absolute; opacity: .16; animation: bitfloat 9s ease-in-out infinite; will-change: transform; }
+@keyframes bitfloat {
+  0%, 100% { transform: translateY(0) rotate(-5deg); opacity: .12; }
+  50% { transform: translateY(-16px) rotate(6deg); opacity: .26; }
+}
+/* content always above ambient/glyph layers */
+.section > .wrap, .hero .wrap { position: relative; z-index: 1; }
+
+/* hero cat: rare blink (lids cover the mask's eye holes) + tiny sway */
+.cat-live { position: relative; display: block; animation: catsway 12s ease-in-out infinite; transform-origin: 50% 85%; }
+@keyframes catsway { 0%, 62%, 72%, 100% { transform: rotate(0deg); } 65% { transform: rotate(-1.6deg); } 69% { transform: rotate(1.1deg); } }
+.cat-live .lid { position: absolute; width: 9.5%; aspect-ratio: 1; border-radius: 50%; background: var(--ink); transform: scaleY(0); animation: blink 7s ease-in-out infinite; }
+.cat-live .lid.l { left: 27%; top: 33%; }
+.cat-live .lid.r { left: 46.5%; top: 33%; }
+@keyframes blink { 0%, 90.5%, 95.5%, 100% { transform: scaleY(0); } 92%, 94% { transform: scaleY(1.15); } }
+
+/* rarity tiers: one quiet live sparkle each (legendary keeps its shimmer) */
+.tier .spark { position: absolute; width: 13px; height: 13px; background: #fff; clip-path: polygon(50% 0, 61% 39%, 100% 50%, 61% 61%, 50% 100%, 39% 61%, 0 50%, 39% 39%); opacity: 0; animation: twinkle 6s ease-in-out infinite; }
+.tier .spark.s1 { top: 16%; left: 10%; }
+.tier .spark.s2 { top: 56%; left: 84%; width: 9px; height: 9px; animation-delay: 2.7s; }
+.tier.common { --sparkmax: .3; }
+.tier.rare { --sparkmax: .5; }
+.tier.epic { --sparkmax: .65; }
+@keyframes twinkle { 0%, 86%, 100% { opacity: 0; transform: scale(.2) rotate(0deg); } 90% { opacity: var(--sparkmax, .5); transform: scale(1) rotate(40deg); } 94% { opacity: .08; transform: scale(.45) rotate(80deg); } }
+
+/* paw-trail divider: prints appear one by one while scrolled through */
+.pawtrail { width: min(var(--maxw), 100% - 2.5rem); margin: -1.6rem auto -2.4rem; color: var(--subtle); opacity: .5; pointer-events: none; position: relative; z-index: 1; }
+.pawtrail svg { width: 100%; height: auto; }
+@media (max-width: 700px) { .pawtrail { margin: -1rem auto -1.6rem; opacity: .4; } }
+
+/* big translucent theme glyph drifting slower than the section content */
+.glyph { position: absolute; inset: 0; overflow: hidden; pointer-events: none; z-index: 0; }
+.glyph > div { position: absolute; top: 12%; width: clamp(240px, 30vw, 440px); opacity: .05; }
+.glyph.g-right > div { right: -5%; }
+.glyph.g-left > div { left: -5%; }
+.glyph svg, .glyph img { width: 100%; height: auto; }
+@media (max-width: 700px) { .glyph > div { width: 200px; opacity: .04; } }
+
+/* donation: heartbeat + two drifting mini hearts */
+.donate .heart svg { animation: heartbeat 3.4s ease-in-out infinite; transform-origin: 50% 60%; }
+@keyframes heartbeat { 0%, 55%, 100% { transform: scale(1); } 62% { transform: scale(1.07); } 68% { transform: scale(1); } 74% { transform: scale(1.05); } }
+.donate .dbit { position: absolute; width: 20px; opacity: .2; animation: bitfloat 10s ease-in-out infinite; pointer-events: none; }
+.donate .dbit.b1 { right: 8%; top: 16%; }
+.donate .dbit.b2 { right: 15%; bottom: 14%; width: 14px; animation-delay: 3s; }
+.donate .dbit svg { width: 100%; }
+
+/* full-screen mobile menu overlay */
+.menu-overlay { position: fixed; inset: 0; z-index: 200; background: var(--paper); color: var(--ink); display: flex; flex-direction: column; overflow-y: auto; overscroll-behavior: contain; }
+.menu-overlay .menu-top { display: flex; align-items: center; justify-content: space-between; height: 68px; flex: none; }
+.menu-close { width: 44px; height: 44px; display: grid; place-items: center; margin-right: -10px; }
+.menu-close svg { width: 26px; height: 26px; }
+.menu-nav { display: flex; flex-direction: column; align-items: flex-start; gap: .35rem; padding: 7vh 0 2rem; }
+.menu-nav a { font-family: var(--display); font-weight: 900; font-size: clamp(1.9rem, 8.5vw, 2.5rem); line-height: 1.25; padding: .3rem 0; color: var(--ink); }
+.menu-nav a.active { color: var(--red); }
+.menu-lang { margin-top: auto; padding-bottom: max(2rem, env(safe-area-inset-bottom)); }
+.menu-overlay .menu-paw { position: absolute; right: -6%; bottom: -4%; width: 45vw; max-width: 300px; opacity: .05; pointer-events: none; }
+@media (min-width: 901px) { .menu-overlay { display: none; } }
+
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation-duration: .001s !important; transition-duration: .001s !important; } }

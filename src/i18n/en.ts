@@ -138,7 +138,7 @@ const en = {
     ],
   },
   notfound: { title: 'This cat wandered off.', text: 'The page you are looking for does not exist.', home: 'Back home' },
-  common: { loading: 'Loading…', langLabel: 'Language' },
+  common: { loading: 'Loading…', langLabel: 'Language', close: 'Close' },
 }
 export default en
 export type Dict = typeof en

@@ -139,6 +139,6 @@ const fr: Dict = {
     ],
   },
   notfound: { title: 'Ce chat est parti se promener.', text: 'La page que vous cherchez n\'existe pas.', home: 'Retour à l\'accueil' },
-  common: { loading: 'Chargement…', langLabel: 'Langue' },
+  common: { loading: 'Chargement…', langLabel: 'Langue', close: 'Fermer' },
 }
 export default fr

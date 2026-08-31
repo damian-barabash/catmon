@@ -139,6 +139,6 @@ const pl: Dict = {
     ],
   },
   notfound: { title: 'Ten kot poszedł na spacer.', text: 'Taka strona nie istnieje.', home: 'Na start' },
-  common: { loading: 'Ładowanie…', langLabel: 'Język' },
+  common: { loading: 'Ładowanie…', langLabel: 'Język', close: 'Zamknij' },
 }
 export default pl

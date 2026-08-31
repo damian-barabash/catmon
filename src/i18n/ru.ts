@@ -139,6 +139,6 @@ const ru: Dict = {
     ],
   },
   notfound: { title: 'Этот кот ушёл гулять.', text: 'Такой страницы не существует.', home: 'На главную' },
-  common: { loading: 'Загрузка…', langLabel: 'Язык' },
+  common: { loading: 'Загрузка…', langLabel: 'Язык', close: 'Закрыть' },
 }
 export default ru

@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
-import { motion, useReducedMotion, useScroll, useSpring } from 'framer-motion'
+import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring } from 'framer-motion'
 import { LANG_NAMES, useI18n } from '../i18n'
 import { LANGS, SUPPORT_EMAIL, type Lang } from '../lib/config'
-import { CatLogo, CookieIcon, Social } from './Icons'
+import { CatLogo, CookieIcon, Paw, Social } from './Icons'
 import { getConsent, setConsent } from '../lib/consent'
 import { api } from '../lib/api'
 
@@ -12,6 +12,15 @@ function Header() {
   const [open, setOpen] = useState(false)
   const loc = useLocation()
   useEffect(() => setOpen(false), [loc.pathname])
+  // while the overlay is open: lock body scroll, close on Escape
+  useEffect(() => {
+    if (!open) return
+    const prev = document.body.style.overflow
+    document.body.style.overflow = 'hidden'
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setOpen(false) }
+    window.addEventListener('keydown', onKey)
+    return () => { document.body.style.overflow = prev; window.removeEventListener('keydown', onKey) }
+  }, [open])
   const links = (
     <>
       <NavLink to="/" end>{t.nav.home}</NavLink>
@@ -20,20 +29,50 @@ function Header() {
       <NavLink to="/contact">{t.nav.contact}</NavLink>
     </>
   )
+  const langSelect = (
+    <div className="lang">
+      <select aria-label={t.common.langLabel} value={lang} onChange={(e) => setLang(e.target.value as Lang)}>
+        {LANGS.map((l) => <option key={l} value={l}>{LANG_NAMES[l]}</option>)}
+      </select>
+    </div>
+  )
   return (
+    <>
     <header className="header">
       <div className="wrap">
         <Link to="/" className="brand" aria-label="CatMon"><CatLogo />CatMon</Link>
         <nav className="nav">{links}</nav>
-        <div className="lang">
-          <select aria-label={t.common.langLabel} value={lang} onChange={(e) => setLang(e.target.value as Lang)}>
-            {LANGS.map((l) => <option key={l} value={l}>{LANG_NAMES[l]}</option>)}
-          </select>
-        </div>
-        <button className="burger" aria-label="Menu" aria-expanded={open} onClick={() => setOpen(!open)}><span /></button>
+        {langSelect}
+        <button className="burger" aria-label="Menu" aria-expanded={open} aria-controls="mobile-menu" onClick={() => setOpen((o) => !o)}><span /></button>
       </div>
-      {open && <div className="wrap"><nav className="mobile-nav">{links}</nav></div>}
     </header>
+      {/* overlay lives OUTSIDE .header: its backdrop-filter would turn the
+          header into the containing block for position:fixed and trap the
+          overlay inside the 68px strip */}
+      <AnimatePresence>
+        {open && (
+          <motion.div
+            id="mobile-menu" className="menu-overlay" role="dialog" aria-modal="true"
+            initial={{ opacity: 0 }} animate={{ opacity: 1 }} exit={{ opacity: 0 }} transition={{ duration: .22 }}
+          >
+            <div className="wrap menu-top">
+              <Link to="/" className="brand" onClick={() => setOpen(false)}><CatLogo />CatMon</Link>
+              <button className="menu-close" aria-label={t.common.close} onClick={() => setOpen(false)}>
+                <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M4 4l16 16M20 4L4 20" stroke="currentColor" strokeWidth="2.4" strokeLinecap="round" /></svg>
+              </button>
+            </div>
+            <motion.nav
+              className="wrap menu-nav" onClick={() => setOpen(false)}
+              initial={{ y: 26, opacity: 0 }} animate={{ y: 0, opacity: 1 }} transition={{ duration: .3, delay: .06, ease: [0.22, 1, 0.36, 1] }}
+            >
+              {links}
+            </motion.nav>
+            <div className="wrap menu-lang">{langSelect}</div>
+            <Paw className="menu-paw" />
+          </motion.div>
+        )}
+      </AnimatePresence>
+    </>
   )
 }
 
