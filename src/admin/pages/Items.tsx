@@ -195,10 +195,10 @@ function EffectEditor({ eff, onChange }: { eff: Eff; onChange: (e: Eff) => void 
           </Field>
         ) : <div />}
       </div>
-      <Field label={tt('eff_special')} hint={special && ACTIVE_SPECIALS.has(special) ? tt('eff_active_hint') : undefined}>
+      <Field label={tt('eff_special')} hint={special ? [lbl(tt, 'spd_' + special, ''), ACTIVE_SPECIALS.has(special) ? tt('eff_active_hint') : ''].filter(Boolean).join(' · ') : undefined}>
         <select className="select" value={special} onChange={e => setSpecial(e.target.value)}>
           <option value="">{tt('eff_none')}</option>
-          {SPECIALS.map(s => <option key={s} value={s}>{lbl(tt, 'sp_' + s, s)}{ACTIVE_SPECIALS.has(s) ? ` — ${tt('eff_active')}` : ''}</option>)}
+          {SPECIALS.map(s => <option key={s} value={s} title={lbl(tt, 'spd_' + s, '')}>{lbl(tt, 'sp_' + s, s)}{ACTIVE_SPECIALS.has(s) ? ` — ${tt('eff_active')}` : ''}</option>)}
         </select>
       </Field>
     </div>
