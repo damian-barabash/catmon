@@ -1,3 +1,4 @@
+import { api } from './api'
 import { useEffect, useState, type ReactNode } from 'react'
 import { Navigate, NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import './admin.css'
@@ -42,6 +43,17 @@ const NAV = [
 function Shell({ children }: { children: ReactNode }) {
   const { t, theme, setTheme, lang, setLang, admin, logout, mock } = useStore()
   const [open, setOpen] = useState(false)
+  // непрочитанные обращения — бейдж в меню, опрос раз в минуту
+  const [unread, setUnread] = useState(0)
+  useEffect(() => {
+    let dead = false
+    const tick = () => api.contactsUnread().then(r => { if (!dead) setUnread(r.count) }).catch(() => {})
+    tick()
+    const iv = setInterval(tick, 60_000)
+    const onUnread = (e: Event) => setUnread((e as CustomEvent<number>).detail)
+    window.addEventListener('adm-unread', onUnread as EventListener)
+    return () => { dead = true; clearInterval(iv); window.removeEventListener('adm-unread', onUnread as EventListener) }
+  }, [])
   const [expanded, setExpanded] = useState(() => { try { return localStorage.getItem('admin.side') === '1' } catch { return false } })
   const refreshing = useRefreshing()
   const [q, setQ] = useState('')
@@ -60,6 +72,7 @@ function Shell({ children }: { children: ReactNode }) {
           {NAV.filter(n => n.to !== '/admin/admins' || admin?.role === 'owner').map(n => (
             <NavLink key={n.to} to={n.to} end={'end' in n && n.end} className={({ isActive }) => (isActive ? 'active' : '')} aria-label={t(n.k)}>
               <n.I size={22} /><span className="lbl">{t(n.k)}</span><span className="tip">{t(n.k)}</span>
+              {n.to === '/admin/contacts' && unread > 0 && <span className="nav-badge">{unread > 99 ? '99+' : unread}</span>}
             </NavLink>
           ))}
         </nav>

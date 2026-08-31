@@ -2,7 +2,7 @@ import { useMemo, useState } from 'react'
 import { api, type ContactRequest } from '../api'
 import { fmtDate, useAsync, useStore } from '../store'
 import { Card, Empty, ErrorBox, Seg, Skeleton, initials } from '../ui'
-import { IcInbox, IcMail, IcSearch } from '../icons'
+import { IcInbox, IcMail, IcSearch, IcTrash } from '../icons'
 
 type St = 'all' | 'new' | 'in_progress' | 'done'
 export default function Contacts() {
@@ -14,10 +14,20 @@ export default function Contacts() {
   const { data, loading, error, setData } = useAsync(() => api.contactsList(), [], 'contacts')
   const list = useMemo(() => (data?.contacts ?? []).filter(c => (st === 'all' || c.status === st) && (kind === 'all' || c.kind === kind) && (!q || [c.name, c.email, c.message].some(s => s?.toLowerCase().includes(q.toLowerCase())))).sort((a, b) => b.created_at.localeCompare(a.created_at)), [data, st, kind, q])
   const cur = list.find(c => c.id === sel) ?? list[0]
+  const syncBadge = (contacts: ContactRequest[]) =>
+    window.dispatchEvent(new CustomEvent('adm-unread', { detail: contacts.filter(x => x.status === 'new').length }))
   const setStatus = async (c: ContactRequest, status: ContactRequest['status']) => {
     const prev = data
-    setData({ contacts: (data?.contacts ?? []).map(x => x.id === c.id ? { ...x, status } : x) })
-    try { await api.contactSetStatus(c.id, status); toast(t('saved')) } catch (e) { if (prev) setData(prev); toast((e as Error).message, 'err') }
+    const next = (data?.contacts ?? []).map(x => x.id === c.id ? { ...x, status } : x)
+    setData({ contacts: next }); syncBadge(next)
+    try { await api.contactSetStatus(c.id, status); toast(t('saved')) } catch (e) { if (prev) { setData(prev); syncBadge(prev.contacts) } toast((e as Error).message, 'err') }
+  }
+  const del = async (c: ContactRequest) => {
+    if (!confirm(t('c_del_confirm'))) return
+    const prev = data
+    const next = (data?.contacts ?? []).filter(x => x.id !== c.id)
+    setData({ contacts: next }); syncBadge(next); if (sel === c.id) setSel(null)
+    try { await api.contactDelete(c.id); toast(t('deleted')) } catch (e) { if (prev) { setData(prev); syncBadge(prev.contacts) } toast((e as Error).message, 'err') }
   }
   const kindL = (k: ContactRequest['kind']) => t(`c_${k}` as 'c_bug')
   const stL = (s: ContactRequest['status']) => t(`st_${s}` as 'st_new')
@@ -54,6 +64,7 @@ export default function Contacts() {
                 <div><b>{cur.name}</b><div className="small muted mono">{cur.email} · {fmtDate(cur.created_at, true)}{cur.ip ? ` · ${cur.ip}` : ''}</div></div>
                 <div className="right row">
                   <Seg value={cur.status} onChange={v => setStatus(cur, v)} options={[{ v: 'new', l: stL('new') }, { v: 'in_progress', l: stL('in_progress') }, { v: 'done', l: stL('done') }]} />
+                  <button className="btn icon danger" onClick={() => del(cur)} aria-label={t('c_del')} title={t('c_del')}><IcTrash size={16} /></button>
                   <a className="btn ink sm" href={`mailto:${cur.email}?subject=${encodeURIComponent(`Re: CatMon — ${kindL(cur.kind)}`)}&body=${encodeURIComponent(`\n\n> ${cur.message.replace(/\n/g, '\n> ')}`)}`}><IcMail size={16} />{t('reply_mail')}</a>
                 </div>
               </div>

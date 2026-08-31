@@ -234,6 +234,8 @@ export const api = {
   // contacts
   contactsList: (status?: string) => call<{ contacts: ContactRequest[] }>('contacts_list', status ? { status } : {}),
   contactSetStatus: (id: string, status: ContactRequest['status']) => call<{ ok: true }>('contact_set_status', { id, status }),
+  contactsUnread: () => call<{ count: number }>('contacts_unread'),
+  contactDelete: (id: string) => call<{ ok: true }>('contact_delete', { id }),
   // seasons
   seasonsList: () => call<{ seasons: Season[] }>('seasons_list'),
   seasonCurrent: () => call<{ season: Season | null }>('season_current'),
