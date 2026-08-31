@@ -117,6 +117,7 @@ const pl: Dict = {
     errText: 'Spróbuj za minutę albo napisz na',
     errRate: 'Zbyt wiele wiadomości z Twojej sieci. Spróbuj za godzinę.',
     required: 'Wypełnij wszystkie pola i zaakceptuj politykę.',
+    tooShort: 'Wiadomość jest za krótka — minimum 5 znaków.',
   },
   blog: { title: 'Blog', sub: 'Dzienniki twórców, kocie historie, patch notes.', empty: 'Jeszcze nie ma wpisów. Wkrótce.', back: 'Wszystkie wpisy', notFound: 'Ten wpis nie istnieje (albo nie jest jeszcze opublikowany).', gallery: 'Galeria' },
   policy: { updated: 'Wersja', fallbackNote: 'To tymczasowa wersja angielska. Pełny tekst pojawi się tu wkrótce.', loading: 'Ładowanie…' },

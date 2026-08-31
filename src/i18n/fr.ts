@@ -117,6 +117,7 @@ const fr: Dict = {
     errText: 'Réessayez dans une minute ou écrivez à',
     errRate: 'Trop de messages depuis votre réseau. Réessayez dans une heure.',
     required: 'Remplissez tous les champs et acceptez la politique.',
+    tooShort: 'Le message est trop court — au moins 5 caractères.',
   },
   blog: { title: 'Blog', sub: 'Carnets de dev, histoires de chats, notes de mise à jour.', empty: 'Pas encore d\'articles. Bientôt.', back: 'Tous les articles', notFound: 'Cet article n\'existe pas (ou n\'est pas encore publié).', gallery: 'Galerie' },
   policy: { updated: 'Version', fallbackNote: 'Ceci est une version anglaise provisoire. Le texte complet apparaîtra ici prochainement.', loading: 'Chargement…' },

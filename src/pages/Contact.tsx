@@ -13,18 +13,21 @@ export default function Contact() {
   useSeo('contact')
   const [kind, setKind] = useState<ContactKind>('support')
   const [f, setF] = useState({ name: '', email: '', message: '', consent: false, website: '' })
-  const [state, setState] = useState<'idle' | 'sending' | 'ok' | 'err' | 'rate' | 'invalid'>('idle')
+  const [state, setState] = useState<'idle' | 'sending' | 'ok' | 'err' | 'rate' | 'invalid' | 'short'>('idle')
 
   const submit = async (e: FormEvent) => {
     e.preventDefault()
     if (!f.name.trim() || !/^\S+@\S+\.\S+$/.test(f.email) || !f.message.trim() || !f.consent) { setState('invalid'); return }
+    // сервер требует ≥5 символов (bad_message) — скажем об этом человеком
+    if (f.message.trim().length < 5) { setState('short'); return }
     setState('sending')
     try {
       await api.contact({ kind, name: f.name.trim(), email: f.email.trim(), message: f.message.trim(), consent: true, website: f.website, meta: { lang, ua: navigator.userAgent, path: location.pathname } })
       setState('ok')
       setF({ name: '', email: '', message: '', consent: false, website: '' })
     } catch (err) {
-      setState(err instanceof ApiError && /rate/i.test(err.code) ? 'rate' : 'err')
+      const code = err instanceof ApiError ? err.code : ''
+      setState(/rate/.test(code) ? 'rate' : code === 'bad_message' ? 'short' : code === 'bad_email' || code === 'consent_required' ? 'invalid' : 'err')
     }
   }
 
@@ -55,6 +58,7 @@ export default function Contact() {
               <span>{t.contact.consent} <Link to="/privacy">{t.contact.consentLink}</Link>.</span>
             </label>
             {state === 'invalid' && <div className="notice err"><Cross /><div><b>{t.contact.required}</b></div></div>}
+            {state === 'short' && <div className="notice err"><Cross /><div><b>{t.contact.tooShort}</b></div></div>}
             {(state === 'err' || state === 'rate') && (
               <div className="notice err"><Cross /><div><b>{t.contact.errTitle}</b><span>{state === 'rate' ? t.contact.errRate : <>{t.contact.errText} <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a></>}</span></div></div>
             )}

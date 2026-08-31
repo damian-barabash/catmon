@@ -116,6 +116,7 @@ const en = {
     errText: 'Please try again in a minute or write to',
     errRate: 'Too many messages from your network. Try again in an hour.',
     required: 'Please fill in all fields and accept the policy.',
+    tooShort: 'Message is too short — at least 5 characters.',
   },
   blog: { title: 'Blog', sub: 'Dev diaries, cat stories, patch notes.', empty: 'No posts yet. Soon.', back: 'All posts', notFound: 'This post does not exist (or is not published yet).', gallery: 'Gallery' },
   policy: { updated: 'Version', fallbackNote: 'This is an interim English version. The full text will appear here shortly.', loading: 'Loading…' },
