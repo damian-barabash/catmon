@@ -96,7 +96,8 @@
 .adm .check { display: inline-flex; align-items: center; gap: 8px; cursor: pointer; }
 .adm .check input { width: 18px; height: 18px; accent-color: var(--accent); }
 .adm .seg { display: inline-flex; background: var(--mist); border-radius: 999px; padding: 3px; gap: 2px; flex-wrap: wrap; }
-.adm .seg button { border: 0; background: transparent; padding: 6px 12px; border-radius: 999px; cursor: pointer; color: var(--subtle); font-weight: 500; font-size: 13px; }
+.adm .seg button { border: 0; background: transparent; padding: 6px 12px; border-radius: 999px; cursor: pointer; color: var(--subtle); font-weight: 500; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; white-space: nowrap; }
+.adm .seg button svg { flex: none; }
 .adm .seg button.on { background: var(--card); color: var(--ink); box-shadow: 0 1px 3px rgba(0,0,0,.08); }
 .adm.dark .seg button.on { background: var(--paper); }
 .adm .chip { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: 12px; font-weight: 500; background: var(--mist); color: var(--ink); border: 1px solid transparent; }
@@ -195,7 +196,8 @@
 .adm .item .ic img { width: 40px; height: 40px; object-fit: contain; }
 .adm .item .nm { font-size: 12.5px; font-weight: 500; line-height: 1.2; } .adm .item .qt { font-size: 11.5px; color: var(--subtle); }
 .adm .actions-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 8px; }
-.adm .actions-grid .btn { justify-content: flex-start; border-radius: 14px; }
+.adm .actions-grid .btn { justify-content: flex-start; border-radius: 14px; white-space: normal; text-align: left; line-height: 1.2; min-height: 46px; padding: 8px 12px; }
+.adm .actions-grid .btn svg { flex: none; }
 .adm .timeline { display: flex; flex-direction: column; gap: 0; }
 .adm .timeline .ev { display: grid; grid-template-columns: 22px 1fr; gap: 10px; padding: 8px 0; position: relative; }
 .adm .timeline .ev::before { content: ''; position: absolute; left: 10px; top: 26px; bottom: -8px; width: 2px; background: var(--line); }
