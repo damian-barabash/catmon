@@ -18,6 +18,8 @@ const en = {
     sub: 'Photograph a real street cat — the AI turns it into a unique collectible card nobody else can ever get. Build your collection, battle live players and win tournaments.',
     free: 'Free mobile game · iOS & Android · coming soon',
     charity: 'Part of the project helps the cats of the Na Paluchu shelter (Warsaw)',
+    charityOne: 'Part of the project helps the cats of {n}',
+    charityMany: 'Part of the project helps the cats of these shelters: {n}',
     soon: 'Coming soon',
     appstore: 'Download on the',
     appstoreName: 'App Store',

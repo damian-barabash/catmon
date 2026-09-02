@@ -2,7 +2,8 @@ import { useEffect, useState } from 'react'
 import { api, type Setting } from '../api'
 import { fmtDate, useAsync, useStore } from '../store'
 import { Card, ErrorBox, Field, Skeleton, Switch } from '../ui'
-import { IcBolt, IcChest, IcCoins, IcGem, IcMap, IcScan, IcServer, IcTrophy, IcWarn, IcWorld } from '../icons'
+import { IcBolt, IcChest, IcGem, IcMap, IcScan, IcServer, IcTrophy, IcWarn, IcWorld } from '../icons'
+import DonationCard, { type DonationValue } from './Donation'
 
 type Obj = Record<string, unknown>
 const KNOWN = ['maintenance', 'scan_limits', 'energy', 'chest_prices', 'tournament', 'market_fee_pct', 'xp_event_mult', 'min_build', 'donation', 'store_links', 'map_tile_limit']
@@ -68,14 +69,13 @@ export default function Settings() {
             <div className="row"><button className="btn ink sm" disabled={!!busy} onClick={async () => { await save('market_fee_pct'); await save('xp_event_mult'); await save('min_build') }}>{t('save')}</button></div>
           </div>
         </Card>
-        <Card icon={<IcCoins size={18} />} title={t('donation')} right={<Switch on={!!don.enabled} onChange={v => setSub('donation', 'enabled', v)} />}>
-          <div className="setting-block">
-            <Field label={t('donation_url')}><input className="input" value={(don.url as string) ?? ''} onChange={e => setSub('donation', 'url', e.target.value)} placeholder="https://" /></Field>
-            <Field label={`${t('title')} (ru)`}><input className="input" value={((don.title_i18n as Obj)?.ru as string) ?? ''} onChange={e => setSub('donation', 'title_i18n', { ...(don.title_i18n as Obj ?? {}), ru: e.target.value })} /></Field>
-            <Field label={`${t('body')} (ru)`}><textarea className="textarea" style={{ minHeight: 70 }} value={((don.text_i18n as Obj)?.ru as string) ?? ''} onChange={e => setSub('donation', 'text_i18n', { ...(don.text_i18n as Obj ?? {}), ru: e.target.value })} /></Field>
-            <SaveBtn k="donation" />
-          </div>
-        </Card>
+        <DonationCard
+          value={don as DonationValue}
+          onChange={v => set('donation', v)}
+          onSave={() => save('donation')}
+          busy={busy === 'donation'}
+          updated={meta.donation?.updated_at ? fmtDate(meta.donation.updated_at, true) : undefined}
+        />
         <Card icon={<IcServer size={18} />} title={t('store_links')}>
           <div className="setting-block">
             <Field label="App Store"><input className="input" value={(links.appstore as string) ?? ''} onChange={e => setSub('store_links', 'appstore', e.target.value)} placeholder="https://apps.apple.com/…" /></Field>

@@ -19,6 +19,8 @@ const pl: Dict = {
     sub: 'Sfotografuj prawdziwego kota na ulicy — AI zamieni go w unikalną kartę kolekcjonerską, której nikt inny nie zdobędzie. Zapełniaj kolekcję, walcz z żywymi graczami i wygrywaj turnieje.',
     free: 'Darmowa gra mobilna · iOS i Android · wkrótce',
     charity: 'Część projektu wspiera koty ze schroniska Na Paluchu (Warszawa)',
+    charityOne: 'Część projektu pomaga kotom ze schroniska {n}',
+    charityMany: 'Część projektu pomaga kotom ze schronisk: {n}',
     soon: 'Wkrótce',
     appstore: 'Pobierz w',
     appstoreName: 'App Store',

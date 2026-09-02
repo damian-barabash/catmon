@@ -27,10 +27,31 @@ export interface SeasonPublic {
   season: { no: number; name: string; name_i18n?: Record<string, string> | null; ends_at: string; rewards: unknown } | null
   top: { place: number; username: string; rating: number; avatar_url: string | null; frame_code: string | null }[]
 }
+/** Приют из world_settings.donation.shelters (нормализован site-api). */
+export interface Shelter {
+  id: string
+  name: string
+  url: string
+  heart?: string
+  logo_url?: string | null
+  title_i18n?: Record<string, string>
+  text_i18n?: Record<string, string>
+  city_i18n?: Record<string, string>
+}
 export interface StoreLinks {
   appstore: string
   googleplay: string
-  donation: { enabled: boolean; url: string; title_i18n?: Record<string, string>; text_i18n?: Record<string, string>; title?: string; text?: string } | null
+  /** enabled — общий тумблер; shelters — список карточек; плоские поля — legacy. */
+  donation: {
+    enabled: boolean
+    url: string
+    heart?: string
+    shelters?: Shelter[]
+    title_i18n?: Record<string, string>
+    text_i18n?: Record<string, string>
+    title?: string
+    text?: string
+  } | null
 }
 
 export class ApiError extends Error {

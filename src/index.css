@@ -182,6 +182,18 @@ a.pill.charity:hover { border-color: var(--red); transform: translateY(-1px); }
 .donate .btn { background: var(--paper); color: var(--ink); border-color: var(--paper); }
 .donate .btn:disabled { opacity: .55; }
 @media (max-width: 800px) { .donate { grid-template-columns: 1fr; text-align: center; justify-items: center; } }
+.donates { display: grid; gap: 1.25rem; }
+.donates.multi { grid-template-columns: repeat(auto-fit, minmax(340px, 1fr)); }
+.donate.multi { grid-template-columns: auto 1fr; grid-template-areas: 'heart text' 'btn btn'; gap: 1.25rem 1.5rem; align-items: start; padding: clamp(1.4rem, 3vw, 2rem); }
+.donate.multi .heart { grid-area: heart; width: 68px; height: 68px; }
+.donate.multi > div:not(.heart) { grid-area: text; padding-right: clamp(52px, 8vw, 86px); }
+.donate.multi .btn { grid-area: btn; justify-self: start; }
+.donate.multi h3 { font-size: 1.2rem; }
+.donate .d-logo { position: absolute; top: 1.1rem; right: 1.2rem; width: clamp(56px, 9vw, 104px); height: auto; max-height: 74px; object-fit: contain; object-position: top right; opacity: .22; pointer-events: none; }
+.donate:not(.multi):has(.d-logo) { min-height: 196px; }
+.donate:not(.multi):has(.d-logo) .btn { align-self: end; }
+.donate.multi .d-logo { width: clamp(48px, 7vw, 76px); max-height: 56px; }
+@media (max-width: 800px) { .donate.multi { grid-template-columns: 1fr; grid-template-areas: 'heart' 'text' 'btn'; justify-items: center; } .donate.multi .btn { justify-self: center; } .donate.multi > div:not(.heart) { padding-right: 0; } .donate .d-logo { opacity: .16; width: 56px; } }
 
 /* steps */
 .steps { display: grid; grid-template-columns: repeat(4, 1fr); gap: 1.25rem; counter-reset: step; }
@@ -460,7 +472,7 @@ a.pill.charity:hover { border-color: var(--red); transform: translateY(-1px); }
 @media (max-width: 700px) { .glyph > div { width: 200px; opacity: .04; } }
 
 /* donation: heartbeat + two drifting mini hearts */
-.donate .heart svg { animation: heartbeat 3.4s ease-in-out infinite; transform-origin: 50% 60%; }
+.donate .heart svg, .donate .heart > span { animation: heartbeat 3.4s ease-in-out infinite; transform-origin: 50% 60%; }
 @keyframes heartbeat { 0%, 55%, 100% { transform: scale(1); } 62% { transform: scale(1.07); } 68% { transform: scale(1); } 74% { transform: scale(1.05); } }
 .donate .dbit { position: absolute; width: 20px; opacity: .2; animation: bitfloat 10s ease-in-out infinite; pointer-events: none; }
 .donate .dbit.b1 { right: 8%; top: 16%; }

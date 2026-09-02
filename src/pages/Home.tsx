@@ -3,8 +3,9 @@ import { Link } from 'react-router-dom'
 import { motion, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform, type MotionValue } from 'framer-motion'
 import { useI18n } from '../i18n'
 import { useSeo } from '../lib/seo'
-import { api, type BlogPostSummary, type StoreLinks } from '../lib/api'
-import { CatLogo, HeartCat, Paw } from '../components/Icons'
+import { api, type BlogPostSummary, type Shelter, type StoreLinks } from '../lib/api'
+import { CatLogo, Paw } from '../components/Icons'
+import { HeartMark } from '../lib/hearts'
 import { Reveal } from '../components/Reveal'
 import { StoreBadges } from '../components/StoreBadges'
 import { PostCard } from './Blog'
@@ -186,7 +187,7 @@ function Hero({ links }: { links: StoreLinks | null }) {
           </motion.div>
           <motion.div className="hero-badges" initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: .6, delay: .5 }}>
             <span className="pill">{t.hero.free}</span>
-            <a className="pill charity" href="#donate"><HeartMini />{t.hero.charity}</a>
+            <a className="pill charity" href="#donate"><HeartMark name={links?.donation?.heart} size={14} color="var(--red)" style={{ flex: 'none' }} />{charityLabel(links, t)}</a>
           </motion.div>
           <motion.div initial={{ opacity: 0, rotate: -8, scale: .9 }} animate={{ opacity: 1, rotate: -1.5, scale: 1 }} transition={{ delay: .7, type: 'spring', stiffness: 200 }}>
             <span className="nop2w">{t.hero.noP2W}</span>
@@ -233,25 +234,67 @@ function Hero({ links }: { links: StoreLinks | null }) {
   )
 }
 
-function Donation({ links }: { links: StoreLinks | null }) {
+
+
+/** Бейдж в hero: перечисляет приюты из админки, иначе — дефолтный текст. */
+function charityLabel(links: StoreLinks | null, t: ReturnType<typeof useI18n>['t']): string {
+  const names = (links?.donation?.shelters ?? []).map((x) => x.name).filter(Boolean)
+  if (!names.length) return t.hero.charity
+  return (names.length === 1 ? t.hero.charityOne : t.hero.charityMany).replace('{n}', names.join(', '))
+}
+
+/**
+ * Приюты для показа: список из админки, иначе — legacy-поля, иначе один
+ * дефолтный приют из словарей (тексты подставит ShelterCard).
+ */
+function shelterList(d: StoreLinks['donation']): Shelter[] {
+  if (d?.shelters?.length) return d.shelters
+  if (d?.url || d?.title_i18n) {
+    return [{ id: 'legacy', name: '', url: d.url ?? '', heart: d.heart, logo_url: null, title_i18n: d.title_i18n, text_i18n: d.text_i18n }]
+  }
+  return [{ id: 'default', name: '', url: '', heart: d?.heart, logo_url: null }]
+}
+
+/**
+ * Донат приютам. Список приютов приходит из world_settings.donation (админка);
+ * пока их нет — рисуем один дефолтный «Na Paluchu» из словарей. Логотип приюта
+ * лежит полупрозрачным знаком в правом верхнем углу карточки.
+ */
+function ShelterCard({ s, on, single }: { s: Shelter; on: boolean; single: boolean }) {
   const { t, lang } = useI18n()
+  const pick = (m?: Record<string, string>) => m?.[lang] || m?.ru || m?.en || ''
+  const title = pick(s.title_i18n) || t.donation.title
+  const text = pick(s.text_i18n) || t.donation.text
+  // город дописываем одной фразой; точка в конце текста не должна удваиваться
+  const city = pick(s.city_i18n)
+  const body = `${on ? text : t.donation.soon}`.replace(/\.\s*$/, '')
+  return (
+    <div className={`donate ${single ? '' : 'multi'}`}>
+      {s.logo_url && <img className="d-logo" src={s.logo_url} alt={s.name || title} loading="lazy" />}
+      <i className="dbit b1" aria-hidden="true"><HeartMini /></i>
+      <i className="dbit b2" aria-hidden="true"><HeartMini /></i>
+      <div className="heart hover"><HeartMark name={s.heart} size="100%" color="var(--red)" /></div>
+      <div>
+        {!on && <span className="tag">{t.hero.soon}</span>}
+        <h3>{title}</h3>
+        <p>{body}{city ? `. ${city}` : ''}.</p>
+      </div>
+      {on
+        ? <a className="btn" href={s.url} target="_blank" rel="noopener">{t.donation.cta}</a>
+        : <button className="btn" disabled>{t.donation.cta}</button>}
+    </div>
+  )
+}
+
+function Donation({ links }: { links: StoreLinks | null }) {
   const d = links?.donation
-  const on = !!(d?.enabled && d.url)
-  const title = d?.title_i18n?.[lang] || d?.title || t.donation.title
-  const text = d?.text_i18n?.[lang] || d?.text || t.donation.text
+  const list = shelterList(d)
+  const master = !!d?.enabled
   return (
     <section className="section" style={{ paddingTop: 0 }} id="donate">
       <Reveal className="wrap">
-        <div className="donate">
-          <i className="dbit b1" aria-hidden="true"><HeartMini /></i>
-          <i className="dbit b2" aria-hidden="true"><HeartMini /></i>
-          <div className="heart hover"><HeartCat /></div>
-          <div>
-            {!on && <span className="tag">{t.hero.soon}</span>}
-            <h3>{title}</h3>
-            <p>{on ? text : t.donation.soon}. {t.donation.city}.</p>
-          </div>
-          {on ? <a className="btn" href={d!.url} target="_blank" rel="noopener">{t.donation.cta}</a> : <button className="btn" disabled>{t.donation.cta}</button>}
+        <div className={`donates ${list.length > 1 ? 'multi' : ''}`}>
+          {list.map((s) => <ShelterCard key={s.id} s={s} on={master && !!s.url} single={list.length === 1} />)}
         </div>
       </Reveal>
     </section>

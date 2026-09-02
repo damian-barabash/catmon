@@ -232,6 +232,8 @@ export const api = {
   blogSave: (p: { id?: string; slug: string; title_ru: string; excerpt_ru: string; body_ru: string; tags: string[]; cover_path?: string | null; gallery: string[]; status: 'draft' | 'published' }) => call<{ ok: true; post?: BlogPost; id?: string }>('blog_save', p),
   blogDelete: (id: string) => call<{ ok: true }>('blog_delete', { id }),
   blogUpload: (filename: string, b64: string) => call<{ path: string; url: string }>('blog_upload', { filename, b64 }),
+  /** Загрузка медиа в bucket site-media в свою папку (лого приютов и т.п.). */
+  mediaUpload: (filename: string, b64: string, folder: string) => call<{ path: string; url: string }>('blog_upload', { filename, b64, folder }),
   blogTranslateMissing: () => call<{ ok: true; translated?: string[] | null; remaining?: number }>('blog_translate_missing'),
   // contacts
   contactsList: (status?: string) => call<{ contacts: ContactRequest[] }>('contacts_list', status ? { status } : {}),
@@ -255,6 +257,8 @@ export const api = {
   adminCreate: (p: { email: string; password: string; name: string; role: Role }) => call<{ ok: true; admin?: Admin }>('admin_create', p),
   adminDelete: (id: string) => call<{ ok: true }>('admin_delete', { id }),
   aiTranslate: (text_ru: string) => call<{ en: string; pl: string; fr: string }>('ai_translate', { text_ru }),
+  /** Перевод нескольких полей разом: {title:'..'} → {title:{ru,en,pl,fr}}. */
+  aiTranslateFields: (fields: Record<string, string>) => call<Record<string, I18n>>('ai_translate', { fields }),
   // cats & items admin
   catsList: (p: { q?: string; rarity?: string; archetype?: string; coat_class?: string; sort?: string; limit?: number; offset?: number }) =>
     call<{ cats: CatRow[]; total: number }>('cats_list', p),

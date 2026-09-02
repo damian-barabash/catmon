@@ -19,6 +19,8 @@ const fr: Dict = {
     sub: 'Photographiez un vrai chat dans la rue — l\'IA le transforme en carte de collection unique que personne d\'autre n\'obtiendra. Remplissez votre collection, affrontez de vrais joueurs et gagnez des tournois.',
     free: 'Jeu mobile gratuit · iOS et Android · bientôt',
     charity: 'Une partie du projet aide les chats du refuge Na Paluchu (Varsovie)',
+    charityOne: 'Une partie du projet aide les chats du refuge {n}',
+    charityMany: 'Une partie du projet aide les chats des refuges : {n}',
     soon: 'Bientôt',
     appstore: 'Télécharger dans l\'',
     appstoreName: 'App Store',

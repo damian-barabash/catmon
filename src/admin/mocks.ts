@@ -72,7 +72,10 @@ const settings: Setting[] = [
   { key: 'market_fee_pct', value: 10 },
   { key: 'xp_event_mult', value: 1 },
   { key: 'min_build', value: 0 },
-  { key: 'donation', value: { enabled: false, url: '', title_i18n: { ru: '' }, text_i18n: { ru: '' } } },
+  { key: 'donation', value: { enabled: false, heart: 'cat', shelters: [
+    { id: 'na-paluchu', name: 'Na Paluchu', url: '', logo_path: '', heart: 'cat', enabled: true, title_i18n: { ru: 'Помоги котикам приюта «Na Paluchu»' }, text_i18n: { ru: 'Крупнейший приют для животных в Варшаве заботится о сотнях котов.' }, city_i18n: { ru: 'Варшава, Польша' } },
+    { id: 'koty_krakow', name: 'Koci Dom', url: 'https://example.org/help', logo_path: '', heart: 'house', enabled: true, title_i18n: { ru: 'Кошачий дом в Кракове' }, text_i18n: { ru: 'Небольшой приют на 40 котов, живёт на пожертвования.' }, city_i18n: { ru: 'Краков, Польша' } },
+  ] } },
   { key: 'store_links', value: { appstore: '', googleplay: '' } },
   { key: 'map_tile_limit', value: 100000 },
   { key: 'experimental_flags', value: { newbie_trail: true, patrol: true } },
