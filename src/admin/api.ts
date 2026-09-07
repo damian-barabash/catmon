@@ -42,6 +42,7 @@ export interface DailyPoint {
   day: string; new_players: number; active: number; scans: number; cats: number
   battles: number; chests: number; gems_spent: number; revenue_pln: number
   gems_issued?: number
+  gems_exact?: boolean // false = день до включения gem_ledger, цифры оценочные
 }
 export interface TopCat { id: string; name: string; rarity: Rarity; owners_count: number; photo_path?: string; card_no?: number }
 export interface Dashboard {

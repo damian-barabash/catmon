@@ -2,7 +2,7 @@ import { useEffect, useRef, useState } from 'react'
 import { Link, useNavigate, useParams } from 'react-router-dom'
 import { api, fileToBase64, mediaUrl, type BlogPost } from '../api'
 import { useStore } from '../store'
-import { Card, Field, Seg, Skeleton, ErrorBox } from '../ui'
+import { Card, Field, Modal, Seg, Skeleton, ErrorBox } from '../ui'
 import { IcArrowLeft, IcBold, IcClose, IcCode, IcHeading, IcImage, IcItalic, IcLink, IcList, IcQuote, IcUpload } from '../icons'
 import { TranslatedBadge } from './Blog'
 import { renderMd } from '../md'
@@ -61,6 +61,8 @@ export default function BlogEditor() {
   const [busy, setBusy] = useState(false)
   const [drag, setDrag] = useState(false)
   const [dragIdx, setDragIdx] = useState<number | null>(null)
+  const [coverDrag, setCoverDrag] = useState(false)
+  const [pickCover, setPickCover] = useState(false)
   const [uploading, setUploading] = useState(0)
   const [urlCache, setUrlCache] = useState<Record<string, string>>({})
 
@@ -80,6 +82,21 @@ export default function BlogEditor() {
     for (const file of Array.from(files)) { try { const path = await upload(file); setF(x => ({ ...x, gallery: [...x.gallery, path], cover: x.cover ?? path })) } catch (e) { toast((e as Error).message, 'err') } }
   }
   const move = (from: number, to: number) => setF(x => { const g = [...x.gallery]; const [it] = g.splice(from, 1); g.splice(to, 0, it); return { ...x, gallery: g } })
+  // обложка: свой файл, отдельно от галереи (её можно и не заводить)
+  const setCoverFile = async (files: FileList | null) => {
+    const file = files?.[0]
+    if (!file) return
+    try { const path = await upload(file); setF(x => ({ ...x, cover: path })) } catch (e) { toast((e as Error).message, 'err') }
+  }
+  // заменить одно фото галереи, сохранив его место (и обложку, если это она)
+  const replaceAt = async (i: number, files: FileList | null) => {
+    const file = files?.[0]
+    if (!file) return
+    try {
+      const path = await upload(file)
+      setF(x => { const g = [...x.gallery]; const old = g[i]; g[i] = path; return { ...x, gallery: g, cover: x.cover === old ? path : x.cover } })
+    } catch (e) { toast((e as Error).message, 'err') }
+  }
   const save = async (status = f.status) => {
     if (!f.title.trim() || !f.slug.trim()) { toast(t('required'), 'err'); return }
     setBusy(true)
@@ -120,20 +137,60 @@ export default function BlogEditor() {
         </div>
         <div className="grid" style={{ gap: 14, alignContent: 'start' }}>
           <Card title={t('cover')}>
-            <div className="cover-prev">{f.cover ? <img src={urlOf(f.cover)} alt="" /> : <IcImage size={28} />}</div>
-            <p className="small muted" style={{ marginTop: 6 }}>{f.cover ? f.cover : '—'}</p>
+            <div
+              className={`cover-prev editable ${coverDrag ? 'on' : ''}`}
+              onDragOver={e => { e.preventDefault(); setCoverDrag(true) }}
+              onDragLeave={() => setCoverDrag(false)}
+              onDrop={e => { e.preventDefault(); setCoverDrag(false); setCoverFile(e.dataTransfer.files) }}
+              onClick={() => document.getElementById('cover-input')?.click()}
+              role="button" tabIndex={0}
+              onKeyDown={e => { if (e.key === 'Enter') document.getElementById('cover-input')?.click() }}
+              title={t('cover_replace')}
+            >
+              {f.cover ? <img src={urlOf(f.cover)} alt="" /> : <IcImage size={28} />}
+              <span className="cover-hint"><IcUpload size={18} />{f.cover ? t('cover_replace') : t('cover_upload')}</span>
+            </div>
+            <input id="cover-input" type="file" accept="image/*" hidden onChange={e => { setCoverFile(e.target.files); e.target.value = '' }} />
+            <div className="row" style={{ marginTop: 8, gap: 8, flexWrap: 'wrap' }}>
+              <button type="button" className="btn sm" onClick={() => document.getElementById('cover-input')?.click()}>
+                <IcUpload size={14} />{f.cover ? t('cover_replace') : t('cover_upload')}
+              </button>
+              {f.gallery.length > 0 && (
+                <button type="button" className="btn sm" onClick={() => setPickCover(true)}><IcImage size={14} />{t('cover_from_gallery')}</button>
+              )}
+              {f.cover && (
+                <button type="button" className="btn sm" onClick={() => setF(x => ({ ...x, cover: null }))}><IcClose size={14} />{t('cover_clear')}</button>
+              )}
+            </div>
+            <p className="small muted" style={{ marginTop: 6, overflowWrap: 'anywhere' }}>{f.cover ? f.cover : '—'}</p>
           </Card>
+          <Modal open={pickCover} title={t('cover_from_gallery')} onClose={() => setPickCover(false)}>
+              <div className="gal">
+                {f.gallery.map(p2 => (
+                  <div key={p2} className={`g ${f.cover === p2 ? 'cover' : ''}`} style={{ cursor: 'pointer' }}
+                    onClick={() => { setF(x => ({ ...x, cover: p2 })); setPickCover(false) }} title={p2}>
+                    <img src={urlOf(p2)} alt="" />
+                  </div>
+              ))}
+            </div>
+          </Modal>
           <Card title={t('gallery')} right={uploading > 0 && <span className="chip">{t('loading')} {uploading}</span>}>
             <div className={`drop ${drag ? 'on' : ''}`} onDragOver={e => { e.preventDefault(); setDrag(true) }} onDragLeave={() => setDrag(false)} onDrop={e => { e.preventDefault(); setDrag(false); addFiles(e.dataTransfer.files) }} onClick={() => document.getElementById('gal-input')?.click()} role="button" tabIndex={0} onKeyDown={e => { if (e.key === 'Enter') document.getElementById('gal-input')?.click() }}>
               <IcUpload size={24} /><div className="small">{t('drop_files')}</div>
               <input id="gal-input" type="file" multiple accept="image/*" hidden onChange={e => { if (e.target.files) addFiles(e.target.files); e.target.value = '' }} />
             </div>
             {f.gallery.length > 0 && (
+              <p className="small muted" style={{ marginTop: 8, marginBottom: 0 }}>{t('gallery_hint')}</p>
+            )}
+            {f.gallery.length > 0 && (
               <div className="gal" style={{ marginTop: 10 }}>
                 {f.gallery.map((p, i) => (
                   <div key={p} className={`g ${f.cover === p ? 'cover' : ''} ${dragIdx === i ? 'over' : ''}`} draggable onDragStart={() => setDragIdx(i)} onDragOver={e => e.preventDefault()} onDrop={() => { if (dragIdx != null && dragIdx !== i) move(dragIdx, i); setDragIdx(null) }} onClick={() => setF({ ...f, cover: p })} title={p}>
                     <img src={urlOf(p)} alt="" />
-                    <button type="button" className="rm" onClick={e => { e.stopPropagation(); setF(x => ({ ...x, gallery: x.gallery.filter(g => g !== p), cover: x.cover === p ? (x.gallery.find(g => g !== p) ?? null) : x.cover })) }} aria-label={t('delete')}><IcClose size={14} /></button>
+                    {f.cover === p && <span className="cover-tag">{t('cover')}</span>}
+                    <button type="button" className="swap" onClick={e => { e.stopPropagation(); document.getElementById(`g-input-${i}`)?.click() }} aria-label={t('photo_replace')} title={t('photo_replace')}><IcUpload size={13} /></button>
+                    <input id={`g-input-${i}`} type="file" accept="image/*" hidden onChange={e => { replaceAt(i, e.target.files); e.target.value = '' }} />
+                    <button type="button" className="rm" onClick={e => { e.stopPropagation(); setF(x => ({ ...x, gallery: x.gallery.filter(g => g !== p), cover: x.cover === p ? null : x.cover })) }} aria-label={t('delete')}><IcClose size={14} /></button>
                   </div>
                 ))}
               </div>

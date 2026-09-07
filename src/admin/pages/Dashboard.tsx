@@ -174,8 +174,9 @@ export default function Dashboard() {
         </Card>
         <Card title={t('economy')} icon={<IcGem size={18} />}>
           {loading || !d ? <Skeleton h={240} /> : <>
-            <Bars data={daily.map(x => ({ day: x.day, issued: x.gems_issued ?? Math.round(x.gems_spent * 1.15), spent: x.gems_spent }))} keys={[{ k: 'issued', l: t('s_gems_issued'), c: '#2F6BFF' }, { k: 'spent', l: t('s_gems_spent'), c: '#C9202A' }]} height={200} />
+            <Bars data={daily.map(x => ({ day: x.day, issued: x.gems_issued ?? 0, spent: x.gems_spent }))} keys={[{ k: 'issued', l: t('s_gems_issued'), c: '#2F6BFF' }, { k: 'spent', l: t('s_gems_spent'), c: '#C9202A' }]} height={200} />
             <div className="legend" style={{ marginTop: 6 }}><span><i style={{ background: '#2F6BFF' }} />{t('s_gems_issued')}</span><span><i style={{ background: '#C9202A' }} />{t('s_gems_spent')}</span></div>
+            {daily.some(x => x.gems_exact === false) && <div className="small muted" style={{ marginTop: 6 }}>{t('economy_estimate')}</div>}
           </>}
         </Card>
       </div>

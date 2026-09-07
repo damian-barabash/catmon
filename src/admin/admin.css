@@ -356,3 +356,11 @@
 .adm .shelter-mark { position: relative; width: 46px; height: 46px; flex: none; display: grid; place-items: center; border-radius: 12px; background: var(--card); border: 1px solid var(--line); overflow: hidden; }
 .adm .shelter-logo { position: absolute; top: 2px; right: 2px; width: 20px; height: 20px; object-fit: contain; opacity: .55; }
 .adm .btn.icon.danger { color: var(--accent); border-color: var(--accent-line); }
+
+.adm .cover-prev.editable { position: relative; cursor: pointer; transition: border-color .15s; }
+.adm .cover-prev.editable:hover, .adm .cover-prev.editable.on { border-color: var(--accent); }
+.adm .cover-prev .cover-hint { position: absolute; inset: auto 0 0 0; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 7px 10px; font-size: 12px; font-weight: 600; color: #fff; background: rgba(20,20,18,.72); opacity: 0; transition: opacity .15s; }
+.adm .cover-prev.editable:hover .cover-hint, .adm .cover-prev.editable.on .cover-hint { opacity: 1; }
+.adm .gal .g .swap { position: absolute; top: 4px; right: 34px; width: 26px; height: 26px; border-radius: 50%; border: 0; background: rgba(20,20,18,.7); color: #fff; display: grid; place-items: center; cursor: pointer; }
+.adm .gal .g .cover-tag { position: absolute; left: 4px; bottom: 4px; padding: 2px 7px; border-radius: 99px; font-size: 10px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: #fff; background: var(--accent); }
+
