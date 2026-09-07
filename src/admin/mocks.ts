@@ -134,6 +134,22 @@ function dashboard(from: string, to: string): Dashboard {
     top_cats: NAMES.slice(0, 8).map((name, i) => ({ id: `cat${i}`, name, rarity: RAR[Math.min(3, Math.floor(i / 2))], owners_count: 40 - i * 4, card_no: i + 1 })),
     retention: { d1: 0.46, d7: 0.21 },
     funnel: { registered: 137, one_cat: 98, three_cats: 61 },
+    geo: {
+      countries: [
+        { code: 'PL', registered: 84, active: 51 }, { code: 'UA', registered: 26, active: 14 },
+        { code: 'DE', registered: 11, active: 6 }, { code: 'FR', registered: 7, active: 3 },
+        { code: 'US', registered: 5, active: 2 }, { code: 'GB', registered: 3, active: 1 },
+        { code: 'ES', registered: 2, active: 1 }, { code: 'BR', registered: 1, active: 0 },
+      ],
+      cities: [
+        { city: 'Warsaw', code: 'PL', registered: 52, active: 33 }, { city: 'Kraków', code: 'PL', registered: 18, active: 11 },
+        { city: 'Gdańsk', code: 'PL', registered: 14, active: 7 }, { city: 'Kyiv', code: 'UA', registered: 16, active: 9 },
+        { city: 'Lviv', code: 'UA', registered: 10, active: 5 }, { city: 'Berlin', code: 'DE', registered: 8, active: 5 },
+        { city: 'Paris', code: 'FR', registered: 7, active: 3 }, { city: 'New York', code: 'US', registered: 5, active: 2 },
+      ],
+      unknown: { registered: 4, active: 1 },
+      resolved_at: new Date().toISOString(),
+    },
     top_players: [...players].sort((a, b) => b.xp - a.xp).slice(0, 8).map(p => ({ id: p.id, username: p.username, xp: p.xp, cards_count: p.cards_count, pvp_rating: p.pvp_rating })),
   }
 }

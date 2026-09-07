@@ -4,7 +4,8 @@ import { api, type Dashboard as Dash, type Rarity, type SubsSeries } from '../ap
 import { dayStr, fmtDate, fmtN, fmtPct, useAsync, useStore } from '../store'
 import { Card, Empty, ErrorBox, Seg, Skeleton, SkeletonCard } from '../ui'
 import { AreaSeries, Bars, Donut, MapUsageChart, RARITY_COLOR, Ring, Sparkline } from '../charts'
-import { IcArena, IcBolt, IcCat, IcChat, IcChest, IcCoins, IcCompass, IcDungeon, IcEye, IcFish, IcGem, IcMap, IcMarket, IcPaw, IcScan, IcServer, IcTrophy, IcUsers, IcWarn, IcClock } from '../icons'
+import { WorldMap, countryName } from '../WorldMap'
+import { IcArena, IcBolt, IcCat, IcChat, IcChest, IcCoins, IcCompass, IcDungeon, IcEye, IcFish, IcGem, IcGlobe, IcMap, IcMarket, IcPaw, IcScan, IcServer, IcTrophy, IcUsers, IcWarn, IcClock } from '../icons'
 import type { Key } from '../i18n'
 
 type Preset = 'today' | 'week' | 'month' | 'this_week' | 'this_month' | 'custom'
@@ -37,6 +38,8 @@ export default function Dashboard() {
   const [from, setFrom] = useState(() => range('week', '', '')[0])
   const [to, setTo] = useState(() => dayStr(new Date()))
   const [applied, setApplied] = useState<[string, string]>(() => range('week', '', ''))
+  const [geoTab, setGeoTab] = useState<'countries' | 'cities'>('countries')
+  const [geoPick, setGeoPick] = useState<string | null>(null)
   const pick = (p: Preset) => { setPreset(p); if (p !== 'custom') { const r = range(p, from, to); setFrom(r[0]); setTo(r[1]); setApplied(r) } }
   const { data, loading, error } = useAsync(() => api.dashboard(applied[0], applied[1]), [applied[0], applied[1]], `dashboard.${applied[0]}.${applied[1]}`)
   const d = data as Dash | null
@@ -163,6 +166,54 @@ export default function Dashboard() {
           )}
         </Card>
       </div>
+
+      <Card title={t('geo')} icon={<IcGlobe size={18} />} className="span2" right={
+        d?.geo && <Seg<'countries' | 'cities'> value={geoTab} onChange={setGeoTab} options={[{ v: 'countries', l: t('geo_countries') }, { v: 'cities', l: t('geo_cities') }]} />
+      }>
+        {loading || !d ? <Skeleton h={280} /> : !d.geo || (!d.geo.countries.length && !d.geo.cities.length) ? (
+          <Empty text={t('geo_empty')} />
+        ) : (
+          <div className="geo-wrap">
+            <WorldMap
+              data={d.geo.countries}
+              lang={lang}
+              selected={geoPick}
+              onPick={setGeoPick}
+              labels={{ registered: t('geo_registered'), active: t('geo_active'), none: t('geo_no_players') }}
+            />
+            <div className="geo-list">
+              <div className="row small muted" style={{ marginBottom: 8 }}>
+                <span>{geoTab === 'countries' ? t('geo_countries') : t('geo_cities')}</span>
+                <span className="right">{t('geo_registered')} · {t('geo_active')}</span>
+              </div>
+              {(geoTab === 'countries'
+                ? d.geo.countries.map(c => ({ key: c.code, code: c.code, name: countryName(c.code, lang), registered: c.registered, active: c.active }))
+                : d.geo.cities.map(c => ({ key: `${c.code}-${c.city}`, code: c.code, name: c.city, registered: c.registered, active: c.active }))
+              ).map(r => (
+                <div
+                  key={r.key}
+                  className={`geo-row ${geoPick === r.code ? 'on' : ''}`}
+                  onClick={() => setGeoPick(geoPick === r.code ? null : r.code)}
+                >
+                  <span className="cc">{r.code}</span>
+                  <span className="nm">{r.name}</span>
+                  <b className="num">{fmtN(r.registered, lang)}</b>
+                  <b className="num act">{fmtN(r.active, lang)}</b>
+                </div>
+              ))}
+              {d.geo.unknown.registered > 0 && (
+                <div className="geo-row muted">
+                  <span className="cc">—</span>
+                  <span className="nm">{t('geo_unknown')}</span>
+                  <b className="num">{fmtN(d.geo.unknown.registered, lang)}</b>
+                  <b className="num act">{fmtN(d.geo.unknown.active, lang)}</b>
+                </div>
+              )}
+              <div className="small muted" style={{ marginTop: 10 }}>{t('geo_hint')}</div>
+            </div>
+          </div>
+        )}
+      </Card>
 
       <div className="grid c21" style={{ marginBottom: 14 }}>
         <Card title={t('map_usage')} icon={<IcMap size={18} />} right={d && <Link to="/admin/map" className="btn sm">{t('more')}</Link>}>

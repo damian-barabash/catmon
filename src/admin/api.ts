@@ -56,6 +56,12 @@ export interface Dashboard {
   retention: { d1: number; d7: number }
   funnel?: { registered: number; one_cat: number; three_cats: number }
   top_players?: { id: string; username: string; xp: number; cards_count: number; pvp_rating: number }[]
+  geo?: {
+    countries: { code: string; registered: number; active: number }[]
+    cities: { city: string; code: string; registered: number; active: number }[]
+    unknown: { registered: number; active: number }
+    resolved_at?: string | null
+  }
 }
 
 export interface PlayerRow {

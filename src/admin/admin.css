@@ -364,3 +364,25 @@
 .adm .gal .g .swap { position: absolute; top: 4px; right: 34px; width: 26px; height: 26px; border-radius: 50%; border: 0; background: rgba(20,20,18,.7); color: #fff; display: grid; place-items: center; cursor: pointer; }
 .adm .gal .g .cover-tag { position: absolute; left: 4px; bottom: 4px; padding: 2px 7px; border-radius: 99px; font-size: 10px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase; color: #fff; background: var(--accent); }
 
+.adm .geo-wrap { display: grid; grid-template-columns: minmax(0, 1fr) 300px; gap: 16px; align-items: start; }
+.adm .wmap { position: relative; border-radius: 14px; overflow: hidden; background: var(--card2); border: 1px solid var(--line); }
+.adm .wmap svg { display: block; width: 100%; height: auto; }
+.adm .wmap path { fill: var(--line); stroke: var(--card2); stroke-width: .6; vector-effect: non-scaling-stroke; transition: fill .12s; }
+.adm .wmap path.has { cursor: pointer; }
+.adm .wmap path.has:hover { fill: var(--accent) !important; }
+.adm .wmap path.sel { stroke: var(--ink); stroke-width: 1.4; }
+.adm .wtip { position: absolute; transform: translate(12px, -50%); pointer-events: none; z-index: 5; display: grid; gap: 2px; padding: 8px 10px; border-radius: 10px; font-size: 12px; line-height: 1.35; color: #fff; background: rgba(20,20,18,.92); border: 1px solid rgba(255,255,255,.14); white-space: nowrap; }
+.adm .wtip.flip { transform: translate(calc(-100% - 12px), -50%); }
+.adm .wtip .muted { color: #B8B5AC; }
+.adm .geo-list { display: grid; align-content: start; gap: 2px; max-height: 380px; overflow: auto; }
+.adm .geo-row { display: grid; grid-template-columns: 34px minmax(0, 1fr) 44px 44px; gap: 8px; align-items: center; padding: 7px 8px; border-radius: 10px; cursor: pointer; }
+.adm .geo-row:hover, .adm .geo-row.on { background: var(--mist); }
+.adm .geo-row .cc { font-size: 10px; font-weight: 700; letter-spacing: .04em; text-align: center; padding: 3px 0; border-radius: 6px; background: var(--mist); color: var(--subtle); }
+.adm .geo-row.on .cc { background: var(--accent); color: #fff; }
+.adm .geo-row .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
+.adm .geo-row .act { color: var(--accent); }
+@media (max-width: 900px) {
+  .adm .geo-wrap { grid-template-columns: minmax(0, 1fr); }
+  .adm .geo-list { max-height: none; }
+}
+
