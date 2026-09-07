@@ -3,6 +3,7 @@ import { useI18n } from '../i18n'
 import { useSeo } from '../lib/seo'
 import { api, type SeasonPublic } from '../lib/api'
 import { Reveal } from '../components/Reveal'
+import { MediaImg } from '../components/MediaImg'
 
 function useCountdown(iso?: string) {
   const [now, setNow] = useState(Date.now())
@@ -48,7 +49,7 @@ export default function Season() {
             <tbody>
               {data.top.map((r) => (
                 <tr key={r.place}><td className="place">{r.place}</td>
-                  <td><div className="who">{r.avatar_url ? <img src={r.avatar_url} alt="" /> : <span className="av" />}{r.username}</div></td>
+                  <td><div className="who">{r.avatar_url ? <MediaImg src={r.avatar_url} alt="" /> : <span className="av" />}{r.username}</div></td>
                   <td>{r.rating}</td></tr>
               ))}
             </tbody>

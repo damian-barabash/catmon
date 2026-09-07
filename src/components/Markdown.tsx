@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react'
 import { marked } from 'marked'
+import { MediaImg } from './MediaImg'
 
 marked.setOptions({ gfm: true, breaks: false })
 
@@ -12,6 +13,11 @@ function sanitize(html: string) {
     .replace(/javascript:/gi, '')
     .replace(/<table>/g, '<div class="table-scroll"><table>')
     .replace(/<\/table>/g, '</table></div>')
+    // картинки в теле поста лежат в Supabase Storage: грузим их в CORS-режиме
+    // без кук — иначе Firefox ругается на отклонённую куку `__cf_bm`
+    // (Cloudflare ставит её с Domain=supabase.co, а это публичный суффикс).
+    // См. components/MediaImg.tsx.
+    .replace(/<img (?=[^>]*src="https?:)/gi, '<img crossorigin="anonymous" ')
 }
 
 export function Markdown({ src, className = 'prose' }: { src: string; className?: string }) {
@@ -28,12 +34,12 @@ export function Gallery({ urls, label }: { urls: string[]; label: string }) {
       <h3>{label}</h3>
       <div className="gallery">
         {urls.map((u, k) => (
-          <button key={u} onClick={() => setI(k)} aria-label={`${label} ${k + 1}`}><img src={u} alt="" loading="lazy" /></button>
+          <button key={u} onClick={() => setI(k)} aria-label={`${label} ${k + 1}`}><MediaImg src={u} alt="" loading="lazy" /></button>
         ))}
       </div>
       {i !== null && (
         <div className="lightbox" onClick={() => setI(null)} role="dialog">
-          <img src={urls[i]} alt="" onClick={(e) => e.stopPropagation()} />
+          <MediaImg src={urls[i]} alt="" onClick={(e) => e.stopPropagation()} />
           <button className="x" aria-label="Close">×</button>
           {urls.length > 1 && <>
             <button className="prev" aria-label="Previous" onClick={(e) => { e.stopPropagation(); go(-1) }}>‹</button>

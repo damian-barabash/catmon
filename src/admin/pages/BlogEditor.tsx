@@ -147,7 +147,7 @@ export default function BlogEditor() {
               onKeyDown={e => { if (e.key === 'Enter') document.getElementById('cover-input')?.click() }}
               title={t('cover_replace')}
             >
-              {f.cover ? <img src={urlOf(f.cover)} alt="" /> : <IcImage size={28} />}
+              {f.cover ? <img crossOrigin="anonymous" src={urlOf(f.cover)} alt="" /> : <IcImage size={28} />}
               <span className="cover-hint"><IcUpload size={18} />{f.cover ? t('cover_replace') : t('cover_upload')}</span>
             </div>
             <input id="cover-input" type="file" accept="image/*" hidden onChange={e => { setCoverFile(e.target.files); e.target.value = '' }} />
@@ -169,7 +169,7 @@ export default function BlogEditor() {
                 {f.gallery.map(p2 => (
                   <div key={p2} className={`g ${f.cover === p2 ? 'cover' : ''}`} style={{ cursor: 'pointer' }}
                     onClick={() => { setF(x => ({ ...x, cover: p2 })); setPickCover(false) }} title={p2}>
-                    <img src={urlOf(p2)} alt="" />
+                    <img crossOrigin="anonymous" src={urlOf(p2)} alt="" />
                   </div>
               ))}
             </div>
@@ -186,7 +186,7 @@ export default function BlogEditor() {
               <div className="gal" style={{ marginTop: 10 }}>
                 {f.gallery.map((p, i) => (
                   <div key={p} className={`g ${f.cover === p ? 'cover' : ''} ${dragIdx === i ? 'over' : ''}`} draggable onDragStart={() => setDragIdx(i)} onDragOver={e => e.preventDefault()} onDrop={() => { if (dragIdx != null && dragIdx !== i) move(dragIdx, i); setDragIdx(null) }} onClick={() => setF({ ...f, cover: p })} title={p}>
-                    <img src={urlOf(p)} alt="" />
+                    <img crossOrigin="anonymous" src={urlOf(p)} alt="" />
                     {f.cover === p && <span className="cover-tag">{t('cover')}</span>}
                     <button type="button" className="swap" onClick={e => { e.stopPropagation(); document.getElementById(`g-input-${i}`)?.click() }} aria-label={t('photo_replace')} title={t('photo_replace')}><IcUpload size={13} /></button>
                     <input id={`g-input-${i}`} type="file" accept="image/*" hidden onChange={e => { replaceAt(i, e.target.files); e.target.value = '' }} />

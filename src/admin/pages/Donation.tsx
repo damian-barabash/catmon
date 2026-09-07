@@ -114,7 +114,7 @@ function ShelterRow({ s, i, total, heart, onPatch, onMove, onDelete }: {
       <div className="shelter-h">
         <div className="shelter-mark">
           <HeartMark name={s.heart || heart} size={34} color="var(--accent)" />
-          {s.logo_path && <img className="shelter-logo" src={mediaUrl(s.logo_path)} alt="" />}
+          {s.logo_path && <img crossOrigin="anonymous" className="shelter-logo" src={mediaUrl(s.logo_path)} alt="" />}
         </div>
         <input className="input grow" placeholder={t('sh_name')} value={s.name ?? ''} onChange={e => onPatch({ name: e.target.value })} />
         <Switch on={s.enabled !== false} onChange={v => onPatch({ enabled: v })} />

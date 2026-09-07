@@ -31,7 +31,7 @@ export default function Blog() {
           <div className="grid" style={{ gap: 8 }}>
             {data.posts.map(p => (
               <div key={p.id} className="post-row">
-                <div className="cv">{p.cover_path ? <img src={mediaUrl(p.cover_path)} alt="" loading="lazy" /> : <IcImage size={22} />}</div>
+                <div className="cv">{p.cover_path ? <img crossOrigin="anonymous" src={mediaUrl(p.cover_path)} alt="" loading="lazy" /> : <IcImage size={22} />}</div>
                 <div style={{ minWidth: 0 }}>
                   <Link to={`/admin/blog/${p.id}`} className="ttl">{p.title_i18n.ru || p.slug}</Link>
                   <div className="row small muted" style={{ gap: 6, marginTop: 4 }}>

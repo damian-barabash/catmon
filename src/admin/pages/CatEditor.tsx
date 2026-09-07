@@ -89,7 +89,7 @@ export default function CatEditor() {
       <div className="row" style={{ marginBottom: 12 }}><Link to="/admin/cats" className="btn sm"><IcArrowLeft size={16} />{t('back')}</Link><h1 style={{ fontSize: 22 }}>#{cat.card_no} · {cat.name_i18n?.ru ?? cat.name}</h1><RarityChip r={cat.rarity} /></div>
       <div className="grid c12">
         <Card>
-          <div className="cat-photo-lg">{url ? <img src={url} alt={cat.name} /> : <div style={{ display: 'grid', placeItems: 'center', height: '100%' }}><IcCat size={64} /></div>}<span className="no">#{cat.card_no}</span></div>
+          <div className="cat-photo-lg">{url ? <img crossOrigin="anonymous" src={url} alt={cat.name} /> : <div style={{ display: 'grid', placeItems: 'center', height: '100%' }}><IcCat size={64} /></div>}<span className="no">#{cat.card_no}</span></div>
           <div className="grid" style={{ gap: 8, marginTop: 12 }}>
             <div className="small muted">{t('found_at')}: {fmtDate(cat.first_found_at, true)}</div>
             {cat.first_found_by && <div className="small">{t('found_by')}: <Link to={`/admin/players/${cat.first_found_by}`}><b>{cat.first_found_username ?? cat.first_found_by.slice(0, 8)}</b></Link></div>}

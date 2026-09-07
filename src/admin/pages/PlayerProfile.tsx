@@ -53,7 +53,7 @@ export default function PlayerProfile() {
       <div className="row" style={{ marginBottom: 12 }}><Link to="/admin/players" className="btn sm"><IcArrowLeft size={16} />{t('back')}</Link></div>
       <Card className="" >
         <div className="p-head">
-          <div className="avatar">{p.avatar_url ? <img src={p.avatar_url} alt="" /> : initials(p.username)}</div>
+          <div className="avatar">{p.avatar_url ? <img crossOrigin="anonymous" src={p.avatar_url} alt="" /> : initials(p.username)}</div>
           <div style={{ minWidth: 0 }}>
             <h1 style={{ fontSize: 22 }}>{p.username}</h1>
             <div className="row small muted" style={{ gap: 6 }}>

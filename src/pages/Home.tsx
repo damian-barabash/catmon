@@ -9,6 +9,7 @@ import { HeartMark } from '../lib/hearts'
 import { Reveal } from '../components/Reveal'
 import { StoreBadges } from '../components/StoreBadges'
 import { PostCard } from './Blog'
+import { MediaImg } from '../components/MediaImg'
 
 /**
  * Hero cards: a deliberate fan composition (positions live in CSS as
@@ -270,7 +271,7 @@ function ShelterCard({ s, on, single }: { s: Shelter; on: boolean; single: boole
   const body = `${on ? text : t.donation.soon}`.replace(/\.\s*$/, '')
   return (
     <div className={`donate ${single ? '' : 'multi'}`}>
-      {s.logo_url && <img className="d-logo" src={s.logo_url} alt={s.name || title} loading="lazy" />}
+      {s.logo_url && <MediaImg className="d-logo" src={s.logo_url} alt={s.name || title} loading="lazy" />}
       <i className="dbit b1" aria-hidden="true"><HeartMini /></i>
       <i className="dbit b2" aria-hidden="true"><HeartMini /></i>
       <div className="heart hover"><HeartMark name={s.heart} size="100%" color="var(--red)" /></div>

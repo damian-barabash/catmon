@@ -6,6 +6,7 @@ import { api, type BlogPost, type BlogPostSummary } from '../lib/api'
 import { CatLogo } from '../components/Icons'
 import { Reveal } from '../components/Reveal'
 import { Gallery, Markdown } from '../components/Markdown'
+import { MediaImg } from '../components/MediaImg'
 
 export function fmtDate(iso: string, lang: string) {
   try { return new Date(iso).toLocaleDateString(lang, { year: 'numeric', month: 'long', day: 'numeric' }) } catch { return iso }
@@ -15,7 +16,7 @@ export function PostCard({ p }: { p: BlogPostSummary }) {
   const { lang } = useI18n()
   return (
     <Link to={`/blog/${p.slug}`} className="post-card">
-      <div className="cover">{p.cover_url ? <img src={p.cover_url} alt="" loading="lazy" /> : <CatLogo animated={false} />}</div>
+      <div className="cover">{p.cover_url ? <MediaImg src={p.cover_url} alt="" loading="lazy" /> : <CatLogo animated={false} />}</div>
       <div className="body">
         <div className="post-meta"><span>{fmtDate(p.published_at, lang)}</span>{p.tags?.map((tg) => <span className="tag" key={tg}>{tg}</span>)}</div>
         <h3>{p.title}</h3>
@@ -66,7 +67,7 @@ export function BlogPostPage() {
         </div>
         {post && (
           <>
-            {post.cover_url && <div className="cover"><img src={post.cover_url} alt="" /></div>}
+            {post.cover_url && <div className="cover"><MediaImg src={post.cover_url} alt="" /></div>}
             <Markdown src={post.body} />
             <Gallery urls={post.gallery_urls || []} label={t.blog.gallery} />
           </>

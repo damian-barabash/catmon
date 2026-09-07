@@ -42,7 +42,7 @@ export default function Players() {
               <tbody>
                 {data.players.map(p => (
                   <tr key={p.id} className="clickable" onClick={() => nav(`/admin/players/${p.id}`)} tabIndex={0} onKeyDown={e => { if (e.key === 'Enter') nav(`/admin/players/${p.id}`) }}>
-                    <td><div className="row" style={{ flexWrap: 'nowrap' }}><div className="avatar-sm">{p.avatar_url ? <img src={p.avatar_url} alt="" /> : initials(p.username)}</div><div><Link to={`/admin/players/${p.id}`} onClick={e => e.stopPropagation()}><b>{p.username}</b></Link><div className="small muted mono">{p.email ?? p.id.slice(0, 8)}</div></div></div></td>
+                    <td><div className="row" style={{ flexWrap: 'nowrap' }}><div className="avatar-sm">{p.avatar_url ? <img crossOrigin="anonymous" src={p.avatar_url} alt="" /> : initials(p.username)}</div><div><Link to={`/admin/players/${p.id}`} onClick={e => e.stopPropagation()}><b>{p.username}</b></Link><div className="small muted mono">{p.email ?? p.id.slice(0, 8)}</div></div></div></td>
                     <td><div className="row" style={{ gap: 4 }}>{p.is_guest && <span className="chip outline">{t('guest')}</span>}{isPlus(p) && <span className="chip r-legendary">{t('plus')}</span>}{isBanned(p) && <span className="chip accent">{t('banned')}</span>}{p.providers?.map(pr => <span key={pr} className="chip" style={{ fontSize: 11 }}>{pr}</span>)}</div></td>
                     <td className="num">{p.cards_count}</td>
                     <td className="num">{fmtN(p.xp, lang)}</td>

@@ -56,7 +56,7 @@ export default function Cats() {
             {data.cats.map(c => (
               <div key={c.id} className={`cat-card clickable r-${c.rarity}`} tabIndex={0} role="link"
                 onClick={() => nav(`/admin/cats/${c.id}`)} onKeyDown={e => { if (e.key === 'Enter') nav(`/admin/cats/${c.id}`) }}>
-                <div className="ph">{c.photo_path ? <img src={catThumbUrl(c.photo_path, 320)} alt={c.name} loading="lazy" /> : <IcCat size={40} />}<span className="no">#{c.card_no}</span></div>
+                <div className="ph">{c.photo_path ? <img crossOrigin="anonymous" src={catThumbUrl(c.photo_path, 320)} alt={c.name} loading="lazy" /> : <IcCat size={40} />}<span className="no">#{c.card_no}</span></div>
                 <div className="body">
                   <b>{c.name_i18n?.ru ?? c.name}</b>
                   <div className="row" style={{ gap: 4 }}><RarityChip r={c.rarity} /><span className="chip outline">{c.archetype}</span></div>
