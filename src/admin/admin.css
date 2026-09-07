@@ -374,15 +374,22 @@
 .adm .wtip { position: absolute; transform: translate(12px, -50%); pointer-events: none; z-index: 5; display: grid; gap: 2px; padding: 8px 10px; border-radius: 10px; font-size: 12px; line-height: 1.35; color: #fff; background: rgba(20,20,18,.92); border: 1px solid rgba(255,255,255,.14); white-space: nowrap; }
 .adm .wtip.flip { transform: translate(calc(-100% - 12px), -50%); }
 .adm .wtip .muted { color: #B8B5AC; }
-.adm .geo-list { display: grid; align-content: start; gap: 2px; max-height: 380px; overflow: auto; }
+.adm .geo-list { display: grid; align-content: start; gap: 2px; max-height: 380px; overflow: auto; padding-bottom: 2px; }
 .adm .geo-row { display: grid; grid-template-columns: 34px minmax(0, 1fr) 44px 44px; gap: 8px; align-items: center; padding: 7px 8px; border-radius: 10px; cursor: pointer; }
 .adm .geo-row:hover, .adm .geo-row.on { background: var(--mist); }
 .adm .geo-row .cc { font-size: 10px; font-weight: 700; letter-spacing: .04em; text-align: center; padding: 3px 0; border-radius: 6px; background: var(--mist); color: var(--subtle); }
 .adm .geo-row.on .cc { background: var(--accent); color: #fff; }
 .adm .geo-row .nm { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; font-size: 13px; }
 .adm .geo-row .act { color: var(--accent); }
+.adm .geo-hint { grid-column: 1 / -1; margin-top: 12px; padding-top: 10px; border-top: 1px solid var(--line); line-height: 1.4; }
+.adm .card:has(.geo-wrap) { padding-bottom: 22px; }
 @media (max-width: 900px) {
   .adm .geo-wrap { grid-template-columns: minmax(0, 1fr); }
   .adm .geo-list { max-height: none; }
+}
+@media (max-width: 760px) {
+  .adm .card:has(.geo-wrap) .card-h { flex-wrap: wrap; }
+  .adm .card:has(.geo-wrap) .card-h h2 { flex: 1 0 auto; }
+  .adm .card:has(.geo-wrap) .card-h .right { flex-basis: 100%; justify-content: flex-start; }
 }
 

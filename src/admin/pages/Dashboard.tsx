@@ -39,6 +39,7 @@ export default function Dashboard() {
   const [to, setTo] = useState(() => dayStr(new Date()))
   const [applied, setApplied] = useState<[string, string]>(() => range('week', '', ''))
   const [geoTab, setGeoTab] = useState<'countries' | 'cities'>('countries')
+  const [geoWin, setGeoWin] = useState<'1d' | '7d' | '30d' | 'all'>('7d')
   const [geoPick, setGeoPick] = useState<string | null>(null)
   const pick = (p: Preset) => { setPreset(p); if (p !== 'custom') { const r = range(p, from, to); setFrom(r[0]); setTo(r[1]); setApplied(r) } }
   const { data, loading, error } = useAsync(() => api.dashboard(applied[0], applied[1]), [applied[0], applied[1]], `dashboard.${applied[0]}.${applied[1]}`)
@@ -167,53 +168,67 @@ export default function Dashboard() {
         </Card>
       </div>
 
-      <Card title={t('geo')} icon={<IcGlobe size={18} />} className="span2" right={
-        d?.geo && <Seg<'countries' | 'cities'> value={geoTab} onChange={setGeoTab} options={[{ v: 'countries', l: t('geo_countries') }, { v: 'cities', l: t('geo_cities') }]} />
-      }>
-        {loading || !d ? <Skeleton h={280} /> : !d.geo || (!d.geo.countries.length && !d.geo.cities.length) ? (
-          <Empty text={t('geo_empty')} />
-        ) : (
-          <div className="geo-wrap">
-            <WorldMap
-              data={d.geo.countries}
-              lang={lang}
-              selected={geoPick}
-              onPick={setGeoPick}
-              labels={{ registered: t('geo_registered'), active: t('geo_active'), none: t('geo_no_players') }}
-            />
-            <div className="geo-list">
-              <div className="row small muted" style={{ marginBottom: 8 }}>
-                <span>{geoTab === 'countries' ? t('geo_countries') : t('geo_cities')}</span>
-                <span className="right">{t('geo_registered')} · {t('geo_active')}</span>
-              </div>
-              {(geoTab === 'countries'
-                ? d.geo.countries.map(c => ({ key: c.code, code: c.code, name: countryName(c.code, lang), registered: c.registered, active: c.active }))
-                : d.geo.cities.map(c => ({ key: `${c.code}-${c.city}`, code: c.code, name: c.city, registered: c.registered, active: c.active }))
-              ).map(r => (
-                <div
-                  key={r.key}
-                  className={`geo-row ${geoPick === r.code ? 'on' : ''}`}
-                  onClick={() => setGeoPick(geoPick === r.code ? null : r.code)}
-                >
-                  <span className="cc">{r.code}</span>
-                  <span className="nm">{r.name}</span>
-                  <b className="num">{fmtN(r.registered, lang)}</b>
-                  <b className="num act">{fmtN(r.active, lang)}</b>
-                </div>
-              ))}
-              {d.geo.unknown.registered > 0 && (
-                <div className="geo-row muted">
-                  <span className="cc">—</span>
-                  <span className="nm">{t('geo_unknown')}</span>
-                  <b className="num">{fmtN(d.geo.unknown.registered, lang)}</b>
-                  <b className="num act">{fmtN(d.geo.unknown.active, lang)}</b>
-                </div>
-              )}
-              <div className="small muted" style={{ marginTop: 10 }}>{t('geo_hint')}</div>
-            </div>
+      <div style={{ marginBottom: 14 }}>
+        <Card title={t('geo')} icon={<IcGlobe size={18} />} className="span2" right={d?.geo && (
+          <div className="row" style={{ gap: 8, flexWrap: 'wrap' }}>
+            <Seg<'1d' | '7d' | '30d' | 'all'> value={geoWin} onChange={setGeoWin} options={[
+              { v: '1d', l: t('geo_w_1d') }, { v: '7d', l: t('geo_w_7d') },
+              { v: '30d', l: t('geo_w_30d') }, { v: 'all', l: t('geo_w_all') },
+            ]} />
+            <Seg<'countries' | 'cities'> value={geoTab} onChange={setGeoTab} options={[
+              { v: 'countries', l: t('geo_countries') }, { v: 'cities', l: t('geo_cities') },
+            ]} />
           </div>
-        )}
-      </Card>
+        )}>
+          {loading || !d ? <Skeleton h={280} /> : !d.geo || (!d.geo.countries.length && !d.geo.cities.length) ? (
+            <Empty text={t('geo_empty')} />
+          ) : (() => {
+            const act = (r: { active_1d: number; active_7d: number; active_30d: number; active_all: number }) =>
+              geoWin === '1d' ? r.active_1d : geoWin === '7d' ? r.active_7d : geoWin === '30d' ? r.active_30d : r.active_all
+            const rows = geoTab === 'countries'
+              ? d.geo.countries.map(c => ({ key: c.code, code: c.code, name: countryName(c.code, lang), registered: c.registered, active: act(c) }))
+              : d.geo.cities.map(c => ({ key: `${c.code}-${c.city}`, code: c.code, name: c.city, registered: c.registered, active: act(c) }))
+            return (
+              <div className="geo-wrap">
+                <WorldMap
+                  data={d.geo.countries.map(c => ({ code: c.code, registered: c.registered, active: act(c) }))}
+                  lang={lang}
+                  selected={geoPick}
+                  onPick={setGeoPick}
+                  labels={{ registered: t('geo_registered'), active: t('geo_active'), none: t('geo_no_players') }}
+                />
+                <div className="geo-list">
+                  <div className="row small muted" style={{ marginBottom: 8 }}>
+                    <span>{geoTab === 'countries' ? t('geo_countries') : t('geo_cities')}</span>
+                    <span className="right">{t('geo_registered')} · {t('geo_active')}</span>
+                  </div>
+                  {rows.map(r => (
+                    <div
+                      key={r.key}
+                      className={`geo-row ${geoPick === r.code ? 'on' : ''}`}
+                      onClick={() => setGeoPick(geoPick === r.code ? null : r.code)}
+                    >
+                      <span className="cc">{r.code}</span>
+                      <span className="nm">{r.name}</span>
+                      <b className="num">{fmtN(r.registered, lang)}</b>
+                      <b className="num act">{fmtN(r.active, lang)}</b>
+                    </div>
+                  ))}
+                  {d.geo.unknown.registered > 0 && (
+                    <div className="geo-row muted">
+                      <span className="cc">—</span>
+                      <span className="nm">{t('geo_unknown')}</span>
+                      <b className="num">{fmtN(d.geo.unknown.registered, lang)}</b>
+                      <b className="num act">{fmtN(act(d.geo.unknown), lang)}</b>
+                    </div>
+                  )}
+                </div>
+                <div className="small muted geo-hint">{t('geo_hint')}</div>
+              </div>
+            )
+          })()}
+        </Card>
+      </div>
 
       <div className="grid c21" style={{ marginBottom: 14 }}>
         <Card title={t('map_usage')} icon={<IcMap size={18} />} right={d && <Link to="/admin/map" className="btn sm">{t('more')}</Link>}>

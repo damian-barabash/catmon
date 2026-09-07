@@ -45,6 +45,13 @@ export interface DailyPoint {
   gems_exact?: boolean // false = день до включения gem_ledger, цифры оценочные
 }
 export interface TopCat { id: string; name: string; rarity: Rarity; owners_count: number; photo_path?: string; card_no?: number }
+/// Строка географии: «зарегистрировано» + активные за несколько окон сразу
+/// (фильтр в карточке переключается без нового запроса).
+export interface GeoRow {
+  registered: number
+  active: number       // за период дашборда
+  active_1d: number; active_7d: number; active_30d: number; active_all: number
+}
 export interface Dashboard {
   kpi: DashboardKpi
   series: { daily: DailyPoint[]; hourly?: { hour: number; scans: number; battles: number }[] }
@@ -57,9 +64,10 @@ export interface Dashboard {
   funnel?: { registered: number; one_cat: number; three_cats: number }
   top_players?: { id: string; username: string; xp: number; cards_count: number; pvp_rating: number }[]
   geo?: {
-    countries: { code: string; registered: number; active: number }[]
-    cities: { city: string; code: string; registered: number; active: number }[]
-    unknown: { registered: number; active: number }
+    countries: (GeoRow & { code: string })[]
+    cities: (GeoRow & { city: string; code: string })[]
+    unknown: GeoRow
+    by_ip?: number
     resolved_at?: string | null
   }
 }
