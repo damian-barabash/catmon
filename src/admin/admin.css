@@ -392,4 +392,38 @@
   .adm .card:has(.geo-wrap) .card-h h2 { flex: 1 0 auto; }
   .adm .card:has(.geo-wrap) .card-h .right { flex-basis: 100%; justify-content: flex-start; }
 }
-
+.adm .lab-grid { display: grid; grid-template-columns: minmax(0, 400px) minmax(0, 1fr); gap: 14px; align-items: start; margin-top: 14px; }
+.adm .lab-col { display: flex; flex-direction: column; gap: 14px; min-width: 0; }
+.adm .lab-two { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 10px; }
+.adm .lab-shot { position: relative; border-radius: 14px; overflow: hidden; background: var(--mist); }
+.adm .lab-shot img { display: block; width: 100%; max-height: 320px; object-fit: contain; }
+.adm .lab-shot .btn { position: absolute; top: 8px; right: 8px; }
+.adm .lab-drop.sm .drop { padding: 12px; }
+.adm .lab-drop.sm .lab-shot img { max-height: 120px; }
+.adm .lab-cats { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; max-height: 300px; overflow-y: auto; }
+.adm .lab-cat { display: flex; align-items: center; gap: 10px; padding: 6px 8px; border: 1px solid var(--line); border-radius: 12px; background: transparent; color: var(--ink); text-align: left; cursor: pointer; font: inherit; min-width: 0; }
+.adm .lab-cat:hover, .adm .lab-cat.on { border-color: var(--accent); }
+.adm .lab-cat.on { cursor: default; margin-top: 8px; }
+.adm .lab-cat img { width: 40px; height: 40px; border-radius: 9px; object-fit: cover; flex: none; background: var(--mist); }
+.adm .lab-cat > div { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.adm .lab-switches { display: flex; flex-direction: column; gap: 10px; }
+.adm .lab-thr { display: grid; grid-template-columns: minmax(0, 1fr) 76px 76px; gap: 8px; align-items: center; margin-top: 8px; font-size: 13.5px; }
+.adm .lab-thr.head { color: var(--subtle); font-size: 12px; margin-top: 14px; }
+.adm .lab-thr .input { padding: 7px 8px; min-width: 0; width: 100%; }
+.adm .lab-verdict { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; }
+.adm .lab-ref { display: inline-flex; align-items: center; gap: 8px; min-width: 0; }
+.adm .lab-ref img { width: 34px; height: 34px; border-radius: 8px; object-fit: cover; flex: none; background: var(--mist); }
+.adm .lab-cardprev { margin-top: 12px; padding: 12px; border-radius: 12px; background: var(--mist); display: flex; flex-direction: column; gap: 6px; overflow-wrap: anywhere; }
+.adm .lab-kv { display: grid; grid-template-columns: max-content minmax(0, 1fr); gap: 6px 14px; font-size: 13.5px; }
+.adm .lab-kv > span { color: var(--subtle); }
+.adm .lab-kv > b { font-weight: 500; overflow-wrap: anywhere; }
+.adm .lab-sub { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--line); display: flex; flex-direction: column; gap: 8px; }
+.adm .lab-cmp { padding: 10px 0; border-bottom: 1px solid var(--line); display: flex; flex-direction: column; gap: 6px; overflow-wrap: anywhere; }
+.adm .lab-cmp:first-child { padding-top: 0; }
+.adm .lab-cmp .row { flex-wrap: wrap; gap: 6px; }
+.adm .lab-raw { font-size: 12.5px; color: var(--subtle); }
+.adm .lab-raw summary { cursor: pointer; padding: 6px 0; }
+.adm .lab-raw pre { margin: 0; padding: 12px; border-radius: 12px; background: var(--mist); color: var(--ink); overflow: auto; max-height: 420px; font-size: 12px; }
+@media (max-width: 900px) {
+  .adm .lab-grid { grid-template-columns: minmax(0, 1fr); }
+}
