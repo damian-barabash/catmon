@@ -1,8 +1,8 @@
 import { useEffect, useRef, useState } from 'react'
 import { ApiError, api, catThumbUrl, type CatRow } from '../api'
 import { useStore } from '../store'
-import { Card, Empty, ErrorBox, Field, RarityChip, Switch, Tabs } from '../ui'
-import { IcBolt, IcCat, IcCheck, IcClose, IcInfo, IcScan, IcSearch, IcUpload, IcWarn } from '../icons'
+import { Card, Empty, ErrorBox, Field, RarityChip, Seg, Tabs } from '../ui'
+import { IcBolt, IcCheck, IcClose, IcInfo, IcScan, IcSearch, IcUpload, IcWarn } from '../icons'
 
 /* Лаборатория ИИ: сухой прогон скана. Сервер (admin-api → scan-cat dry_run)
  * считает всё так же, как для игрока, но ничего не пишет в игру. */
@@ -51,33 +51,36 @@ function PhotoDrop({ value, onChange, label, small }: { value: Photo | null; onC
 function CatPick({ value, onChange }: { value: CatRow | null; onChange: (c: CatRow | null) => void }) {
   const { t } = useStore()
   const [q, setQ] = useState('')
+  const [open, setOpen] = useState(false)
   const [list, setList] = useState<CatRow[]>([])
   useEffect(() => {
-    if (value) return
+    if (value || !open) return
     let dead = false
     const h = setTimeout(() => {
       api.catsList({ q, limit: 8, sort: 'card_no' }).then(r => { if (!dead) setList(r.cats) }).catch(() => { if (!dead) setList([]) })
-    }, 300)
+    }, 250)
     return () => { dead = true; clearTimeout(h) }
-  }, [q, value])
+  }, [q, value, open])
   if (value) return (
     <div className="lab-cat on">
-      <img src={catThumbUrl(value.photo_path, 96)} alt="" crossOrigin="anonymous" />
+      <img src={catThumbUrl(value.photo_path, 96) || undefined} alt="" crossOrigin="anonymous" />
       <div><b>#{value.card_no} {value.name}</b><div className="small muted">{value.coat_class ?? '—'}</div></div>
       <button type="button" className="btn icon sm ghost" onClick={() => onChange(null)} aria-label="remove"><IcClose size={14} /></button>
     </div>
   )
   return (
-    <div>
-      <div className="adm-search"><IcSearch size={16} /><input value={q} onChange={e => setQ(e.target.value)} placeholder={t('search_cats')} aria-label={t('lab_pick_cat')} /></div>
-      <div className="lab-cats">
-        {list.map(c => (
-          <button type="button" key={c.id} className="lab-cat" onClick={() => onChange(c)}>
-            <img src={catThumbUrl(c.photo_path, 96)} alt="" loading="lazy" crossOrigin="anonymous" />
-            <div><b>#{c.card_no} {c.name}</b><div className="small muted">{c.coat_class ?? '—'}</div></div>
-          </button>
-        ))}
-      </div>
+    <div className="lab-pick" onBlur={e => { if (!e.currentTarget.contains(e.relatedTarget as Node)) setOpen(false) }}>
+      <div className="adm-search"><IcSearch size={16} /><input value={q} onChange={e => setQ(e.target.value)} onFocus={() => setOpen(true)} placeholder={t('search_cats')} aria-label={t('lab_pick_cat')} /></div>
+      {open && list.length > 0 && (
+        <div className="lab-cats">
+          {list.map(c => (
+            <button type="button" key={c.id} className="lab-cat" onClick={() => { onChange(c); setOpen(false) }}>
+              <img src={catThumbUrl(c.photo_path, 96) || undefined} alt="" loading="lazy" crossOrigin="anonymous" />
+              <div><b>#{c.card_no} {c.name}</b><div className="small muted">{c.coat_class ?? '—'}</div></div>
+            </button>
+          ))}
+        </div>
+      )}
     </div>
   )
 }
@@ -94,44 +97,49 @@ function ThrRow({ label, v, onChange, ph }: { label: string; v: Pair2; onChange:
   )
 }
 
-/// Настройки ИИ: модель, планки, политика. Пустое поле = как в игре.
-function AiSettings({ model, setModel, thr, setThr, unsure, setUnsure, degraded, setDegraded, live }: {
+/// Настройки ИИ: модель, планки, политика. Пустое поле = как в игре. Свёрнуты по умолчанию.
+function AiSettings({ model, setModel, thr, setThr, unsure, setUnsure, degraded, setDegraded, live, changed }: {
   model: string; setModel: (v: string) => void; thr: Thr; setThr: (t: Thr) => void
   unsure: string; setUnsure: (v: string) => void; degraded: string; setDegraded: (v: string) => void
   live?: { near: [number, number]; colony: [number, number]; far: [number, number]; decisive: [number, number]; rescue: number } | null
+  changed: boolean
 }) {
   const { t } = useStore()
   return (
-    <Card title={t('lab_ai')} icon={<IcBolt size={18} />}>
-      <Field label={t('lab_model')}>
-        <select className="select" value={model} onChange={e => setModel(e.target.value)}>
-          <option value="">{t('lab_model_default')}</option>{MODELS.map(m => <option key={m} value={m}>{m}</option>)}
-        </select>
-      </Field>
-      <div className="lab-thr head"><span>{t('lab_thr')}</span><span>{t('lab_conf')}</span><span>{t('lab_marks')}</span></div>
-      <ThrRow label={t('lab_near')} v={thr.near} ph={live?.near} onChange={v => setThr({ ...thr, near: v })} />
-      <ThrRow label={t('lab_colony')} v={thr.colony} ph={live?.colony} onChange={v => setThr({ ...thr, colony: v })} />
-      <ThrRow label={t('lab_far')} v={thr.far} ph={live?.far} onChange={v => setThr({ ...thr, far: v })} />
-      <ThrRow label={t('lab_decisive')} v={thr.decisive} ph={live?.decisive} onChange={v => setThr({ ...thr, decisive: v })} />
-      <div className="lab-thr">
-        <span>{t('lab_rescue')}</span>
-        <input className="input num" type="number" min={0} max={100} value={thr.rescue} placeholder={live ? String(live.rescue) : ''} onChange={e => setThr({ ...thr, rescue: numOr(e.target.value) })} aria-label={t('lab_rescue')} />
-        <span />
+    <details className="lab-ai">
+      <summary><IcBolt size={16} />{t('lab_ai')}{changed && <span className="chip warn">{t('lab_changed')}</span>}<span className="small muted">{t('lab_thr_short')}</span></summary>
+      <div className="lab-ai-grid">
+        <div className="lab-ai-col">
+          <Field label={t('lab_model')}>
+            <select className="select" value={model} onChange={e => setModel(e.target.value)}>
+              <option value="">{t('lab_model_default')}</option>{MODELS.map(m => <option key={m} value={m}>{m}</option>)}
+            </select>
+          </Field>
+          <Field label={t('lab_on_unsure')}>
+            <select className="select" value={unsure} onChange={e => setUnsure(e.target.value)}>
+              <option value="">{t('lab_pol_default')}</option><option value="new">{t('lab_pol_new')}</option><option value="busy">{t('lab_pol_busy')}</option>
+            </select>
+          </Field>
+          <Field label={t('lab_on_degraded')}>
+            <select className="select" value={degraded} onChange={e => setDegraded(e.target.value)}>
+              <option value="">{t('lab_pol_default')}</option><option value="new">{t('lab_pol_new')}</option><option value="busy">{t('lab_pol_busy')}</option>
+            </select>
+          </Field>
+        </div>
+        <div className="lab-ai-col">
+          <div className="lab-thr head"><span>{t('lab_thr')}</span><span>{t('lab_conf')}</span><span>{t('lab_marks')}</span></div>
+          <ThrRow label={t('lab_near')} v={thr.near} ph={live?.near} onChange={v => setThr({ ...thr, near: v })} />
+          <ThrRow label={t('lab_colony')} v={thr.colony} ph={live?.colony} onChange={v => setThr({ ...thr, colony: v })} />
+          <ThrRow label={t('lab_far')} v={thr.far} ph={live?.far} onChange={v => setThr({ ...thr, far: v })} />
+          <ThrRow label={t('lab_decisive')} v={thr.decisive} ph={live?.decisive} onChange={v => setThr({ ...thr, decisive: v })} />
+          <div className="lab-thr">
+            <span>{t('lab_rescue')}</span>
+            <input className="input num" type="number" min={0} max={100} value={thr.rescue} placeholder={live ? String(live.rescue) : ''} onChange={e => setThr({ ...thr, rescue: numOr(e.target.value) })} aria-label={t('lab_rescue')} />
+            <span />
+          </div>
+        </div>
       </div>
-      <div className="small muted" style={{ margin: '6px 0 12px' }}>{t('lab_thr_hint')}</div>
-      <div className="lab-two">
-        <Field label={t('lab_on_unsure')}>
-          <select className="select" value={unsure} onChange={e => setUnsure(e.target.value)}>
-            <option value="">{t('lab_pol_default')}</option><option value="new">{t('lab_pol_new')}</option><option value="busy">{t('lab_pol_busy')}</option>
-          </select>
-        </Field>
-        <Field label={t('lab_on_degraded')}>
-          <select className="select" value={degraded} onChange={e => setDegraded(e.target.value)}>
-            <option value="">{t('lab_pol_default')}</option><option value="new">{t('lab_pol_new')}</option><option value="busy">{t('lab_pol_busy')}</option>
-          </select>
-        </Field>
-      </div>
-    </Card>
+    </details>
   )
 }
 
@@ -151,7 +159,7 @@ function CatRef({ id, cats }: { id: string; cats: Record<string, any> }) {
   const c = cats?.[id]
   return (
     <span className="lab-ref">
-      {c?.photo_path && <img src={catThumbUrl(c.photo_path, 96)} alt="" loading="lazy" crossOrigin="anonymous" />}
+      {c?.photo_path && <img src={catThumbUrl(c.photo_path, 96) || undefined} alt="" loading="lazy" crossOrigin="anonymous" />}
       <b>{c ? `#${c.card_no} ${c.name}` : id.slice(0, 8)}</b>
     </span>
   )
@@ -167,10 +175,10 @@ function ScanResult({ r }: { r: Res }) {
   const vText = r.status === 'new_cat' ? t('lab_v_new') : r.status === 'existing_cat' ? t('lab_v_existing') : r.status === 'rejected' ? t('lab_v_rejected') : t('lab_v_error')
   return (
     <>
-      <Card title={t('lab_result')} icon={<IcScan size={18} />} right={<span className="chip outline num">{sec(lab.t?.total_ms)}</span>}>
+      <Card className="lab-top" title={t('lab_result')} icon={<IcScan size={18} />} right={<span className="chip outline num">{sec(lab.t?.total_ms)}</span>}>
         <div className="lab-verdict">
           <span className={`chip ${vClass}`}>{vText}</span>
-          {r.status === 'existing_cat' && r.cat && <span className="lab-ref"><img src={catThumbUrl(r.cat.photo_path, 96)} alt="" crossOrigin="anonymous" /><b>#{r.cat.card_no} {r.cat.name}</b><RarityChip r={r.cat.rarity} /></span>}
+          {r.status === 'existing_cat' && r.cat && <span className="lab-ref"><img src={catThumbUrl(r.cat.photo_path, 96) || undefined} alt="" crossOrigin="anonymous" /><b>#{r.cat.card_no} {r.cat.name}</b><RarityChip r={r.cat.rarity} /></span>}
           {(r.status === 'rejected' || r.status === 'error') && <b>{r.reason}{r.detail ? ` — ${r.detail}` : ''}</b>}
           {r.xp_gained != null && <span className="chip outline num">{t('lab_xp')}: +{r.xp_gained}</span>}
           {r.trail_x2 && <span className="chip outline">×2</span>}{r.patrol_x15 && <span className="chip outline">×1.5</span>}
@@ -186,6 +194,7 @@ function ScanResult({ r }: { r: Res }) {
         )}
       </Card>
 
+      <div className="lab-res">
       {g && (
         <Card title={t('lab_gate')} right={<span className="chip outline num">{lab.models?.gate} · {sec(lab.t?.gate_ms)}</span>}>
           <div className="lab-kv">
@@ -215,10 +224,11 @@ function ScanResult({ r }: { r: Res }) {
         </Card>
       )}
 
+      <div className="lab-col">
       {r.status !== 'rejected' || lab.searches?.length ? (
         <Card title={t('lab_cands')}>
           {!(lab.searches?.length) ? <Empty text={t('lab_no_cands')} /> : lab.searches.map((s: any, i: number) => (
-            <div className="tbl-wrap" key={i}>
+            <div className="tbl-wrap lab-scroll" key={i}>
               <table className="tbl">
                 <thead><tr><th>{t('cats')}</th><th>{t('lab_distance')}</th><th>{t('coat')}</th><th /></tr></thead>
                 <tbody>
@@ -267,6 +277,8 @@ function ScanResult({ r }: { r: Res }) {
         </Card>
       )}
 
+      </div>
+      </div>
       <details className="lab-raw"><summary>{t('lab_raw')}</summary><pre>{JSON.stringify(r, null, 1)}</pre></details>
     </>
   )
@@ -359,67 +371,79 @@ export default function AiLab() {
     run({ mode: 'pair', photo_b64: pa.b64, ...(bMode === 'upload' ? { photo_b_b64: pb!.b64 } : { cat_b_id: catB!.id }), opts: opts() }, setPairRes)
   }
   const live = scanRes?.lab?.profile ?? null
-  const sw = (k: keyof typeof fx, label: string) => <Switch on={fx[k]} onChange={v => setFx({ ...fx, [k]: v })} label={label} />
+  const changed = model !== '' || unsure !== '' || degraded !== '' || JSON.stringify(thr) !== JSON.stringify(EMPTY_THR)
+  const chip = (k: keyof typeof fx, short: string, full: string) => (
+    <button type="button" key={k} className={`lab-chip ${fx[k] ? 'on' : ''}`} aria-pressed={fx[k]} title={full} onClick={() => setFx({ ...fx, [k]: !fx[k] })}>{short}</button>
+  )
+  const res = tab === 'scan' ? scanRes : pairRes
 
   return (
     <>
-      <div className="row" style={{ marginBottom: 12 }}><h1>{t('lab_title')}</h1></div>
-      <div className="alert info" style={{ marginBottom: 14 }}><IcInfo size={18} /><span>{t('lab_note')}</span></div>
-      <Tabs value={tab} onChange={v => { setTab(v); setErr('') }} options={[{ v: 'scan', l: t('lab_tab_scan') }, { v: 'pair', l: t('lab_tab_pair') }]} />
-      <div className="lab-grid">
-        <div className="lab-col">
-          {tab === 'scan' ? (
-            <>
-              <Card title={t('lab_photo')} icon={<IcCat size={18} />}>
+      <div className="lab-head">
+        <h1>{t('lab_title')}</h1>
+        <span className="chip outline lab-safe" title={t('lab_note')}><IcInfo size={14} />{t('lab_safe')}</span>
+        <div className="lab-tabs"><Tabs value={tab} onChange={v => { setTab(v); setErr('') }} options={[{ v: 'scan', l: t('lab_tab_scan') }, { v: 'pair', l: t('lab_tab_pair') }]} /></div>
+      </div>
+      <section className="card lab-bar">
+        {tab === 'scan' ? (
+          <div className="lab-in">
+            <div className="lab-block">
+              <div className="kicker">{t('lab_photo')}</div>
+              <div className="lab-photos">
                 <PhotoDrop value={photo} onChange={setPhoto} label={t('lab_photo_hint')} />
-                <div className="kicker" style={{ margin: '12px 0 6px' }}>{t('lab_burst')}</div>
-                <div className="lab-two"><PhotoDrop small value={b1} onChange={setB1} label="1" /><PhotoDrop small value={b2} onChange={setB2} label="2" /></div>
-                <div className="small muted" style={{ marginTop: 6 }}>{t('lab_burst_hint')}</div>
-              </Card>
-              <Card title={t('lab_where')}>
-                <Tabs value={where} onChange={v => setWhere(v as 'cat' | 'xy')} options={[{ v: 'cat', l: t('lab_where_cat') }, { v: 'xy', l: t('lab_where_xy') }]} />
-                {where === 'cat' ? <CatPick value={nearCat} onChange={setNearCat} /> : (
-                  <div className="lab-two">
-                    <Field label={t('lab_lat')}><input className="input num" value={lat} onChange={e => setLat(e.target.value)} placeholder="52.2374" inputMode="decimal" /></Field>
-                    <Field label={t('lab_lng')}><input className="input num" value={lng} onChange={e => setLng(e.target.value)} placeholder="21.0657" inputMode="decimal" /></Field>
-                  </div>
-                )}
-              </Card>
-              <Card title={t('lab_player')}>
-                <div className="lab-switches">
-                  {sw('with_card', t('lab_with_card'))}
-                  {sw('trail_boost', t('lab_trail_boost'))}
-                  {sw('plus', t('lab_plus'))}
-                  {sw('buddy_hunter', t('lab_buddy'))}
-                  {sw('xp_boost', t('lab_xpboost'))}
-                  {sw('trail', t('lab_trail'))}
-                  {sw('patrol', t('lab_patrol'))}
+                <div className="lab-burst" title={t('lab_burst_hint')}>
+                  <PhotoDrop small value={b1} onChange={setB1} label={t('lab_burst_short')} />
+                  <PhotoDrop small value={b2} onChange={setB2} label={t('lab_burst_short')} />
                 </div>
-              </Card>
-            </>
-          ) : (
-            <>
-              <Card title={t('lab_photo_a')} icon={<IcCat size={18} />}><PhotoDrop value={pa} onChange={setPa} label={t('lab_photo_hint')} /></Card>
-              <Card title={t('lab_photo_b')} icon={<IcCat size={18} />}>
-                <Tabs value={bMode} onChange={v => setBMode(v as 'upload' | 'cat')} options={[{ v: 'upload', l: t('lab_b_upload') }, { v: 'cat', l: t('lab_b_cat') }]} />
-                {bMode === 'upload' ? <PhotoDrop value={pb} onChange={setPb} label={t('lab_photo_hint')} /> : <CatPick value={catB} onChange={setCatB} />}
-              </Card>
-            </>
-          )}
-          <AiSettings model={model} setModel={setModel} thr={thr} setThr={setThr} unsure={unsure} setUnsure={setUnsure} degraded={degraded} setDegraded={setDegraded} live={live} />
-          <div className="row">
+              </div>
+            </div>
+            <div className="lab-block">
+              <div className="kicker">{t('lab_where')}</div>
+              <Seg value={where} onChange={v => setWhere(v as 'cat' | 'xy')} options={[{ v: 'cat', l: t('lab_where_cat') }, { v: 'xy', l: t('lab_where_xy') }]} />
+              {where === 'cat' ? <CatPick value={nearCat} onChange={setNearCat} /> : (
+                <div className="lab-two">
+                  <input className="input num" value={lat} onChange={e => setLat(e.target.value)} placeholder={`${t('lab_lat')} 52.2374`} aria-label={t('lab_lat')} inputMode="decimal" />
+                  <input className="input num" value={lng} onChange={e => setLng(e.target.value)} placeholder={`${t('lab_lng')} 21.0657`} aria-label={t('lab_lng')} inputMode="decimal" />
+                </div>
+              )}
+            </div>
+            <div className="lab-block">
+              <div className="kicker">{t('lab_player')}</div>
+              <div className="lab-chips">
+                {chip('with_card', t('lab_c_card'), t('lab_with_card'))}
+                {chip('trail_boost', t('lab_c_trailboost'), t('lab_trail_boost'))}
+                {chip('plus', t('lab_c_plus'), t('lab_plus'))}
+                {chip('buddy_hunter', t('lab_c_buddy'), t('lab_buddy'))}
+                {chip('xp_boost', t('lab_c_xpboost'), t('lab_xpboost'))}
+                {chip('trail', t('lab_c_trail'), t('lab_trail'))}
+                {chip('patrol', t('lab_c_patrol'), t('lab_patrol'))}
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="lab-in pair">
+            <div className="lab-block">
+              <div className="kicker">{t('lab_photo_a')}</div>
+              <PhotoDrop value={pa} onChange={setPa} label={t('lab_photo_hint')} />
+            </div>
+            <div className="lab-block">
+              <div className="kicker">{t('lab_photo_b')}</div>
+              <Seg value={bMode} onChange={v => setBMode(v as 'upload' | 'cat')} options={[{ v: 'upload', l: t('lab_b_upload') }, { v: 'cat', l: t('lab_b_cat') }]} />
+              {bMode === 'upload' ? <PhotoDrop value={pb} onChange={setPb} label={t('lab_photo_hint')} /> : <CatPick value={catB} onChange={setCatB} />}
+            </div>
+          </div>
+        )}
+        <div className="lab-foot">
+          <AiSettings model={model} setModel={setModel} thr={thr} setThr={setThr} unsure={unsure} setUnsure={setUnsure} degraded={degraded} setDegraded={setDegraded} live={live} changed={changed} />
+          <div className="lab-actions">
+            {changed && <button className="btn ghost sm" disabled={busy} onClick={() => { setThr(EMPTY_THR); setModel(''); setUnsure(''); setDegraded('') }}>{t('lab_reset')}</button>}
             <button className="btn primary" disabled={busy} onClick={tab === 'scan' ? runScan : runPair}><IcScan size={16} />{busy ? t('lab_running') : t('lab_run')}</button>
-            <button className="btn ghost" disabled={busy} onClick={() => { setThr(EMPTY_THR); setModel(''); setUnsure(''); setDegraded('') }}>{t('lab_reset')}</button>
           </div>
         </div>
-        <div className="lab-col">
-          {err && <div className="alert err"><IcWarn size={18} /><span>{err}</span></div>}
-          {busy && <Card><div className="sk" style={{ height: 14, width: '60%', marginBottom: 10 }} /><div className="sk" style={{ height: 14, width: '85%', marginBottom: 10 }} /><div className="sk" style={{ height: 14, width: '40%' }} /><div className="small muted" style={{ marginTop: 12 }}>{t('lab_running')}</div></Card>}
-          {!busy && tab === 'scan' && scanRes && <ScanResult r={scanRes} />}
-          {!busy && tab === 'pair' && pairRes && <PairResult r={pairRes} />}
-          {!busy && !err && !(tab === 'scan' ? scanRes : pairRes) && <Card><Empty text={t('lab_result')} /></Card>}
-        </div>
-      </div>
+      </section>
+      {err && <div className="alert err" style={{ marginTop: 12 }}><IcWarn size={18} /><span>{err}</span></div>}
+      {busy && <Card className="lab-top"><div className="sk" style={{ height: 14, width: '60%', marginBottom: 10 }} /><div className="sk" style={{ height: 14, width: '40%' }} /><div className="small muted" style={{ marginTop: 10 }}>{t('lab_running')}</div></Card>}
+      {!busy && res && (tab === 'scan' ? <ScanResult r={res} /> : <div className="lab-top"><PairResult r={res} /></div>)}
     </>
   )
 }
