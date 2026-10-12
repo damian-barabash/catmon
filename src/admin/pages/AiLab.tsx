@@ -1,13 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
-import { ApiError, api, catThumbUrl, type CatRow } from '../api'
+import { Link } from 'react-router-dom'
+import { ApiError, api, catThumbUrl, type CatRow, type PlayerRow } from '../api'
 import { useStore } from '../store'
 import { Card, Empty, ErrorBox, Field, RarityChip, Seg, Tabs } from '../ui'
-import { IcBolt, IcCheck, IcClose, IcInfo, IcScan, IcSearch, IcUpload, IcWarn } from '../icons'
+import { IcBolt, IcCheck, IcClose, IcGift, IcInfo, IcRefresh, IcScan, IcSearch, IcTrash, IcUpload, IcWarn } from '../icons'
 
 /* Лаборатория ИИ: сухой прогон скана. Сервер (admin-api → scan-cat dry_run)
  * считает всё так же, как для игрока, но ничего не пишет в игру. */
 
-type Photo = { b64: string; url: string }
+type Photo = { b64: string; url: string; full: string }
 type Pair2 = [number | '', number | '']
 type Thr = { near: Pair2; colony: Pair2; far: Pair2; decisive: Pair2; rescue: number | '' }
 const EMPTY_THR: Thr = { near: ['', ''], colony: ['', ''], far: ['', ''], decisive: ['', ''], rescue: '' }
@@ -21,7 +22,13 @@ async function prepPhoto(file: File, max = 512): Promise<Photo> {
   c.width = Math.round(bmp.width * k); c.height = Math.round(bmp.height * k)
   c.getContext('2d')!.drawImage(bmp, 0, 0, c.width, c.height)
   const url = c.toDataURL('image/jpeg', 0.8)
-  return { b64: url.slice(url.indexOf(',') + 1), url }
+  // крупная копия (1024 px) — фото карточки, если тестовую карточку выдадут игроку
+  const k2 = Math.min(1, 1024 / Math.max(bmp.width, bmp.height))
+  const c2 = document.createElement('canvas')
+  c2.width = Math.round(bmp.width * k2); c2.height = Math.round(bmp.height * k2)
+  c2.getContext('2d')!.drawImage(bmp, 0, 0, c2.width, c2.height)
+  const big = c2.toDataURL('image/jpeg', 0.85)
+  return { b64: url.slice(url.indexOf(',') + 1), url, full: big.slice(big.indexOf(',') + 1) }
 }
 
 function PhotoDrop({ value, onChange, label, small }: { value: Photo | null; onChange: (p: Photo | null) => void; label: string; small?: boolean }) {
@@ -165,8 +172,143 @@ function CatRef({ id, cats }: { id: string; cats: Record<string, any> }) {
   )
 }
 
-function ScanResult({ r }: { r: Res }) {
+const ARCH: Record<string, { ru: string; en: string; pl: string }> = {
+  hunter: { ru: 'Охотник', en: 'Hunter', pl: 'Łowca' }, guardian: { ru: 'Страж', en: 'Guardian', pl: 'Strażnik' },
+  shadow: { ru: 'Тень', en: 'Shadow', pl: 'Cień' }, royal: { ru: 'Короли', en: 'Royal', pl: 'Królewski' },
+  street: { ru: 'Уличный', en: 'Street', pl: 'Uliczny' }, mystic: { ru: 'Мистик', en: 'Mystic', pl: 'Mistyk' },
+  explorer: { ru: 'Скиталец', en: 'Explorer', pl: 'Wędrowiec' }, lazy: { ru: 'Лежебока', en: 'Lazy', pl: 'Leniuch' },
+  chaos: { ru: 'Хаос', en: 'Chaos', pl: 'Chaos' }, noble: { ru: 'Аристократ', en: 'Noble', pl: 'Arystokrata' },
+}
+const RAR: Record<string, { ru: string; en: string; pl: string }> = {
+  common: { ru: 'Обычный', en: 'Common', pl: 'Zwykły' }, rare: { ru: 'Редкий', en: 'Rare', pl: 'Rzadki' },
+  epic: { ru: 'Эпический', en: 'Epic', pl: 'Epicki' }, legendary: { ru: 'Легендарный', en: 'Legendary', pl: 'Legendarny' },
+}
+
+/// Тестовая карточка в виде игровой TCG-карты (63:88): вскрытие флипом с рубашки,
+/// рост полосок статов, перелив; наклон за курсором. В игру не пишется.
+function LabCard({ cat, photoUrl, isNew, replay, grantedNo }: { cat: any; photoUrl: string; isNew: boolean; replay: number; grantedNo?: number | null }) {
+  const { t, lang } = useStore()
+  const ref = useRef<HTMLDivElement>(null)
+  const L = (lang === 'pl' ? 'pl' : lang === 'en' ? 'en' : 'ru') as 'ru' | 'en' | 'pl'
+  const name = cat.name_i18n?.[L] || cat.name_i18n?.ru || cat.name || '—'
+  const desc = cat.description_i18n?.[L] || cat.description_i18n?.ru || cat.description || ''
+  const stats: [string, number][] = [[t('ist_charm'), cat.charm], [t('ist_agility'), cat.agility], [t('ist_dominance'), cat.dominance], [t('ist_mystery'), cat.mystery]]
+  const move = (e: React.MouseEvent) => {
+    const el = ref.current; if (!el) return
+    const b = el.getBoundingClientRect()
+    el.style.setProperty('--rx', `${((e.clientY - b.top) / b.height - .5) * -10}deg`)
+    el.style.setProperty('--ry', `${((e.clientX - b.left) / b.width - .5) * 12}deg`)
+  }
+  const leave = () => { ref.current?.style.setProperty('--rx', '0deg'); ref.current?.style.setProperty('--ry', '0deg') }
+  return (
+    <div className="tcg-wrap" onMouseMove={move} onMouseLeave={leave}>
+      <div ref={ref} key={replay} className={`tcg r-${cat.rarity}`}>
+        <div className="tcg-back"><img src="/admin/cat_logo.png" alt="" /></div>
+        <div className="tcg-front">
+          <div className="tcg-h"><b>{name}</b><span className="tcg-pow">{cat.power}</span></div>
+          <div className="tcg-photo"><img src={photoUrl} alt={name} />{grantedNo == null && <span className="tcg-test">{t('lab_test')}</span>}</div>
+          <div className="tcg-meta"><span>{ARCH[cat.archetype]?.[L] ?? cat.archetype ?? '—'}</span><span className="tcg-rar">{RAR[cat.rarity]?.[L] ?? cat.rarity}</span></div>
+          <div className="tcg-stats">
+            {stats.map(([l, v], i) => (
+              <div key={l} className="tcg-stat"><span>{l}</span><i><em style={{ width: `${v}%`, animationDelay: `${0.95 + i * 0.09}s` }} /></i><b>{v}</b></div>
+            ))}
+          </div>
+          <div className="tcg-desc">{desc}</div>
+          <div className="tcg-foot"><span>{grantedNo != null ? `№${String(grantedNo).padStart(4, '0')}` : isNew ? `№ ${t('lab_test')}` : `№${String(cat.card_no ?? 0).padStart(4, '0')}`}</span><span>{isNew ? t('lab_first') : `${t('lab_owners')}: ${cat.owners_count ?? '—'}`}</span></div>
+          <div className="tcg-shine" />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+function PlayerPick({ value, onChange }: { value: PlayerRow | null; onChange: (p: PlayerRow | null) => void }) {
   const { t } = useStore()
+  const [q, setQ] = useState('')
+  const [open, setOpen] = useState(false)
+  const [list, setList] = useState<PlayerRow[]>([])
+  useEffect(() => {
+    if (value || !open) return
+    let dead = false
+    const h = setTimeout(() => {
+      api.players({ q, limit: 6 }).then(r => { if (!dead) setList(r.players) }).catch(() => { if (!dead) setList([]) })
+    }, 250)
+    return () => { dead = true; clearTimeout(h) }
+  }, [q, value, open])
+  if (value) return (
+    <div className="lab-cat on">
+      <div><b>{value.username}</b><div className="small muted">{value.email ?? '—'} · {value.cards_count}</div></div>
+      <button type="button" className="btn icon sm ghost" onClick={() => onChange(null)} aria-label="remove"><IcClose size={14} /></button>
+    </div>
+  )
+  return (
+    <div className="lab-pick" onBlur={e => { if (!e.currentTarget.contains(e.relatedTarget as Node)) setOpen(false) }}>
+      <div className="adm-search"><IcSearch size={16} /><input value={q} onChange={e => setQ(e.target.value)} onFocus={() => setOpen(true)} placeholder={t('search_players')} aria-label={t('lab_grant')} /></div>
+      {open && list.length > 0 && (
+        <div className="lab-cats">
+          {list.map(p => (
+            <button type="button" key={p.id} className="lab-cat" onClick={() => { onChange(p); setOpen(false) }}>
+              <div><b>{p.username}</b><div className="small muted">{p.email ?? '—'} · {p.cards_count}</div></div>
+            </button>
+          ))}
+        </div>
+      )}
+    </div>
+  )
+}
+
+/// Что сделать с тестовой карточкой: выдать игроку (обычная запись в игру) или удалить.
+function GrantBox({ r, photo, onDiscard, onReplay, onGranted }: { r: Res; photo: Photo; onDiscard: () => void; onReplay: () => void; onGranted: (cardNo: number) => void }) {
+  const { t, toast } = useStore()
+  const [player, setPlayer] = useState<PlayerRow | null>(null)
+  const [busy, setBusy] = useState(false)
+  const [done, setDone] = useState<{ status: string; cat?: any; player: PlayerRow } | null>(null)
+  const [err, setErr] = useState('')
+  const grant = async () => {
+    if (!player) return
+    const c = r.cat ?? {}
+    const st = { charm: c.charm, agility: c.agility, dominance: c.dominance, mystery: c.mystery }
+    const preset = r.status === 'existing_cat' ? { existing_cat_id: c.id } : {
+      card: { canonical_text: c.canonical_text, name_i18n: c.name_i18n, description_i18n: c.description_i18n, uniqueness: c.uniqueness, stats: st },
+      rarity: c.rarity, stats: st, archetype: c.archetype, coat_colors: r.lab?.gate?.coat_colors, coat_class: r.lab?.coat_class,
+    }
+    setBusy(true); setErr('')
+    try {
+      const o = await api.aiLabCommit(player.id, { photo_b64: photo.full, lat: r.lab?.location?.lat, lng: r.lab?.location?.lng, preset })
+      const s = o.scan ?? {}
+      if (s.status === 'new_cat' || s.status === 'existing_cat' || s.status === 'already_owned') { setDone({ status: s.status, cat: s.cat, player }); if (s.status !== 'already_owned') { toast(t('done')); if (typeof s.cat?.card_no === 'number') onGranted(s.cat.card_no) } }
+      else setErr(String(s.reason ?? s.error ?? s.message ?? 'failed'))
+    } catch (e) { setErr((e as Error).message) } finally { setBusy(false) }
+  }
+  return (
+    <Card title={t('lab_card_actions')} icon={<IcGift size={18} />}>
+      {done ? (
+        <div className="lab-verdict">
+          <span className={`chip ${done.status === 'already_owned' ? 'warn' : 'ok'}`}>{done.status === 'already_owned' ? t('lab_owned') : t('lab_granted')}</span>
+          <Link to={`/admin/players/${done.player.id}`}><b>{done.player.username}</b></Link>
+          {done.cat?.id && <Link to={`/admin/cats/${done.cat.id}`} className="chip outline num">#{done.cat.card_no} {done.cat.name}</Link>}
+        </div>
+      ) : (
+        <>
+          <div className="small muted" style={{ marginBottom: 8 }}>{r.status === 'existing_cat' ? t('lab_grant_hint_ex') : t('lab_grant_hint')}</div>
+          <PlayerPick value={player} onChange={setPlayer} />
+          {err && <div className="alert err" style={{ marginTop: 8 }}><IcWarn size={16} /><span>{err}</span></div>}
+        </>
+      )}
+      <div className="lab-btns">
+        {!done && <button className="btn primary" disabled={!player || busy} onClick={grant}><IcGift size={16} />{busy ? t('loading') : player ? `${t('lab_grant')}: ${player.username}` : t('lab_grant')}</button>}
+        <button className="btn ghost" onClick={onReplay}><IcRefresh size={16} />{t('lab_replay')}</button>
+        <button className="btn ghost" disabled={busy} onClick={onDiscard}><IcTrash size={16} />{done ? t('close') : t('lab_discard')}</button>
+      </div>
+    </Card>
+  )
+}
+
+function ScanResult({ r, photo, onDiscard }: { r: Res; photo: Photo | null; onDiscard: () => void }) {
+  const { t } = useStore()
+  const [replay, setReplay] = useState(0)
+  const [grantedNo, setGrantedNo] = useState<number | null>(null)
+  const showCard = !!photo && ((r.status === 'new_cat' && !!r.cat?.rarity) || (r.status === 'existing_cat' && !!r.cat))
   const tt = t as (k: string) => string
   const lab = r.lab ?? {}
   const cats = lab.cats ?? {}
@@ -175,7 +317,10 @@ function ScanResult({ r }: { r: Res }) {
   const vText = r.status === 'new_cat' ? t('lab_v_new') : r.status === 'existing_cat' ? t('lab_v_existing') : r.status === 'rejected' ? t('lab_v_rejected') : t('lab_v_error')
   return (
     <>
-      <Card className="lab-top" title={t('lab_result')} icon={<IcScan size={18} />} right={<span className="chip outline num">{sec(lab.t?.total_ms)}</span>}>
+      <div className={`lab-hero ${showCard ? 'with-card' : ''}`}>
+      {showCard && <LabCard cat={r.cat} photoUrl={photo!.url} isNew={r.status === 'new_cat'} replay={replay} grantedNo={grantedNo} />}
+      <div className="lab-col">
+      <Card title={t('lab_result')} icon={<IcScan size={18} />} right={<span className="chip outline num">{sec(lab.t?.total_ms)}</span>}>
         <div className="lab-verdict">
           <span className={`chip ${vClass}`}>{vText}</span>
           {r.status === 'existing_cat' && r.cat && <span className="lab-ref"><img src={catThumbUrl(r.cat.photo_path, 96) || undefined} alt="" crossOrigin="anonymous" /><b>#{r.cat.card_no} {r.cat.name}</b><RarityChip r={r.cat.rarity} /></span>}
@@ -185,14 +330,12 @@ function ScanResult({ r }: { r: Res }) {
           {r.dup_risk && <span className="chip warn">{t('lab_dup_risk')}: {r.dup_risk}</span>}
         </div>
         {r.status === 'new_cat' && r.cat?.rarity && (
-          <div className="lab-cardprev">
-            <div className="row"><b>{r.cat.name_i18n?.ru ?? '—'}</b><RarityChip r={r.cat.rarity} /><span className="chip outline num">uniq {r.cat.uniqueness}</span><span className="chip outline num">power {r.cat.power}</span></div>
-            <div className="small muted">{r.cat.description_i18n?.ru}</div>
-            <div className="small num">charm {r.cat.charm} · agility {r.cat.agility} · dominance {r.cat.dominance} · mystery {r.cat.mystery}</div>
-            <div className="small muted">{r.cat.canonical_text}</div>
-          </div>
+          <div className="small muted" style={{ marginTop: 10 }}><span className="chip outline num">uniq {r.cat.uniqueness}</span> {r.cat.canonical_text}</div>
         )}
       </Card>
+      {showCard && <GrantBox r={r} photo={photo!} onDiscard={onDiscard} onReplay={() => setReplay(x => x + 1)} onGranted={setGrantedNo} />}
+      </div>
+      </div>
 
       <div className="lab-res">
       {g && (
@@ -334,7 +477,7 @@ export default function AiLab() {
   const [nearCat, setNearCat] = useState<CatRow | null>(null)
   const [lat, setLat] = useState('')
   const [lng, setLng] = useState('')
-  const [fx, setFx] = useState({ plus: false, buddy_hunter: false, xp_boost: false, trail_boost: false, trail: false, patrol: false, with_card: false })
+  const [fx, setFx] = useState({ plus: false, buddy_hunter: false, xp_boost: false, trail_boost: false, trail: false, patrol: false })
   const [scanRes, setScanRes] = useState<Res>(null)
   // пара
   const [pa, setPa] = useState<Photo | null>(null)
@@ -363,7 +506,7 @@ export default function AiLab() {
     const burst = [b1, b2].filter(Boolean).map(p => p!.b64)
     setScanRes(null)
     run({ mode: 'scan', photo_b64: photo.b64, photo_cmp_b64: photo.b64, burst_b64: burst, ...loc,
-      opts: { ...opts(), ...fx, cards_count: fx.trail ? 0 : 5 } }, setScanRes)
+      opts: { ...opts(), ...fx, with_card: true, cards_count: fx.trail ? 0 : 5 } }, setScanRes)
   }
   const runPair = () => {
     if (!pa || (bMode === 'upload' ? !pb : !catB)) return setErr(t('lab_need_photo'))
@@ -410,7 +553,6 @@ export default function AiLab() {
             <div className="lab-block">
               <div className="kicker">{t('lab_player')}</div>
               <div className="lab-chips">
-                {chip('with_card', t('lab_c_card'), t('lab_with_card'))}
                 {chip('trail_boost', t('lab_c_trailboost'), t('lab_trail_boost'))}
                 {chip('plus', t('lab_c_plus'), t('lab_plus'))}
                 {chip('buddy_hunter', t('lab_c_buddy'), t('lab_buddy'))}
@@ -443,7 +585,7 @@ export default function AiLab() {
       </section>
       {err && <div className="alert err" style={{ marginTop: 12 }}><IcWarn size={18} /><span>{err}</span></div>}
       {busy && <Card className="lab-top"><div className="sk" style={{ height: 14, width: '60%', marginBottom: 10 }} /><div className="sk" style={{ height: 14, width: '40%' }} /><div className="small muted" style={{ marginTop: 10 }}>{t('lab_running')}</div></Card>}
-      {!busy && res && (tab === 'scan' ? <ScanResult r={res} /> : <div className="lab-top"><PairResult r={res} /></div>)}
+      {!busy && res && (tab === 'scan' ? <ScanResult r={res} photo={photo} onDiscard={() => setScanRes(null)} /> : <div className="lab-top"><PairResult r={res} /></div>)}
     </>
   )
 }

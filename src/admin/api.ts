@@ -276,6 +276,8 @@ export const api = {
   aiTranslateFields: (fields: Record<string, string>) => call<Record<string, I18n>>('ai_translate', { fields }),
   // Лаборатория ИИ: сухой прогон скана (в игру ничего не пишется)
   aiLab: (payload: Record<string, unknown>) => call<{ ok: boolean; result: any }>('ai_lab', { payload }), // eslint-disable-line @typescript-eslint/no-explicit-any
+  // выдать игроку тестовую карточку из лаборатории (обычная запись в игру, без повторного ИИ)
+  aiLabCommit: (user_id: string, payload: Record<string, unknown>) => call<{ ok: boolean; scan: any }>('ai_lab_commit', { user_id, payload }), // eslint-disable-line @typescript-eslint/no-explicit-any
   // cats & items admin
   catsList: (p: { q?: string; rarity?: string; archetype?: string; coat_class?: string; sort?: string; limit?: number; offset?: number }) =>
     call<{ cats: CatRow[]; total: number }>('cats_list', p),
