@@ -6,3 +6,5 @@ export const SITE_URL = 'https://catmongame.app'
 export const SUPPORT_EMAIL = 'support@catmongame.app'
 export const LANGS = ['en', 'ru', 'pl', 'fr'] as const
 export type Lang = (typeof LANGS)[number]
+/** Ссылки на соцсети в футере. Пустая строка — иконка скрыта; если пусты все — блок «Соцсети» не показывается. */
+export const SOCIAL_LINKS: { x: string; ig: string; tt: string; yt: string } = { x: '', ig: '', tt: '', yt: '' }

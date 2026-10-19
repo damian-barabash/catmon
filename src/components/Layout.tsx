@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring } from 'framer-motion'
 import { LANG_NAMES, useI18n } from '../i18n'
-import { LANGS, SUPPORT_EMAIL, type Lang } from '../lib/config'
+import { LANGS, SOCIAL_LINKS, SUPPORT_EMAIL, type Lang } from '../lib/config'
 import { CatLogo, CookieIcon, Paw, Social } from './Icons'
 import { getConsent, setConsent } from '../lib/consent'
 import { api } from '../lib/api'
@@ -76,6 +76,11 @@ function Header() {
   )
 }
 
+const SOCIAL_LABELS = { x: 'X', ig: 'Instagram', tt: 'TikTok', yt: 'YouTube' } as const
+const socials = (Object.keys(SOCIAL_LABELS) as (keyof typeof SOCIAL_LABELS)[])
+  .filter((k) => SOCIAL_LINKS[k])
+  .map((k) => [k, SOCIAL_LABELS[k], SOCIAL_LINKS[k]] as const)
+
 function Footer() {
   const { t } = useI18n()
   return (
@@ -111,13 +116,12 @@ function Footer() {
               <li><Link to="/contact">{t.nav.contact}</Link></li>
               <li><a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a></li>
             </ul>
-            <h4 style={{ marginTop: '1.5rem' }}>{t.footer.social}</h4>
-            <div className="socials">
-              <a href="#" aria-label="X"><Social.x /></a>
-              <a href="#" aria-label="Instagram"><Social.ig /></a>
-              <a href="#" aria-label="TikTok"><Social.tt /></a>
-              <a href="#" aria-label="YouTube"><Social.yt /></a>
-            </div>
+            {socials.length > 0 && <>
+              <h4 style={{ marginTop: '1.5rem' }}>{t.footer.social}</h4>
+              <div className="socials">
+                {socials.map(([k, label, href]) => { const I = Social[k]; return <a key={k} href={href} target="_blank" rel="noopener noreferrer" aria-label={label}><I /></a> })}
+              </div>
+            </>}
           </div>
         </div>
         <div className="footer-bottom">
@@ -180,8 +184,10 @@ function ScrollProgress() {
 }
 
 export default function Layout() {
+  // .site — корень публичного сайта: классовые правила index.css скоупятся под него
+  // (postcss-плагин scope-site в vite.config.ts), поэтому не протекают в админку (.adm)
   return (
-    <>
+    <div className="site">
       <ScrollProgress />
       <ScrollTop />
       <Tracker />
@@ -189,6 +195,6 @@ export default function Layout() {
       <main><Outlet /></main>
       <Footer />
       <CookieBanner />
-    </>
+    </div>
   )
 }

@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState, type ReactNode } from 'react'
+import { useEffect, useRef, useState, useSyncExternalStore, type CSSProperties, type ReactNode } from 'react'
 import { Link } from 'react-router-dom'
 import { motion, useMotionValue, useReducedMotion, useScroll, useSpring, useTransform, type MotionValue } from 'framer-motion'
 import { useI18n } from '../i18n'
@@ -8,25 +8,31 @@ import { CatLogo, Paw } from '../components/Icons'
 import { HeartMark } from '../lib/hearts'
 import { Reveal } from '../components/Reveal'
 import { StoreBadges } from '../components/StoreBadges'
-import { PostCard } from './Blog'
+import { PostCard } from '../components/PostCard'
 import { MediaImg } from '../components/MediaImg'
+import { Cubes, Isle, type CubeSpec, type Scene } from '../components/Isle'
 
 /**
- * Hero cards: a deliberate fan composition (positions live in CSS as
- * .fc0–.fc3). Two smaller, dimmed cards sit at the back top corners, two
- * bigger cards at the front bottom, the legendary card leads. Depth order =
- * z-index = parallax amplitude (front moves the most).
+ * Hero: композиция из парящих островов игры (улица CatDex сзади, арена слева,
+ * Шабаш спереди справа) + две карточки котов по краям. Глубина = z-index =
+ * амплитуда параллакса (мышь и скролл). Парение — CSS (у каждого своя фаза).
  */
-const floating = [
-  { src: '/shots/catdex.webp', name: 'White Spot', r: 'rare', cls: 'fc0', rot: -9, o: .8, d: 0 },
-  { src: '/shots/arena.webp', name: 'Obsidian', r: 'epic', cls: 'fc1', rot: 8, o: .85, d: 1.2 },
-  { src: '/shots/fishing.webp', name: 'Ember Paws', r: 'common', cls: 'fc2', rot: -6, o: 1, d: .6 },
-  { src: '/shots/dungeon.webp', name: 'Archwitch', r: 'legendary', cls: 'fc3', rot: 5, o: 1, d: 2.1 },
+const heroIsles: { scene: Scene; cls: string; glow: string; mouse: number; scroll: number; phase: number; sizes: string; priority?: boolean }[] = [
+  { scene: 'ban_catdex', cls: 'hi-street', glow: 'var(--rare)', mouse: 10, scroll: -24, phase: 0, sizes: '(max-width: 900px) 94vw, 560px', priority: true },
+  { scene: 'ban_arena', cls: 'hi-arena', glow: 'var(--legendary)', mouse: 18, scroll: -44, phase: 2.2, sizes: '300px' },
+  { scene: 'dungeon_4', cls: 'hi-dungeon', glow: 'var(--epic)', mouse: 28, scroll: -72, phase: 3.9, sizes: '(max-width: 900px) 44vw, 260px' },
 ]
-/** Mouse-parallax amplitude per card (front cards move more). */
-const cardDepth = [8, 14, 22, 34]
-/** Scroll-parallax offset per card at 600px scrolled (back cards move less). */
-const cardScroll = [-16, -28, -46, -70]
+const floating = [
+  { src: '/shots/arena.webp', name: 'Obsidian', r: 'epic', cls: 'fc1', rot: -8, d: 1.2, mouse: 14, scroll: -34 },
+  { src: '/shots/dungeon.webp', name: 'Archwitch', r: 'legendary', cls: 'fc3', rot: 6, d: 2.1, mouse: 34, scroll: -86 },
+]
+const heroCubes: CubeSpec[] = [
+  { c: 'var(--legendary)', l: '6%', t: '8%', s: 16, dur: 7, delay: 0 },
+  { c: 'var(--rare)', l: '88%', t: '12%', s: 12, dur: 9, delay: 2.5 },
+  { c: 'var(--epic)', l: '52%', t: '52%', s: 11, dur: 8, delay: 1.2, lg: true },
+  { c: 'var(--red)', l: '14%', t: '86%', s: 13, dur: 10, delay: 4, lg: true },
+  { c: '#C9A27A', l: '94%', t: '70%', s: 15, dur: 8.5, delay: 3.1 },
+]
 
 const HeartMini = () => (
   <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 21C6.5 17 2 13.5 2 8.8 2 6 4.2 4 6.9 4c2 0 3.6 1.2 5.1 3 1.5-1.8 3.1-3 5.1-3C19.8 4 22 6 22 8.8c0 4.7-4.5 8.2-10 12.2z" fill="var(--red)" /></svg>
@@ -146,28 +152,27 @@ function PawTrail() {
   )
 }
 
+/** Слой hero с параллаксом: мышь (x) + скролл (y), глубина задаётся числами. */
+function Depth({ mx, my, scrollY, mouse, scroll, className, children, reduce, style }: {
+  mx: MotionValue<number>; my: MotionValue<number>; scrollY: MotionValue<number>; mouse: number; scroll: number
+  className: string; children: ReactNode; reduce: boolean | null; style?: CSSProperties
+}) {
+  const x = useTransform(mx, (v) => v * mouse)
+  const yM = useTransform(my, (v) => v * mouse * .45)
+  const yS = useTransform(scrollY, [0, 600], [0, scroll])
+  const y = useTransform(() => yM.get() + yS.get())
+  return <motion.div className={className} style={reduce ? style : { ...style, x, y }}>{children}</motion.div>
+}
+
 function Hero({ links }: { links: StoreLinks | null }) {
   const { t } = useI18n()
   const reduce = useReducedMotion()
   const { scrollY } = useScroll()
-  const catY = useTransform(scrollY, [0, 600], [0, -55])
-  const sy0 = useTransform(scrollY, [0, 600], [0, cardScroll[0]])
-  const sy1 = useTransform(scrollY, [0, 600], [0, cardScroll[1]])
-  const sy2 = useTransform(scrollY, [0, 600], [0, cardScroll[2]])
-  const sy3 = useTransform(scrollY, [0, 600], [0, cardScroll[3]])
-  const cardYs = [sy0, sy1, sy2, sy3]
-  // mouse parallax: cat and cards live at different depths
+  // mouse parallax: islands and cards live at different depths
   const mx = useMotionValue(0)
   const my = useMotionValue(0)
   const smx = useSpring(mx, { stiffness: 50, damping: 16 })
   const smy = useSpring(my, { stiffness: 50, damping: 16 })
-  const catMX = useTransform(smx, (v) => v * -22)
-  const catMY = useTransform(smy, (v) => v * -14)
-  const card0 = useTransform(smx, (v) => v * cardDepth[0])
-  const card1 = useTransform(smx, (v) => v * cardDepth[1])
-  const card2 = useTransform(smx, (v) => v * cardDepth[2])
-  const card3 = useTransform(smx, (v) => v * cardDepth[3])
-  const cardXs = [card0, card1, card2, card3]
   return (
     <section
       className="hero"
@@ -194,39 +199,33 @@ function Hero({ links }: { links: StoreLinks | null }) {
             <span className="nop2w">{t.hero.noP2W}</span>
           </motion.div>
         </div>
-        <div className="hero-visual">
-          {[...Array(5)].map((_, i) => (
-            <Paw key={i} className="paw" style={{ left: `${10 + i * 18}%`, top: `${(i * 37) % 85}%`, transform: `rotate(${i * 30 - 45}deg)`, animationDelay: `${i * .8}s` }} />
-          ))}
-          {/* cat-big keeps its CSS centering transform; framer moves inner divs */}
-          <div className="cat-big">
-            <motion.div style={reduce ? undefined : { y: catY }}>
-            <motion.div style={reduce ? undefined : { x: catMX, y: catMY }}>
-              {/* rare blink (lids cover the eye holes) + tiny sway, CSS-only */}
-              <span className="cat-live">
-                <CatLogo color="var(--ink)" />
-                <i className="lid l" /><i className="lid r" />
-              </span>
-            </motion.div>
-            </motion.div>
-          </div>
-          {floating.map((c, i) => (
-            <motion.div
-              key={c.name}
-              className={`float-card ${c.r} ${c.cls}`}
-              style={reduce ? undefined : { x: cardXs[i], y: cardYs[i] }}
-              initial={{ opacity: 0, scale: .7, rotate: c.rot * 1.8 }}
-              animate={{ opacity: c.o, scale: 1, rotate: c.rot }}
-              transition={{ delay: .45 + i * .12, type: 'spring', stiffness: 170, damping: 17 }}
-            >
-              <motion.div animate={reduce ? {} : { y: [0, -8, 0], rotate: [0, -1.1, 0, 1.1, 0] }} transition={{ repeat: Infinity, duration: 6 + c.d, ease: 'easeInOut', delay: c.d }}>
-                <Tilt max={10}>
-                  <img src={c.src} alt="" loading="eager" />
-                  <div className="fc-name">{c.name}</div>
-                  <div className="fc-r">{c.r}</div>
-                </Tilt>
+        <div className="hero-visual" aria-hidden="true">
+          <div className="hv-glow" />
+          <Cubes items={heroCubes} />
+          {heroIsles.map((h, i) => (
+            <Depth key={h.scene} className={`hv-layer ${h.cls}`} mx={smx} my={smy} scrollY={scrollY} mouse={h.mouse} scroll={h.scroll} reduce={reduce}>
+              {/* opacity-only entrance: the LCP image must not start invisible for long */}
+              <motion.div initial={reduce ? false : { opacity: 0, scale: .94 }} animate={{ opacity: 1, scale: 1 }} transition={{ delay: .1 + i * .12, type: 'spring', stiffness: 120, damping: 18 }}>
+                <Isle scene={h.scene} sizes={h.sizes} glow={h.glow} phase={h.phase} priority={h.priority} />
               </motion.div>
-            </motion.div>
+            </Depth>
+          ))}
+          {floating.map((c, i) => (
+            <Depth key={c.name} className={`float-card ${c.r} ${c.cls}`} mx={smx} my={smy} scrollY={scrollY} mouse={c.mouse} scroll={c.scroll} reduce={reduce}>
+              <motion.div
+                initial={reduce ? false : { opacity: 0, scale: .7, rotate: c.rot * 1.8 }}
+                animate={{ opacity: 1, scale: 1, rotate: c.rot }}
+                transition={{ delay: .55 + i * .14, type: 'spring', stiffness: 170, damping: 17 }}
+              >
+                <motion.div animate={reduce ? {} : { y: [0, -8, 0], rotate: [0, -1.1, 0, 1.1, 0] }} transition={{ repeat: Infinity, duration: 6 + c.d, ease: 'easeInOut', delay: c.d }}>
+                  <Tilt max={10} className="fc-inner">
+                    <img src={c.src} alt="" width="300" height="400" decoding="async" />
+                    <div className="fc-name">{c.name}</div>
+                    <div className="fc-r">{c.r}</div>
+                  </Tilt>
+                </motion.div>
+              </motion.div>
+            </Depth>
           ))}
         </div>
       </div>
@@ -234,8 +233,6 @@ function Hero({ links }: { links: StoreLinks | null }) {
     </section>
   )
 }
-
-
 
 /** Бейдж в hero: перечисляет приюты из админки, иначе — дефолтный текст. */
 function charityLabel(links: StoreLinks | null, t: ReturnType<typeof useI18n>['t']): string {
@@ -302,22 +299,24 @@ function Donation({ links }: { links: StoreLinks | null }) {
   )
 }
 
-const stepIcons = ['/game/map_cat.svg', '/game/trail_radar.svg', '/game/first_card.svg', '/game/cats_100.svg']
+const stepGlow = ['var(--red)', 'var(--rare)', 'var(--legendary)', 'var(--epic)']
 /** Step icon pops in with a small spring when its card reveals. */
 const icoV = {
-  hidden: { scale: .4, rotate: -12, opacity: 0 },
-  show: { scale: 1, rotate: 0, opacity: 1, transition: { type: 'spring' as const, stiffness: 280, damping: 15 } },
+  hidden: { scale: .7, y: 14, opacity: 0 },
+  show: { scale: 1, y: 0, opacity: 1, transition: { type: 'spring' as const, stiffness: 220, damping: 16 } },
 }
 const tierCats = { common: '/game/a4_c_street_bowtie.svg', rare: '/game/a4_r_frost_halo.svg', epic: '/game/a4_e_lunar_horns.svg', legendary: '/game/acc_crown.svg' }
 const tierPct = { common: '~70%', rare: '~22%', epic: '~7%', legendary: '<1%' }
-const worldArt: Record<string, { banner: string; icon: string }> = {
-  arena: { banner: '/game/banner_arena.svg', icon: '/game/pvp_50.svg' },
-  dungeon: { banner: '/game/banner_dungeon.svg', icon: '/game/weak_spot.svg' },
-  fishing: { banner: '/game/fish_map.svg', icon: '/game/fish_legend.svg' },
-  expedition: { banner: '/game/scene_roofs.svg', icon: '/game/exp_start.svg' },
-  tournament: { banner: '/game/banner_tournament.svg', icon: '/game/crown_champion.svg' },
-  buddy: { banner: '/game/banner_catdex.svg', icon: '/game/buddy_feed.svg' },
+const worldArt: Record<string, { scene: Scene; icon: string; glow: string }> = {
+  arena: { scene: 'ban_arena', icon: '/game/pvp_50.svg', glow: 'var(--legendary)' },
+  dungeon: { scene: 'dungeon_5', icon: '/game/weak_spot.svg', glow: '#E0562B' },
+  fishing: { scene: 'fish_calm', icon: '/game/fish_legend.svg', glow: '#2FA8B5' },
+  expedition: { scene: 'exp_roofs', icon: '/game/exp_start.svg', glow: '#C0691F' },
+  tournament: { scene: 'ban_chests', icon: '/game/crown_champion.svg', glow: 'var(--legendary)' },
+  buddy: { scene: 'ban_catdex', icon: '/game/buddy_feed.svg', glow: 'var(--rare)' },
 }
+/** Сцены шагов «Как играть»: рынок (найди кота), кристаллы (скан), сундуки (карта), доска заданий. */
+const stepScenes: Scene[] = ['ban_market', 'ban_shop', 'ban_chests', 'ban_quests']
 const fairIcons = ['/game/pigeon_panic.svg', '/game/seal_paw.svg', '/game/luck_dice.svg']
 // battle.webp — RU-кадр интерфейса, в EN-полосе не показываем
 const shots = ['catdex', 'arena', 'dungeon', 'chests', 'quests', 'fishing', 'expeditions']
@@ -379,9 +378,9 @@ function WorldsSection() {
     }
   }, [rail, dist, x])
 
-  const cards = t.worlds.items.map((w) => (
+  const cards = t.worlds.items.map((w, i) => (
     <Tilt key={w.k} className="world" max={6}>
-      <div className="banner"><img src={worldArt[w.k].banner} alt="" loading="lazy" /></div>
+      <div className="w-scene"><Isle className="w-isle" scene={worldArt[w.k].scene} sizes="340px" glow={worldArt[w.k].glow} phase={i * 1.1} /></div>
       <div className="body"><img src={worldArt[w.k].icon} alt="" /><div><h3>{w.t}</h3><p>{w.d}</p></div></div>
     </Tilt>
   ))
@@ -406,13 +405,143 @@ function WorldsSection() {
   )
 }
 
+/** matchMedia без мигания: значение есть уже на первом рендере. */
+function useMedia(q: string) {
+  return useSyncExternalStore(
+    (cb) => { const m = window.matchMedia(q); m.addEventListener('change', cb); return () => m.removeEventListener('change', cb) },
+    () => window.matchMedia(q).matches,
+    () => false,
+  )
+}
+
+/** Демо-прогресс как на карте в игре: два пройдено, третий текущий, дальше закрыто. */
+const dmap = [
+  { id: 1, unlock: 5, done: 11, accent: '#C0691F' },
+  { id: 2, unlock: 10, done: 11, accent: '#3E7D4F' },
+  { id: 3, unlock: 15, done: 4, accent: '#D98A2B' },
+  { id: 4, unlock: 20, done: -1, accent: '#5AC8D9' },
+  { id: 5, unlock: 30, done: -1, accent: '#E0562B' },
+] as const
+
+type Pt = { x: number; y: number }
+const bez = (a: Pt, b: Pt, c: Pt, d: Pt, t: number): Pt => {
+  const u = 1 - t
+  return { x: u * u * u * a.x + 3 * u * u * t * b.x + 3 * u * t * t * c.x + t * t * t * d.x, y: u * u * u * a.y + 3 * u * u * t * b.y + 3 * u * t * t * c.y + t * t * t * d.y }
+}
+
+/**
+ * Карта подземелий — фирменный вид игры (widgets/dungeon_islands.dart):
+ * острова зигзагом, между ними пунктирная тропа с лапками, под каждым белая
+ * плашка «название · N/11». Десктоп — горизонтальный зигзаг, мобила — вертикальный.
+ * Координаты в единицах viewBox; острова и плашки позиционируются в процентах
+ * того же прямоугольника, поэтому SVG-тропа совпадает с ними на любой ширине.
+ */
+function DungeonMap() {
+  const { t } = useI18n()
+  const reduce = useReducedMotion()
+  const wide = useMedia('(min-width: 900px)')
+  const n = dmap.length
+  // геометрия: W×H — viewBox; s — сторона квадрата острова
+  const W = wide ? 1180 : 400
+  const s = wide ? 214 : 204
+  const gapX = (W - 40 - s) / (n - 1)
+  const rowY = wide ? 270 : s * 1.1
+  const pos = (i: number): Pt => wide
+    ? { x: 20 + i * gapX, y: i % 2 ? rowY : 0 }
+    : { x: i % 2 ? W - s - 2 : 2, y: i * rowY }
+  const H = wide ? rowY + s + 50 : (n - 1) * rowY + s + 50
+  const centers = dmap.map((_, i) => { const p = pos(i); return { x: p.x + s / 2, y: p.y + s / 2 } })
+  // тропа: от бока плашки острова i к краю острова i+1 (S-кривая), 3 лапки по ходу
+  const trails = centers.slice(0, -1).map((c0, i) => {
+    const c3 = centers[i + 1]
+    const dx = Math.sign(c3.x - c0.x) || 1
+    const down = c3.y > c0.y
+    const a: Pt = down || !wide
+      ? { x: c0.x + dx * s * .4, y: c0.y + s * .42 }
+      : { x: c0.x + dx * s * .42, y: c0.y - s * .26 }
+    const b: Pt = down || !wide
+      ? { x: c3.x - dx * s * .4, y: c3.y - s * .3 }
+      : { x: c3.x - dx * s * .4, y: c3.y + s * .42 }
+    const bulge = wide ? 26 : 46
+    const c1: Pt = { x: a.x + dx * bulge, y: a.y + (b.y - a.y) * .5 }
+    const c2: Pt = { x: b.x - dx * bulge, y: b.y - (b.y - a.y) * .5 }
+    const d = `M${a.x} ${a.y}C${c1.x} ${c1.y} ${c2.x} ${c2.y} ${b.x} ${b.y}`
+    const paws = [.22, .5, .78].map((f) => {
+      const p = bez(a, c1, c2, b, f)
+      const q = bez(a, c1, c2, b, f + .01)
+      return { ...p, r: (Math.atan2(q.y - p.y, q.x - p.x) * 180) / Math.PI + 90 }
+    })
+    return { d, paws }
+  })
+  const pct = (v: number, of: number) => `${(v / of) * 100}%`
+  return (
+    <section className="section dmap-sec" id="dungeons">
+      <div className="wrap">
+        <Reveal className="section-head"><Drift><span className="kicker">{t.dmap.kicker}</span><h2>{t.dmap.title}</h2><p>{t.dmap.sub}</p></Drift></Reveal>
+        <div className={`dmap ${wide ? 'h' : 'v'}`} style={{ aspectRatio: `${W} / ${H}` }}>
+          <svg className="dmap-trail" viewBox={`0 0 ${W} ${H}`} aria-hidden="true">
+            {trails.map((tr, i) => (
+              <g key={i}>
+                <path d={tr.d} className="dash" />
+                {tr.paws.map((p, k) => (
+                  <motion.g
+                    key={k}
+                    initial={reduce ? false : { opacity: 0 }}
+                    whileInView={{ opacity: 1 }}
+                    viewport={{ once: true, margin: '-80px' }}
+                    transition={{ delay: .25 + i * .35 + k * .12, duration: .35 }}
+                  >
+                    <g transform={`translate(${p.x} ${p.y}) rotate(${p.r})${wide ? '' : ' scale(.82)'}`}>
+                      <ellipse cx="0" cy="3" rx="6" ry="5" />
+                      <ellipse cx="-6.2" cy="-3.6" rx="2.3" ry="2.9" />
+                      <ellipse cx="-2.3" cy="-6.8" rx="2.3" ry="2.9" />
+                      <ellipse cx="2.3" cy="-6.8" rx="2.3" ry="2.9" />
+                      <ellipse cx="6.2" cy="-3.6" rx="2.3" ry="2.9" />
+                    </g>
+                  </motion.g>
+                ))}
+              </g>
+            ))}
+          </svg>
+          <ol className="dmap-list" aria-label={t.dmap.label}>
+            {dmap.map((d, i) => {
+              const p = pos(i)
+              const locked = d.done < 0
+              const cur = !locked && d.done < 11
+              const name = t.dmap.names[i]
+              const sub = locked ? t.dmap.locked.replace('{n}', String(d.unlock)) : `${d.done}/11`
+              return (
+                <li
+                  key={d.id}
+                  className={`dm-spot${locked ? ' locked' : ''}${cur ? ' current' : ''}`}
+                  style={{ left: pct(p.x, W), top: pct(p.y, H), width: pct(s, W), '--acc': d.accent } as CSSProperties}
+                >
+                  <Isle scene={`dungeon_${d.id}` as Scene} sizes={wide ? '(max-width: 1180px) 18vw, 214px' : '51vw'} glow={cur ? d.accent : undefined} phase={i * 1.3} />
+                  <span className="dm-pill">
+                    <b>{name}</b>
+                    <span className="dm-sub">
+                      {locked && <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.5 7V5.2a3.5 3.5 0 0 1 7 0V7" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" /><rect x="3" y="7" width="10" height="7.4" rx="2" fill="currentColor" /></svg>}
+                      <span>{sub}</span>
+                      {d.done >= 11 && <i className="dm-check" title={t.dmap.cleared}><svg viewBox="0 0 16 16" aria-hidden="true"><path d="M4.2 8.4 6.8 11 11.8 5.6" fill="none" stroke="currentColor" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round" /></svg></i>}
+                    </span>
+                  </span>
+                </li>
+              )
+            })}
+          </ol>
+        </div>
+      </div>
+    </section>
+  )
+}
+
 export default function Home() {
   const { t, lang } = useI18n()
   useSeo('home')
   const [links, setLinks] = useState<StoreLinks | null>(null)
   const [posts, setPosts] = useState<BlogPostSummary[]>([])
   useEffect(() => { api.storeLinks().then(setLinks) }, [])
-  useEffect(() => { api.blogList(lang, 3).then(setPosts) }, [lang])
+  useEffect(() => { let alive = true; api.blogList(lang, 3).then((v) => { if (alive) setPosts(v) }); return () => { alive = false } }, [lang])
 
   return (
     <>
@@ -426,7 +555,7 @@ export default function Home() {
           <div className="steps">
             {t.how.steps.map((s, i) => (
               <Reveal key={s.t} i={i} className="step">
-                <motion.img className="ico" variants={icoV} src={stepIcons[i]} alt="" />
+                <motion.div className="step-scene" variants={icoV}><Isle scene={stepScenes[i]} sizes="(max-width: 520px) 86vw, (max-width: 1000px) 42vw, 260px" glow={stepGlow[i]} phase={i * 1.4} /></motion.div>
                 <span className="num">0{i + 1}</span>
                 <h3>{s.t}</h3><p>{s.d}</p>
               </Reveal>
@@ -459,6 +588,8 @@ export default function Home() {
       </section>
 
       <WorldsSection />
+
+      <DungeonMap />
 
       <section className="section fair" id="fair">
         <GlyphLayer side="left"><img src="/game/luck_dice.svg" alt="" /></GlyphLayer>
@@ -528,7 +659,7 @@ export default function Home() {
           {posts.length ? (
             <div className="posts">{posts.map((p, i) => <Reveal key={p.slug} i={i}><PostCard p={p} /></Reveal>)}</div>
           ) : (
-            <div className="empty"><CatLogo animated={false} /><p>{t.blogTeaser.empty}</p></div>
+            <div className="empty isle-empty"><Isle scene="fish_shoal" sizes="260px" glow="var(--rare)" /><p>{t.blogTeaser.empty}</p></div>
           )}
         </div>
       </section>

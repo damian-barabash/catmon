@@ -1,5 +1,4 @@
-/* CatMon admin — self-contained styles, scoped under .adm (does not inherit site styles) */
-@import url('https://fonts.googleapis.com/css2?family=Unbounded:wght@400;500;600;700;800&family=Golos+Text:wght@400;500;600;700&display=swap');
+/* CatMon admin — self-contained styles, scoped under .adm (does not inherit site styles). Fonts: src/fonts.css (self-hosted) */
 
 .adm {
   --ink: #141412; --paper: #FAF9F6; --mist: #EFEDE7; --line: #DDD9CF; --subtle: #6F6C64;
@@ -501,3 +500,5 @@
   .adm .lab-actions .btn.primary { flex: 1; }
   .adm .lab-ai-grid { grid-template-columns: minmax(0, 1fr); }
 }
+
+@media (max-width: 600px) { .adm .card-h:has(.right .btn) { flex-wrap: wrap; } .adm .card-h:has(.right .btn) h2 { flex: 1 1 0; min-width: 0; } .adm .card-h:has(.right .btn) .right { flex-basis: 100%; justify-content: flex-start; } .adm .card-h .right .btn { white-space: normal; text-align: left; } }

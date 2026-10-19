@@ -4,6 +4,7 @@ import { useSeo } from '../lib/seo'
 import { api, type SeasonPublic } from '../lib/api'
 import { Reveal } from '../components/Reveal'
 import { MediaImg } from '../components/MediaImg'
+import { Isle } from '../components/Isle'
 
 function useCountdown(iso?: string) {
   const [now, setNow] = useState(Date.now())
@@ -38,7 +39,7 @@ export default function Season() {
           </div>
         </Reveal>
         <Reveal i={1}>
-          <img src="/game/banner_leaderboard.svg" alt="" style={{ borderRadius: 20, width: '100%' }} onError={(e) => { (e.target as HTMLImageElement).src = '/game/banner_arena.svg' }} />
+          <Isle scene="ban_arena" sizes="(max-width: 860px) 92vw, 560px" glow="var(--legendary)" className="season-isle" />
         </Reveal>
       </section>
       <section style={{ paddingBottom: '5rem' }}>

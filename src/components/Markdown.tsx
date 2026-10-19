@@ -1,27 +1,10 @@
 import { useMemo, useState } from 'react'
-import { marked } from 'marked'
+import { renderMarkdown } from '../lib/markdown'
 import { MediaImg } from './MediaImg'
 
-marked.setOptions({ gfm: true, breaks: false })
-
-/** Minimal sanitiser: strip script/iframe/on* attributes. Content comes from our own admin, so this is belt-and-braces. */
-function sanitize(html: string) {
-  return html
-    .replace(/<(script|iframe|object|embed|style)[\s\S]*?<\/\1>/gi, '')
-    .replace(/\son\w+="[^"]*"/gi, '')
-    .replace(/\son\w+='[^']*'/gi, '')
-    .replace(/javascript:/gi, '')
-    .replace(/<table>/g, '<div class="table-scroll"><table>')
-    .replace(/<\/table>/g, '</table></div>')
-    // картинки в теле поста лежат в Supabase Storage: грузим их в CORS-режиме
-    // без кук — иначе Firefox ругается на отклонённую куку `__cf_bm`
-    // (Cloudflare ставит её с Domain=supabase.co, а это публичный суффикс).
-    // См. components/MediaImg.tsx.
-    .replace(/<img (?=[^>]*src="https?:)/gi, '<img crossorigin="anonymous" ')
-}
-
+/** h1 на странице один (заголовок страницы), поэтому `# …` из тела рендерим как `<h2 class="h1">` — выглядит так же. */
 export function Markdown({ src, className = 'prose' }: { src: string; className?: string }) {
-  const html = useMemo(() => sanitize(marked.parse(src || '') as string), [src])
+  const html = useMemo(() => renderMarkdown(src).replace(/<h1>/g, '<h2 class="h1">').replace(/<\/h1>/g, '</h2>'), [src])
   return <div className={className} dangerouslySetInnerHTML={{ __html: html }} />
 }
 

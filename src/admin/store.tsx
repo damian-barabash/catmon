@@ -19,7 +19,8 @@ const ls = { get: (k: string) => { try { return localStorage.getItem(k) } catch 
 export function StoreProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<Theme>(() => { try { const q = new URLSearchParams(location.search).get('theme'); if (q === 'dark' || q === 'light') { ls.set('admin.theme', q); return q } } catch { /* */ } return (ls.get('admin.theme') as Theme) || 'light' })
   const [lang, setLangState] = useState<Lang>(() => { const l = ls.get('admin.lang'); return (l === 'en' || l === 'pl' || l === 'ru') ? l : 'ru' })
-  const [admin, setAdmin] = useState<Admin | null>(null)
+  const [admin, setAdminState] = useState<Admin | null>(null)
+  const setAdmin = useCallback((a: Admin | null) => { if (a) setCacheOwner(a.id); setAdminState(a) }, [])
   const [ready, setReady] = useState(false)
   const [toasts, setToasts] = useState<Toast[]>([])
 
@@ -34,8 +35,8 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   }, [dismiss])
 
   useEffect(() => {
-    setUnauthorizedHandler(() => { setAdmin(null); toast(DICTS[lang].unauthorized, 'err') })
-  }, [lang, toast])
+    setUnauthorizedHandler(() => { clearAdminCache(); setAdmin(null); toast(DICTS[lang].unauthorized, 'err') })
+  }, [lang, toast, setAdmin])
 
   useEffect(() => {
     let alive = true
@@ -43,6 +44,7 @@ export function StoreProvider({ children }: { children: ReactNode }) {
     if (!tok) { setReady(true); return }
     api.me().then(r => { if (alive) { setAdmin(r.admin); if (r.admin.lang && ['ru', 'en', 'pl'].includes(r.admin.lang) && !ls.get('admin.lang')) setLangState(r.admin.lang as Lang) } }).catch(() => { setToken(null) }).finally(() => alive && setReady(true))
     return () => { alive = false }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const login = async (email: string, password: string) => {
@@ -51,21 +53,53 @@ export function StoreProvider({ children }: { children: ReactNode }) {
   }
   const logout = async () => { try { await api.logout() } catch { /* ignore */ } setToken(null); setAdmin(null); clearAdminCache() }
 
-  const value = useMemo<Store>(() => ({ theme, setTheme, lang, setLang, t, admin, setAdmin, ready, login, logout, toasts, toast, dismiss, mock: isMock() }), [theme, lang, t, admin, ready, toasts, toast, dismiss])
+  const value = useMemo<Store>(() => ({ theme, setTheme, lang, setLang, t, admin, setAdmin, ready, login, logout, toasts, toast, dismiss, mock: isMock() }), [theme, lang, t, admin, ready, toasts, toast, dismiss, setAdmin])
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>
 }
 export function useStore() { const s = useContext(Ctx); if (!s) throw new Error('StoreProvider missing'); return s }
 export const useT = () => useStore().t
 
-/* ---------- async helper: stale-while-revalidate cache in localStorage ---------- */
+/* ---------- async helper: stale-while-revalidate cache in localStorage ----------
+ * Ключи: admin.cache.<adminId>.<key> — кэш привязан к админу (editor после owner в том же
+ * браузере не видит чужие данные). Не больше CACHE_MAX ключей (LRU, индекс в admin.cache.__idx).
+ * Чистится целиком при logout и на 401. */
 const CACHE_PREFIX = 'admin.cache.'
+const CACHE_IDX = CACHE_PREFIX + '__idx'
+const CACHE_MAX = 30
+let cacheOwner: string | null = null
+const fullKey = (key: string) => (cacheOwner ? `${CACHE_PREFIX}${cacheOwner}.${key}` : null)
+function readIdx(): string[] {
+  try { const v = JSON.parse(localStorage.getItem(CACHE_IDX) || '[]'); return Array.isArray(v) ? v : [] } catch { return [] }
+}
+function touch(k: string) {
+  try {
+    const idx = readIdx().filter(x => x !== k)
+    idx.push(k)
+    while (idx.length > CACHE_MAX) localStorage.removeItem(idx.shift()!)
+    localStorage.setItem(CACHE_IDX, JSON.stringify(idx))
+  } catch { /* quota */ }
+}
+/** Кэш принадлежит админу `id`; кэш других админов (и старые ключи без namespace) удаляется. */
+export function setCacheOwner(id: string | null) {
+  if (id === cacheOwner) return
+  cacheOwner = id
+  if (!id) return
+  try {
+    const mine = CACHE_PREFIX + id + '.'
+    Object.keys(localStorage).filter(k => k.startsWith(CACHE_PREFIX) && k !== CACHE_IDX && !k.startsWith(mine)).forEach(k => localStorage.removeItem(k))
+    localStorage.setItem(CACHE_IDX, JSON.stringify(readIdx().filter(k => k.startsWith(mine))))
+  } catch { /* ignore */ }
+}
 function cacheGet<T>(key: string): T | null {
-  try { const raw = localStorage.getItem(CACHE_PREFIX + key); if (!raw) return null; return (JSON.parse(raw) as { d: T }).d ?? null } catch { return null }
+  const k = fullKey(key); if (!k) return null
+  try { const raw = localStorage.getItem(k); if (!raw) return null; touch(k); return (JSON.parse(raw) as { d: T }).d ?? null } catch { return null }
 }
 function cacheSet(key: string, d: unknown) {
-  try { const raw = JSON.stringify({ t: Date.now(), d }); if (raw.length < 1_500_000) localStorage.setItem(CACHE_PREFIX + key, raw) } catch { /* quota */ }
+  const k = fullKey(key); if (!k) return
+  try { const raw = JSON.stringify({ t: Date.now(), d }); if (raw.length < 1_500_000) { localStorage.setItem(k, raw); touch(k) } } catch { /* quota */ }
 }
 export function clearAdminCache() {
+  cacheOwner = null
   try { Object.keys(localStorage).filter(k => k.startsWith(CACHE_PREFIX)).forEach(k => localStorage.removeItem(k)) } catch { /* ignore */ }
 }
 
@@ -107,7 +141,7 @@ export const fmtPct = (x: number | undefined | null) => (x == null ? '—' : `${
 export const fmtDate = (s?: string | null, withTime = false) => {
   if (!s) return '—'
   const d = new Date(s); if (isNaN(d.getTime())) return s
-  return d.toLocaleDateString('ru-RU', { day: '2-digit', month: '2-digit', year: 'numeric', ...(withTime ? { hour: '2-digit', minute: '2-digit' } : {}) })
+  return d.toLocaleDateString('ru-RU', { timeZone: 'Europe/Warsaw', day: '2-digit', month: '2-digit', year: 'numeric', ...(withTime ? { hour: '2-digit', minute: '2-digit' } : {}) })
 }
 export const fmtAgo = (s?: string | null) => {
   if (!s) return '—'
@@ -123,4 +157,8 @@ export const i18nText = (v: unknown, lang: Lang = 'ru'): string => {
   const o = v as Record<string, string>
   return o[lang] ?? o.ru ?? o.en ?? Object.values(o)[0] ?? ''
 }
-export const dayStr = (d: Date) => d.toISOString().slice(0, 10)
+/** Календарный день YYYY-MM-DD по Варшаве (а не UTC: иначе с 00:00 до 02:00 «сегодня» = вчера). */
+const WARSAW_DAY = new Intl.DateTimeFormat('en-CA', { timeZone: 'Europe/Warsaw', year: 'numeric', month: '2-digit', day: '2-digit' })
+export const dayStr = (d: Date) => WARSAW_DAY.format(d)
+/** Сдвиг календарного дня YYYY-MM-DD на n дней (без влияния TZ/DST). */
+export const addDays = (day: string, n: number) => { const x = new Date(day + 'T00:00:00Z'); x.setUTCDate(x.getUTCDate() + n); return x.toISOString().slice(0, 10) }

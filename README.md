@@ -7,7 +7,7 @@ Public website + admin panel for **CatMon** (React 19 + Vite + TypeScript, hoste
 ```bash
 npm ci
 npm run dev        # http://localhost:5173
-npm run build      # -> dist/ (also writes dist/404.html for SPA fallback)
+npm run build      # -> dist/ (+ <route>.html per page with its own <head>, blog posts from site-api, sitemap.xml, 404.html — scripts/static-pages.ts)
 npm run preview
 ```
 
@@ -19,7 +19,7 @@ npm run preview
 - `src/lib/api.ts` — client for the Supabase edge function `site-api` (contract in the backend repo). Every call degrades gracefully if the function is not deployed.
 - `src/lib/config.ts` — Supabase URL + anon key (public by design), site URL, support e-mail.
 - `public/game/*` — SVG art copied from the game (`CatMon/assets`), `public/shots/*` — app screenshots, `public/video/promo-portrait.mp4` — promo.
-- SEO: `index.html` (meta, OG/Twitter, JSON-LD), `src/lib/seo.ts` (per-route title/description/canonical/hreflang), `public/sitemap.xml`, `public/robots.txt`, `public/manifest.webmanifest`, `public/og.png`.
+- SEO: `index.html` (meta, OG/Twitter, JSON-LD), `src/lib/seo.ts` (per-route title/description/canonical/hreflang; language via `?lang=xx`), `scripts/static-pages.ts` (build-time HTML per route + sitemap.xml), `public/robots.txt`, `public/manifest.webmanifest`, `public/og.png`.
 
 ## Deploy
 

@@ -29,14 +29,22 @@ export function RarityChip({ r }: { r?: Rarity | string }) { return <span classN
 
 export function Modal({ open, onClose, title, children, footer, wide }: { open: boolean; onClose: () => void; title: ReactNode; children: ReactNode; footer?: ReactNode; wide?: boolean }) {
   const ref = useRef<HTMLDivElement>(null)
+  // onClose часто создаётся заново на каждом рендере родителя — держим его в ref,
+  // чтобы эффект ниже срабатывал только на открытие (иначе фокус уезжал после каждого символа)
+  const closeRef = useRef(onClose)
+  useEffect(() => { closeRef.current = onClose })
   useEffect(() => {
     if (!open) return
-    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') onClose() }
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') closeRef.current() }
     document.addEventListener('keydown', onKey)
-    const first = ref.current?.querySelector<HTMLElement>('input,select,textarea,button')
+    // фокус один раз при открытии: [autofocus] → первое поле тела → первая кнопка
+    const root = ref.current
+    const first = root?.querySelector<HTMLElement>('[autofocus]')
+      ?? root?.querySelector<HTMLElement>('.modal-b input:not([type=hidden]):not([disabled]), .modal-b select:not([disabled]), .modal-b textarea:not([disabled])')
+      ?? root?.querySelector<HTMLElement>('.modal-b button, .modal-f button, button')
     first?.focus()
     return () => document.removeEventListener('keydown', onKey)
-  }, [open, onClose])
+  }, [open])
   return (
     <AnimatePresence>
       {open && (

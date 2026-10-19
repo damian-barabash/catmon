@@ -3,34 +3,22 @@ import { Link, useParams } from 'react-router-dom'
 import { useI18n } from '../i18n'
 import { useSeo } from '../lib/seo'
 import { api, type BlogPost, type BlogPostSummary } from '../lib/api'
-import { CatLogo } from '../components/Icons'
+import { Isle } from '../components/Isle'
+import { PostCard, fmtDate } from '../components/PostCard'
 import { Reveal } from '../components/Reveal'
 import { Gallery, Markdown } from '../components/Markdown'
 import { MediaImg } from '../components/MediaImg'
-
-export function fmtDate(iso: string, lang: string) {
-  try { return new Date(iso).toLocaleDateString(lang, { year: 'numeric', month: 'long', day: 'numeric' }) } catch { return iso }
-}
-
-export function PostCard({ p }: { p: BlogPostSummary }) {
-  const { lang } = useI18n()
-  return (
-    <Link to={`/blog/${p.slug}`} className="post-card">
-      <div className="cover">{p.cover_url ? <MediaImg src={p.cover_url} alt="" loading="lazy" /> : <CatLogo animated={false} />}</div>
-      <div className="body">
-        <div className="post-meta"><span>{fmtDate(p.published_at, lang)}</span>{p.tags?.map((tg) => <span className="tag" key={tg}>{tg}</span>)}</div>
-        <h3>{p.title}</h3>
-        <p>{p.excerpt}</p>
-      </div>
-    </Link>
-  )
-}
 
 export default function Blog() {
   const { t, lang } = useI18n()
   useSeo('blog')
   const [posts, setPosts] = useState<BlogPostSummary[] | null>(null)
-  useEffect(() => { setPosts(null); api.blogList(lang, 30).then(setPosts) }, [lang])
+  useEffect(() => {
+    let alive = true // смена языка во время запроса: старый ответ не должен затереть новый
+    setPosts(null)
+    api.blogList(lang, 30).then((v) => { if (alive) setPosts(v) })
+    return () => { alive = false }
+  }, [lang])
   return (
     <div className="wrap">
       <div className="page-head"><span className="kicker">{t.blogTeaser.kicker}</span><h1>{t.blog.title}</h1><p>{t.blog.sub}</p></div>
@@ -40,7 +28,7 @@ export default function Blog() {
         ) : posts.length ? (
           <div className="posts">{posts.map((p, i) => <Reveal key={p.slug} i={i}><PostCard p={p} /></Reveal>)}</div>
         ) : (
-          <div className="empty"><CatLogo animated={false} /><p>{t.blog.empty}</p></div>
+          <div className="empty isle-empty"><Isle scene="fish_shoal" sizes="260px" glow="var(--rare)" /><p>{t.blog.empty}</p></div>
         )}
       </section>
     </div>
@@ -51,8 +39,13 @@ export function BlogPostPage() {
   const { t, lang } = useI18n()
   const { slug = '' } = useParams()
   const [post, setPost] = useState<BlogPost | null | undefined>(undefined)
-  useEffect(() => { setPost(undefined); api.blogGet(slug, lang).then(setPost) }, [slug, lang])
-  useSeo(post ? { title: `${post.title} — CatMon`, desc: post.excerpt || t.meta.blog.desc, image: post.cover_url || undefined } : 'blog')
+  useEffect(() => {
+    let alive = true
+    setPost(undefined)
+    api.blogGet(slug, lang).then((v) => { if (alive) setPost(v) })
+    return () => { alive = false }
+  }, [slug, lang])
+  useSeo(post ? { title: `${post.title} — CatMon`, desc: post.excerpt || t.meta.blog.desc, image: post.cover_url || undefined } : 'blog', { noindex: post === null })
   return (
     <div className="wrap">
       <article className="article" style={{ paddingBottom: '5rem' }}>

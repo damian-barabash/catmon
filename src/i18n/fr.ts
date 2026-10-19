@@ -69,6 +69,15 @@ const fr: Dict = {
       { k: 'buddy', t: 'Compagnon', d: 'Choisissez un chat compagnon, nourrissez-le d\'un poisson chaque jour et recevez un bonus quotidien. 7 jours d\'affilée — un titre.' },
     ],
   },
+  dmap: {
+    kicker: 'Patte Sombre',
+    title: 'Cinq donjons\u00A0: dix niveaux et un boss',
+    sub: 'Terminez une île pour ouvrir la suivante. Plus vous descendez, plus la Patte Sombre est forte, et chaque boss garde son propre butin.',
+    names: ['Bas-Fonds des Errants', 'Antre du Croc', 'Marais aux Citrouilles', 'Sabbat des Sortilèges', 'Portes de l\'Enfer'],
+    locked: 'Niveau {n}+',
+    cleared: 'terminé',
+    label: 'Carte des donjons',
+  },
   fair: {
     kicker: 'Fair-play',
     title: 'Pas de pay-to-win. Jamais.',

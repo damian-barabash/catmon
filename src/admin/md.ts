@@ -1,13 +1,6 @@
-import { marked } from 'marked'
+import { renderMarkdown } from '../lib/markdown'
 
-marked.setOptions({ gfm: true, breaks: true })
-
-/** Minimal sanitizer: strips scripts/handlers from rendered markdown. */
+/** Превью markdown в админке — тот же рендерер и санитайзер (DOMPurify), что и на сайте. */
 export function renderMd(src: string): string {
-  const html = marked.parse(src || '', { async: false }) as string
-  return html
-    .replace(/<script[\s\S]*?<\/script>/gi, '')
-    .replace(/\son\w+="[^"]*"/gi, '')
-    .replace(/\son\w+='[^']*'/gi, '')
-    .replace(/javascript:/gi, '')
+  return renderMarkdown(src)
 }

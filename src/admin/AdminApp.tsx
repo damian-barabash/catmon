@@ -1,29 +1,30 @@
 import { api } from './api'
-import { useEffect, useState, type ReactNode } from 'react'
+import { Suspense, lazy, useEffect, useState, type ReactNode } from 'react'
 import { Navigate, NavLink, Route, Routes, useLocation, useNavigate } from 'react-router-dom'
 import './admin.css'
 import { StoreProvider, useRefreshing, useStore } from './store'
 import { Toasts, initials } from './ui'
 import { IcAudit, IcBlog, IcCat, IcChest, IcDashboard, IcInbox, IcLogout, IcMap, IcMenu, IcMoon, IcScan, IcSearch, IcShield, IcSun, IcTrophy, IcUser, IcUsers, IcWorld, IcKey } from './icons'
 import { LANGS } from './i18n'
-import Login from './pages/Login'
-import Dashboard from './pages/Dashboard'
-import Players from './pages/Players'
-import PlayerProfile from './pages/PlayerProfile'
-import Cats from './pages/Cats'
-import CatEditor from './pages/CatEditor'
-import Items from './pages/Items'
-import AiLab from './pages/AiLab'
-import Blog from './pages/Blog'
-import BlogEditor from './pages/BlogEditor'
-import Contacts from './pages/Contacts'
-import Seasons from './pages/Seasons'
-import Settings from './pages/Settings'
-import Policies from './pages/Policies'
-import MapPage from './pages/MapPage'
-import Audit from './pages/Audit'
-import Admins from './pages/Admins'
-import Profile from './pages/Profile'
+// страницы ленивые: recharts/карта мира/AiLab грузятся только на своих экранах
+const Login = lazy(() => import('./pages/Login'))
+const Dashboard = lazy(() => import('./pages/Dashboard'))
+const Players = lazy(() => import('./pages/Players'))
+const PlayerProfile = lazy(() => import('./pages/PlayerProfile'))
+const Cats = lazy(() => import('./pages/Cats'))
+const CatEditor = lazy(() => import('./pages/CatEditor'))
+const Items = lazy(() => import('./pages/Items'))
+const AiLab = lazy(() => import('./pages/AiLab'))
+const Blog = lazy(() => import('./pages/Blog'))
+const BlogEditor = lazy(() => import('./pages/BlogEditor'))
+const Contacts = lazy(() => import('./pages/Contacts'))
+const Seasons = lazy(() => import('./pages/Seasons'))
+const Settings = lazy(() => import('./pages/Settings'))
+const Policies = lazy(() => import('./pages/Policies'))
+const MapPage = lazy(() => import('./pages/MapPage'))
+const Audit = lazy(() => import('./pages/Audit'))
+const Admins = lazy(() => import('./pages/Admins'))
+const Profile = lazy(() => import('./pages/Profile'))
 
 const NAV = [
   { to: '/admin', k: 'nav_dashboard', I: IcDashboard, end: true },
@@ -92,10 +93,14 @@ function Shell({ children }: { children: ReactNode }) {
           <form className="adm-search right" onSubmit={submitSearch} role="search"><IcSearch size={18} /><input value={q} onChange={e => setQ(e.target.value)} placeholder={t('search_players')} aria-label={t('search')} /></form>
           <NavLink to="/admin/profile" className="row" style={{ gap: 10 }}><div className="adm-avatar">{initials(admin?.name || admin?.email)}</div><div className="adm-who"><b>{admin?.name || admin?.email}</b><span>{admin?.role}</span></div></NavLink>
         </header>
-        {children}
+        <Suspense fallback={<PageFallback />}>{children}</Suspense>
       </main>
     </div>
   )
+}
+
+function PageFallback() {
+  return <div className="sk" style={{ height: 180, borderRadius: 20 }} />
 }
 
 function Guard({ children }: { children: ReactNode }) {
@@ -111,7 +116,7 @@ function Inner() {
   return (
     <div className={`adm ${theme === 'dark' ? 'dark' : ''}`}>
       <Routes>
-        <Route path="login" element={<Login />} />
+        <Route path="login" element={<Suspense fallback={null}><Login /></Suspense>} />
         <Route index element={<Guard><Dashboard /></Guard>} />
         <Route path="players" element={<Guard><Players /></Guard>} />
         <Route path="players/:id" element={<Guard><PlayerProfile /></Guard>} />

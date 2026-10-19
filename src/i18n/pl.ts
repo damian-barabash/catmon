@@ -69,6 +69,15 @@ const pl: Dict = {
       { k: 'buddy', t: 'Kompan', d: 'Wybierz kota-kompana, karm go rybą codziennie i odbieraj dzienny buff. 7 dni z rzędu — tytuł.' },
     ],
   },
+  dmap: {
+    kicker: 'Ciemna Łapa',
+    title: 'Pięć lochów: dziesięć poziomów i boss',
+    sub: 'Przejdź jedną wyspę, by otworzyć następną. Im głębiej, tym silniejsza Ciemna Łapa, a każdy boss strzeże własnych łupów.',
+    names: ['Podziemie Włóczęgów', 'Legowisko Kła', 'Dyniowe Bagno', 'Czaronośny Sabat', 'Wrota Inferna'],
+    locked: 'Poziom {n}+',
+    cleared: 'ukończono',
+    label: 'Mapa lochów',
+  },
   fair: {
     kicker: 'Fair play',
     title: 'Bez pay-to-win. Nigdy.',

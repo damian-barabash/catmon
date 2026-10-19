@@ -1,7 +1,7 @@
 import { useMemo, useState, type ReactNode } from 'react'
-import { Link } from 'react-router-dom'
+import { Link, useNavigate } from 'react-router-dom'
 import { api, type Dashboard as Dash, type Rarity, type SubsSeries } from '../api'
-import { dayStr, fmtDate, fmtN, fmtPct, useAsync, useStore } from '../store'
+import { addDays, dayStr, fmtDate, fmtN, fmtPct, useAsync, useStore } from '../store'
 import { Card, Empty, ErrorBox, Seg, Skeleton, SkeletonCard } from '../ui'
 import { AreaSeries, Bars, Donut, MapUsageChart, RARITY_COLOR, Ring, Sparkline } from '../charts'
 import { WorldMap, countryName } from '../WorldMap'
@@ -9,13 +9,14 @@ import { IcArena, IcBolt, IcCat, IcChat, IcChest, IcCoins, IcCompass, IcDungeon,
 import type { Key } from '../i18n'
 
 type Preset = 'today' | 'week' | 'month' | 'this_week' | 'this_month' | 'custom'
-const startOfWeek = (d: Date) => { const x = new Date(d); const day = (x.getUTCDay() + 6) % 7; x.setUTCDate(x.getUTCDate() - day); return x }
+// все даты — календарные дни по Варшаве (dayStr), арифметика — по строке дня
+const startOfWeek = (day: string) => addDays(day, -((new Date(day + 'T00:00:00Z').getUTCDay() + 6) % 7))
 function range(p: Preset, from: string, to: string): [string, string] {
-  const now = new Date(); const today = dayStr(now)
+  const today = dayStr(new Date())
   if (p === 'today') return [today, today]
-  if (p === 'week') { const d = new Date(now); d.setUTCDate(d.getUTCDate() - 6); return [dayStr(d), today] }
-  if (p === 'month') { const d = new Date(now); d.setUTCDate(d.getUTCDate() - 29); return [dayStr(d), today] }
-  if (p === 'this_week') return [dayStr(startOfWeek(now)), today]
+  if (p === 'week') return [addDays(today, -6), today]
+  if (p === 'month') return [addDays(today, -29), today]
+  if (p === 'this_week') return [startOfWeek(today), today]
   if (p === 'this_month') return [today.slice(0, 8) + '01', today]
   return [from, to]
 }
@@ -34,6 +35,7 @@ function Kpi({ label, value, icon, sub, spark, accent, img }: { label: string; v
 
 export default function Dashboard() {
   const { t, lang, admin } = useStore()
+  const nav = useNavigate()
   const [preset, setPreset] = useState<Preset>('week')
   const [from, setFrom] = useState(() => range('week', '', '')[0])
   const [to, setTo] = useState(() => dayStr(new Date()))
@@ -258,7 +260,7 @@ export default function Dashboard() {
           {loading || !d ? <Skeleton h={200} /> : (
             <div className="tbl-wrap"><table className="tbl"><tbody>
               {(d.top_players ?? []).map((p, i) => (
-                <tr key={p.id} className="clickable" onClick={() => location.assign(`/admin/players/${p.id}`)}>
+                <tr key={p.id} className="clickable" onClick={() => nav(`/admin/players/${p.id}`)}>
                   <td style={{ width: 36 }}><span className={`rank ${i === 0 ? 'g' : i === 1 ? 's' : i === 2 ? 'b' : ''}`}>{i + 1}</span></td>
                   <td><Link to={`/admin/players/${p.id}`}><b>{p.username}</b></Link><div className="small muted">{p.cards_count} {t('s_cats').toLowerCase()}</div></td>
                   <td className="num">{fmtN(p.xp, lang)} XP</td>

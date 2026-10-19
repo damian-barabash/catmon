@@ -19,7 +19,13 @@ export default function PolicyPage({ code }: { code: Policy['code'] }) {
   const r = routes.find((x) => x.code === code)!
   useSeo(r.metaKey)
   const [p, setP] = useState<Policy | null | undefined>(undefined)
-  useEffect(() => { setP(undefined); api.policy(code, lang).then(setP) }, [code, lang])
+  useEffect(() => {
+    // PolicyPage переиспользуется между /privacy, /terms…: ответ на прошлый code/lang игнорируем
+    let alive = true
+    setP(undefined)
+    api.policy(code, lang).then((v) => { if (alive) setP(v) })
+    return () => { alive = false }
+  }, [code, lang])
   const fb = FALLBACK[code]
   return (
     <div className="wrap">

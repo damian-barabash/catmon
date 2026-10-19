@@ -68,6 +68,15 @@ const en = {
       { k: 'buddy', t: 'Companion', d: 'Pick a buddy cat, feed it a fish every day and get a daily buff. Keep a 7-day streak for a title.' },
     ],
   },
+  dmap: {
+    kicker: 'Dark Paw',
+    title: 'Five dungeons: ten floors and a boss',
+    sub: 'Clear one island to open the next. The Dark Paw grows stronger the deeper you go, and every boss guards its own loot.',
+    names: ['Undercity of Strays', 'Fang Den', 'Pumpkin Mire', 'Spellborne Coven', 'Gates of the Inferno'],
+    locked: 'Level {n}+',
+    cleared: 'cleared',
+    label: 'Dungeon map',
+  },
   fair: {
     kicker: 'Fair play',
     title: 'No pay-to-win. Ever.',

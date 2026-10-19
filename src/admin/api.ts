@@ -1,7 +1,11 @@
 /* CatMon admin API client — strictly follows scratchpad contract.md (admin-api edge).
- * Mocks: `?mock=1` in URL (persisted to localStorage `admin.mock`) or VITE_ADMIN_MOCK=1.
+ * Mocks: только в dev-сборке (`vite`) или при сборке с VITE_ADMIN_MOCK=1. Тогда `?mock=1` в URL
+ * (запоминается в localStorage `admin.mock`). В обычной прод-сборке моков нет ни в бандле, ни по ссылке.
  */
-import { mockCall } from './mocks'
+const MOCK_ALLOWED = import.meta.env.DEV || import.meta.env.VITE_ADMIN_MOCK === '1'
+// динамический импорт под константой: в прод-сборке ветка вырезается вместе с mocks.ts
+const mockCall = (action: string, params: Record<string, unknown>): Promise<unknown> =>
+  MOCK_ALLOWED ? import('./mocks').then(m => m.mockCall(action, params)) : Promise.reject(new Error('mocks disabled'))
 
 export const SUPABASE_URL = 'https://grdhdjksxkstahjtlqqb.supabase.co'
 export const ANON_KEY =
@@ -135,6 +139,7 @@ export class ApiError extends Error {
 
 /* ---------- mock switch / token ---------- */
 export function isMock(): boolean {
+  if (!MOCK_ALLOWED) return false
   try {
     const p = new URLSearchParams(location.search)
     if (p.get('mock') === '1') { localStorage.setItem('admin.mock', '1'); if (p.get('auto') === '1') localStorage.setItem('admin.token', 'mock-token'); if (p.get('theme')) localStorage.setItem('admin.theme', p.get('theme')!); return true }

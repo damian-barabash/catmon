@@ -5,6 +5,7 @@ import { useSeo } from '../lib/seo'
 import { api, ApiError, type ContactKind } from '../lib/api'
 import { Bug, Check, Cross, Handshake, Life } from '../components/Icons'
 import { SUPPORT_EMAIL } from '../lib/config'
+import { Isle } from '../components/Isle'
 
 const icons: Record<ContactKind, React.ReactNode> = { partnership: <Handshake />, bug: <Bug />, support: <Life /> }
 
@@ -33,7 +34,7 @@ export default function Contact() {
 
   return (
     <div className="wrap">
-      <div className="page-head"><span className="kicker">{t.nav.contact}</span><h1>{t.contact.title}</h1><p>{t.contact.sub}</p></div>
+      <div className="page-head with-isle"><div><span className="kicker">{t.nav.contact}</span><h1>{t.contact.title}</h1><p>{t.contact.sub}</p></div><Isle scene="exp_docks" sizes="280px" glow="#2FA8B5" className="ph-isle" /></div>
       <section className="contact-grid" style={{ paddingBottom: '5rem' }}>
         <div className="kinds">
           {(Object.keys(t.contact.kinds) as ContactKind[]).map((k) => (
