@@ -198,6 +198,14 @@ export async function mockCall(action: string, params: Record<string, unknown>):
     case 'player_ban': { const p = players.find(x => x.id === P.id)!; p.banned_until = P.until ?? null; p.ban_reason = P.reason; return { ok: true } }
     case 'player_unban': { const p = players.find(x => x.id === P.id)!; p.banned_until = undefined; p.ban_reason = null; return { ok: true } }
     case 'settings_get': return { settings }
+    case 'ai_usage': return {
+      config: { provider: 'claude', day_cap_usd: 2, month_cap_usd: 20 }, updated_at: new Date().toISOString(), key_set: true,
+      spend: { day: 0.0412, month: 0.63, calls_day: 37 },
+      by_day: Array.from({ length: 14 }, (_, i) => ({ day: new Date(Date.now() - (13 - i) * 864e5).toISOString().slice(0, 10), usd: 0.02 + (i % 4) * 0.015, calls: 20 + i, errors: i === 9 ? 1 : 0 })),
+      by_role: [{ key: 'scan-cat:compare', usd: 0.41, calls: 140, avg_ms: 2600 }, { key: 'scan-cat:gate', usd: 0.04, calls: 210, avg_ms: 1900 }, { key: 'scan-cat:card', usd: 0.02, calls: 60, avg_ms: 3300 }],
+      cache_share: 0.41,
+      errors: [{ at: new Date().toISOString(), fn: 'scan-cat', role: 'compare', err: 'APIConnectionTimeoutError' }],
+    }
     case 'settings_set': { const s = settings.find(x => x.key === P.key); if (s) { s.value = P.value; s.updated_at = new Date().toISOString() } else settings.push({ key: P.key, value: P.value }); return { ok: true } }
     case 'policies_list': return { policies }
     case 'policy_save': { const pl = policies.find(x => x.code === P.code)!; pl.title_i18n = { ...pl.title_i18n, ru: P.title_ru }; pl.body_i18n = { ...pl.body_i18n, ru: P.body_ru }; pl.required = P.required; if (P.bump_version) pl.version++; pl.updated_at = new Date().toISOString(); return { ok: true, policy: pl } }

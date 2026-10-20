@@ -4,9 +4,10 @@ import { fmtDate, useAsync, useStore } from '../store'
 import { Card, ErrorBox, Field, Skeleton, Switch } from '../ui'
 import { IcBolt, IcChest, IcGem, IcMap, IcScan, IcServer, IcTrophy, IcWarn, IcWorld } from '../icons'
 import DonationCard, { type DonationValue } from './Donation'
+import AiProviderCard from './AiProvider'
 
 type Obj = Record<string, unknown>
-const KNOWN = ['maintenance', 'scan_limits', 'energy', 'chest_prices', 'tournament', 'market_fee_pct', 'xp_event_mult', 'min_build', 'donation', 'store_links', 'map_tile_limit']
+const KNOWN = ['maintenance', 'scan_limits', 'energy', 'chest_prices', 'tournament', 'market_fee_pct', 'xp_event_mult', 'min_build', 'donation', 'store_links', 'map_tile_limit', 'ai']
 
 export default function Settings() {
   const { t, toast } = useStore()
@@ -40,6 +41,7 @@ export default function Settings() {
       <div className="row" style={{ marginBottom: 16 }}><h1>{t('world')}</h1></div>
       {error && <ErrorBox text={error} />}
       <div className="grid c2">
+        <AiProviderCard />
         <Card icon={<IcWarn size={18} />} title={t('maintenance')} right={<Switch on={!!maint.on} onChange={v => { const nv = { ...obj('maintenance'), on: v }; set('maintenance', nv); save('maintenance', nv) }} />}>
           <div className="setting-block">
             {!!maint.on && <div className="alert warn small"><IcWarn size={14} />{t('maintenance_on')}</div>}

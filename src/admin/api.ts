@@ -242,6 +242,7 @@ export const api = {
   // settings
   settingsGet: () => call<{ settings: Setting[] }>('settings_get'),
   settingsSet: (key: string, value: unknown) => call<{ ok: true }>('settings_set', { key, value }),
+  aiUsage: (days = 30) => call<AiUsage>('ai_usage', { days }),
   // policies
   policiesList: () => call<{ policies: Policy[] }>('policies_list'),
   policySave: (p: { code: string; title_ru: string; body_ru: string; required: boolean; bump_version: boolean }) => call<{ ok: true; policy?: Policy }>('policy_save', p),
@@ -326,4 +327,14 @@ export function fileToBase64(file: File): Promise<string> {
     r.onerror = reject
     r.readAsDataURL(file)
   })
+}
+
+export type AiConfig = { provider: 'claude' | 'barabash'; day_cap_usd: number; month_cap_usd: number }
+export type AiUsage = {
+  config: AiConfig; updated_at: string | null; key_set: boolean
+  spend: { day: number; month: number; calls_day?: number }
+  by_day: { day: string; usd: number; calls: number; errors: number }[]
+  by_role: { key: string; usd: number; calls: number; avg_ms: number }[]
+  cache_share: number
+  errors: { at: string; fn: string; role: string; err: string }[]
 }
