@@ -1,13 +1,13 @@
 // Interim EN texts shown until site-api `policy` responds. Keep short; the real
 // legal text lives in the `policies` table and is edited in the admin panel.
-const contact = '\n\n---\n\nContact: **support@catmongame.app** · DBDC Studio, Warsaw, Poland.'
+const contact = '\n\n---\n\nContact: **dbdcstudio@gmail.com** · Maksym Yehorov Maksikon (DBDC Studio), ul. Zamiany 18 lok. 46, 02-786 Warszawa, Poland, NIP: 9512594289, REGON: 528375783.'
 export const FALLBACK = {
   privacy: {
     title: 'Privacy Policy',
     body: `_Interim version — effective 2026-09-01._
 
 ## 1. Who we are
-CatMon is operated by **DBDC Studio** (the "Studio", "we"). This policy explains what personal data we process when you use the CatMon mobile app and the website catmongame.app.
+CatMon is made by **DBDC Studio** and operated by **Maksym Yehorov Maksikon**, ul. Zamiany 18 lok. 46, 02-786 Warszawa, Poland, NIP: 9512594289, REGON: 528375783 (the "Studio", "we"). This policy explains what personal data we process when you use the CatMon mobile app and the website catmongame.app.
 
 ## 2. What we collect
 - **Account data**: username, e-mail (if you link Google / Apple sign-in), device identifiers for push notifications.
@@ -28,7 +28,7 @@ Processors: Supabase (hosting), Apple / Google (sign-in, payments, push), our AI
 Account data is kept while your account exists. You can delete your account in the app settings; data is erased within 30 days.
 
 ## 7. Your rights
-Access, rectification, erasure, restriction, portability and objection under GDPR. Write to support@catmongame.app. You may also complain to your local supervisory authority (in Poland: UODO).
+Access, rectification, erasure, restriction, portability and objection under GDPR. Write to dbdcstudio@gmail.com. You may also complain to your local supervisory authority (in Poland: UODO).
 
 ## 8. Children
 CatMon is not intended for children under 13.${contact}`,
@@ -70,13 +70,13 @@ You can change your choice by clearing site data in your browser.${contact}`,
 - **No pay-to-win.** No item or purchase gives a guaranteed victory. Purchases are cosmetic or convenience.
 - **Respect others.** No insults, harassment or spam in chats. Report players from their profile.
 - **No automation.** Bots, scripts, modified clients and GPS spoofing are banned.
-- **Bans.** Violations result in warnings, temporary or permanent bans. Appeals: support@catmongame.app.${contact}`,
+- **Bans.** Violations result in warnings, temporary or permanent bans. Appeals: dbdcstudio@gmail.com.${contact}`,
   },
   data_processing: {
     title: 'Data Processing Information',
     body: `_Interim version — information under Art. 13 GDPR._
 
-**Controller:** DBDC Studio, Warsaw, Poland — support@catmongame.app.
+**Controller:** Maksym Yehorov Maksikon (DBDC Studio), ul. Zamiany 18 lok. 46, 02-786 Warszawa, Poland, NIP: 9512594289, REGON: 528375783 — dbdcstudio@gmail.com.
 
 **Purposes and legal bases:** providing the game and website (Art. 6(1)(b)); anti-fraud, security and analytics (Art. 6(1)(f)); push notifications and website statistics (Art. 6(1)(a) — consent, revocable at any time); legal obligations (Art. 6(1)(c)).
 

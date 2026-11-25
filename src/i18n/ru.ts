@@ -106,6 +106,7 @@ const ru: Dict = {
     game: 'Игра', legal: 'Документы', company: 'Компания',
     privacy: 'Политика конфиденциальности', cookies: 'Политика cookies', terms: 'Условия использования', rules: 'Правила игры', data: 'Обработка данных',
     support: 'Поддержка', rights: 'DBDC Studio. Все права защищены.', social: 'Соцсети',
+    madeBy: 'Сделано', dataBy: 'Все данные обслуживает фирма',
   },
   cookie: { text: 'Мы используем пару cookies для языка и анонимной статистики.', more: 'Политика cookies', accept: 'Принять', decline: 'Только необходимые' },
   contact: {

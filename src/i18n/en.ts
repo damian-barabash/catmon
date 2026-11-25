@@ -105,6 +105,7 @@ const en = {
     game: 'Game', legal: 'Legal', company: 'Company',
     privacy: 'Privacy Policy', cookies: 'Cookie Policy', terms: 'Terms of Service', rules: 'Game Rules', data: 'Data Processing',
     support: 'Support', rights: 'DBDC Studio. All rights reserved.', social: 'Social',
+    madeBy: 'Made by', dataBy: 'All data is handled by the company',
   },
   cookie: { text: 'We use a couple of cookies for language settings and anonymous statistics.', more: 'Cookie policy', accept: 'Accept', decline: 'Only necessary' },
   contact: {

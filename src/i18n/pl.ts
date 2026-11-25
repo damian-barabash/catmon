@@ -106,6 +106,7 @@ const pl: Dict = {
     game: 'Gra', legal: 'Dokumenty', company: 'Firma',
     privacy: 'Polityka prywatności', cookies: 'Polityka cookies', terms: 'Regulamin', rules: 'Zasady gry', data: 'Przetwarzanie danych',
     support: 'Wsparcie', rights: 'DBDC Studio. Wszelkie prawa zastrzeżone.', social: 'Social media',
+    madeBy: 'Stworzone przez', dataBy: 'Wszystkie dane obsługuje firma',
   },
   cookie: { text: 'Używamy kilku plików cookies do ustawień języka i anonimowych statystyk.', more: 'Polityka cookies', accept: 'Akceptuję', decline: 'Tylko niezbędne' },
   contact: {

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { Link, NavLink, Outlet, useLocation } from 'react-router-dom'
 import { AnimatePresence, motion, useReducedMotion, useScroll, useSpring } from 'framer-motion'
 import { LANG_NAMES, useI18n } from '../i18n'
-import { LANGS, SOCIAL_LINKS, SUPPORT_EMAIL, type Lang } from '../lib/config'
+import { COMPANY, LANGS, SOCIAL_LINKS, SUPPORT_EMAIL, type Lang } from '../lib/config'
 import { CatLogo, CookieIcon, Paw, Social } from './Icons'
 import { getConsent, setConsent } from '../lib/consent'
 import { api } from '../lib/api'
@@ -126,8 +126,15 @@ function Footer() {
         </div>
         <div className="footer-bottom">
           <span>© {new Date().getFullYear()} {t.footer.rights}</span>
-          <span>catmongame.app</span>
+          <span>{t.footer.madeBy} <a href={COMPANY.site} target="_blank" rel="noopener">{COMPANY.brand}</a></span>
         </div>
+        <p className="footer-legal">
+          <span>{t.footer.dataBy} <b>{COMPANY.legalName}</b></span>
+          <span>{COMPANY.address}, {COMPANY.city}</span>
+          <span>NIP: {COMPANY.nip}</span>
+          <span>REGON: {COMPANY.regon}</span>
+          <a href={`mailto:${SUPPORT_EMAIL}`}>{SUPPORT_EMAIL}</a>
+        </p>
       </div>
     </footer>
   )
